@@ -12,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -96,7 +98,7 @@ public class JsonUtils {
             request.getHeader().forEach(get::addHeader);
             if (entity != null) get.setEntity(collector.put(entity));
             CloseableHttpResponse response = collector.put(httpClient.execute(get));
-            Scanner scanner = collector.put(new Scanner(response.getEntity().getContent()));
+            Scanner scanner = collector.put(new Scanner(response.getEntity().getContent(), StandardCharsets.UTF_8));
 
             StringBuilder content = new StringBuilder();
             while(scanner.hasNext()) {
@@ -130,7 +132,7 @@ public class JsonUtils {
             request.getHeader().forEach(post::addHeader);
             if (entity != null) post.setEntity(collector.put(entity));
             CloseableHttpResponse response = collector.put(httpClient.execute(post));
-            Scanner scanner = collector.put(new Scanner(response.getEntity().getContent()));
+            Scanner scanner = collector.put(new Scanner(response.getEntity().getContent(), StandardCharsets.UTF_8));
 
             StringBuilder content = new StringBuilder();
             while(scanner.hasNext()) {

@@ -22,7 +22,7 @@ public interface AiTranslator {
 
     @NotNull
     default String getFinalPrompt(@NotNull String text, @NotNull String sourceLanguage, @NotNull String targetLanguage) {
-        String promptFinal = this.getRawPrompt();
+        String promptFinal = this.getRawPrompt().replace("\\n", "\n");
         promptFinal = promptFinal.replace(PROMPT_PLACEHOLDER_SOURCE_LANG, sourceLanguage);
         promptFinal = promptFinal.replace(PROMPT_PLACEHOLDER_TARGET_LANG, targetLanguage);
         promptFinal = promptFinal.replace(PROMPT_PLACEHOLDER_TEXT_TO_TRANSLATE, text);

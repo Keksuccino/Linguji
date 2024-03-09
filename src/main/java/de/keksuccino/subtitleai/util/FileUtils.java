@@ -11,35 +11,33 @@ import java.util.Locale;
 
 public class FileUtils {
 
+    public static final String UTF8_BOM_CHAR = "\uFEFF";
     //TODO make this actually represent if system is macOS or not
     public static final boolean ON_OSX = false;
 
-    public static void writeTextToFile(@NotNull File file, boolean append, @NotNull String... textLines) {
-        FileOutputStream fileOut = null;
-        OutputStreamWriter outputWriter = null;
-        BufferedWriter bufferedWriter = null;
+    public static void writeTextToFile(@NotNull File file, @NotNull String... textLines) {
+        BufferedWriter writer = null;
         try {
-            fileOut = new FileOutputStream(file, append);
-            outputWriter = new OutputStreamWriter(fileOut, StandardCharsets.UTF_8);
-            bufferedWriter = new BufferedWriter(outputWriter);
+            if (file.isFile()) {
+                Files.delete(file.toPath());
+            }
+            writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
             if (textLines.length == 1) {
-                bufferedWriter.write(textLines[0]);
+                writer.append(textLines[0]);
             } else {
-                for (String s : textLines) {
-                    bufferedWriter.write(s + "\n");
+                for (String line : textLines) {
+                    writer.append(line);
+                    writer.newLine();
                 }
             }
-            bufferedWriter.flush();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        CloseableUtils.closeQuietly(bufferedWriter);
-        CloseableUtils.closeQuietly(fileOut);
-        CloseableUtils.closeQuietly(outputWriter);
+        CloseableUtils.closeQuietly(writer);
     }
 
-    public static void writeTextToFile(@NotNull File file, boolean append, @NotNull List<String> textLines) {
-        writeTextToFile(file, append, textLines.toArray(new String[0]));
+    public static void writeTextToFile(@NotNull File file, @NotNull List<String> textLines) {
+        writeTextToFile(file, textLines.toArray(new String[0]));
     }
 
     /** Reads all plain text lines from the given {@link InputStream}, closes it at the end and returns the text lines. **/

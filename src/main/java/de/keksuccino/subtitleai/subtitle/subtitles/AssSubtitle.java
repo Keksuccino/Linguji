@@ -59,6 +59,11 @@ public class AssSubtitle extends AbstractSubtitle {
 
         for (String line : FileUtils.readTextLinesFrom(assFile)) {
 
+//            //Remove UTF-8 BOM
+//            if (line.startsWith(FileUtils.UTF8_BOM_CHAR)) {
+//                line = line.substring(1);
+//            }
+
             //Skip comments
             if (line.trim().startsWith("!") || line.trim().startsWith(";")) continue;
 
@@ -88,6 +93,7 @@ public class AssSubtitle extends AbstractSubtitle {
                     }
                 }
 
+                //Search for start of Events section
                 if (line.trim().equals("[Events]")) {
                     eventsSectionLineFound = true;
                 }

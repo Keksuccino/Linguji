@@ -1,9 +1,6 @@
 package de.keksuccino.subtitleai;
 
-import de.keksuccino.subtitleai.ai.gemini.GeminiTranslator;
-import de.keksuccino.subtitleai.subtitle.subtitles.AssSubtitle;
-import de.keksuccino.subtitleai.subtitle.translation.SubtitleTranslator;
-import de.keksuccino.subtitleai.util.FileUtils;
+import de.keksuccino.subtitleai.subtitle.translation.TranslationProcessFeedback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,19 +8,16 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.jetbrains.annotations.NotNull;
-import java.io.File;
-import java.util.Objects;
 
 public class Main {
 
-    //TODO single-line translation implementieren (target ist immer eine Line, aber als Kontext wird vorherige und nachfolgende mitgesendet) ---> NUR FALLS NORMALER MODE FAILT !!!!
-    //TODO single-line translation implementieren (target ist immer eine Line, aber als Kontext wird vorherige und nachfolgende mitgesendet) ---> NUR FALLS NORMALER MODE FAILT !!!!
-    //TODO single-line translation implementieren (target ist immer eine Line, aber als Kontext wird vorherige und nachfolgende mitgesendet) ---> NUR FALLS NORMALER MODE FAILT !!!!
-    //TODO single-line translation implementieren (target ist immer eine Line, aber als Kontext wird vorherige und nachfolgende mitgesendet) ---> NUR FALLS NORMALER MODE FAILT !!!!
-    //TODO single-line translation implementieren (target ist immer eine Line, aber als Kontext wird vorherige und nachfolgende mitgesendet) ---> NUR FALLS NORMALER MODE FAILT !!!!
+    //TODO Timeouts abfangen und in dem Fall einfach nochmal probieren: https://gist.github.com/Keksuccino/4bd978ee5b807c73a0faee908afd9b46
+
     //TODO single-line translation implementieren (target ist immer eine Line, aber als Kontext wird vorherige und nachfolgende mitgesendet) ---> NUR FALLS NORMALER MODE FAILT !!!!
 
-    //TODO Schauen, warum Umlaute trotz UTF-8 nicht richtig in File geschrieben werden
+    //TODO toggleable option: wenn X mal soft-block oder hard-block , alle profanity settings auf höchste Tolleranz stellen und Abschnitt erneut versuchen
+
+    //TODO Threading auf maximal X Threads reduzieren (einstellbar), damit schneller übersetzt werden kann, ohne Minuten-Limit zu erreichen
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -39,17 +33,12 @@ public class Main {
             throw new RuntimeException("Invalid Gemini API key!");
         }
 
-        GeminiTranslator aiTranslator = new GeminiTranslator(getOptions().geminiApiKey.getValue());
-        SubtitleTranslator<AssSubtitle> assTranslator = new SubtitleTranslator<>(aiTranslator);
-        AssSubtitle subtitle = Objects.requireNonNull(AssSubtitle.create(new File("subtitle.ass")));
-
         try {
 
-            assTranslator.translate(subtitle, "English", "German");
-            FileUtils.writeTextToFile(new File("subtitle_translated.ass"), false, subtitle.serialize());
+            Backend.translate(new TranslationProcessFeedback());
 
         } catch (Exception ex) {
-            LOGGER.error("Failed to translate ASS file!", ex);
+            ex.printStackTrace();
         }
 
     }

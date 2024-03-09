@@ -2,10 +2,17 @@ package de.keksuccino.subtitleai.subtitle.subtitles;
 
 import de.keksuccino.subtitleai.subtitle.subtitles.line.AbstractSubtitleLine;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractSubtitle {
+
+    @NotNull
+    public TranslationFinishStatus translationFinishStatus = TranslationFinishStatus.NOT_FINISHED;
+    @Nullable
+    public File sourceFile = null;
 
     @NotNull
     protected List<AbstractSubtitleLine> lines = new ArrayList<>();
@@ -20,5 +27,11 @@ public abstract class AbstractSubtitle {
 
     @NotNull
     public abstract String serialize();
+
+    public enum TranslationFinishStatus {
+        NOT_FINISHED,
+        FINISHED,
+        FINISHED_WITH_EXCEPTIONS
+    }
 
 }

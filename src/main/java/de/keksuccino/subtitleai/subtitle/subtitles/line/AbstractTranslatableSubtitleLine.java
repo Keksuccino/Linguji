@@ -8,7 +8,7 @@ public abstract class AbstractTranslatableSubtitleLine extends AbstractSubtitleL
     public static final String LINE_BREAK_UNIVERSAL = "<br>";
 
     @Nullable
-    protected String translatedText = null;
+    protected volatile String translatedText = null;
 
     /**
      * Returns the text without formatting codes. Line breaks ({@code <br>}) don't get removed.
