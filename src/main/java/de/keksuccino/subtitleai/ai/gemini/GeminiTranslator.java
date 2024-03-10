@@ -196,10 +196,12 @@ public class GeminiTranslator implements AiTranslator {
         protected boolean hardMaxedOut = false;
 
         protected boolean shouldTryOverrideSoft(int softBlockTries) {
+            if (Main.getOptions().geminiOverrideSafetyThresholdSoftBlockAfterTries.getValue() < 0) return false;
             return (softBlockTries >= Main.getOptions().geminiOverrideSafetyThresholdSoftBlockAfterTries.getValue());
         }
 
         protected boolean shouldTryOverrideHard(int hardBlockTries) {
+            if (Main.getOptions().geminiOverrideSafetyThresholdHardBlockAfterTries.getValue() < 0) return false;
             return (hardBlockTries >= Main.getOptions().geminiOverrideSafetyThresholdHardBlockAfterTries.getValue());
         }
 
