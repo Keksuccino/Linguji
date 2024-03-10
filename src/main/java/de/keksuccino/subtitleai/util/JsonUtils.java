@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -83,13 +82,13 @@ public class JsonUtils {
         return toElementJsonArray(Arrays.asList(array));
     }
 
-    @Nullable
-    public static String getJsonFromGET(@NotNull HttpRequest request, @Nullable HttpEntity entity) {
+    @NotNull
+    public static String getJsonFromGET(@NotNull HttpRequest request, @Nullable HttpEntity entity) throws Exception {
 
         Objects.requireNonNull(request);
 
         CloseableCollector collector = new CloseableCollector();
-        String jsonString = null;
+        String jsonString;
 
         try {
 
@@ -108,22 +107,21 @@ public class JsonUtils {
             jsonString = content.toString();
 
         } catch (Exception ex) {
-            LOGGER.error("Failed to get JSON from URL: " + request.getUrl(), ex);
+            collector.closeQuietly();
+            throw ex;
         }
-
-        collector.closeQuietly();
 
         return jsonString;
 
     }
 
-    @Nullable
-    public static String getJsonFromPOST(@NotNull HttpRequest request, @Nullable HttpEntity entity) {
+    @NotNull
+    public static String getJsonFromPOST(@NotNull HttpRequest request, @Nullable HttpEntity entity) throws Exception {
 
         Objects.requireNonNull(request);
 
         CloseableCollector collector = new CloseableCollector();
-        String jsonString = null;
+        String jsonString;
 
         try {
 
@@ -142,10 +140,9 @@ public class JsonUtils {
             jsonString = content.toString();
 
         } catch (Exception ex) {
-            LOGGER.error("Failed to get JSON from URL: " + request.getUrl(), ex);
+            collector.closeQuietly();
+            throw ex;
         }
-
-        collector.closeQuietly();
 
         return jsonString;
 

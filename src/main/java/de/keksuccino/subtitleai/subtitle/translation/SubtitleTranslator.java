@@ -24,23 +24,24 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
     public SubtitleTranslator(@NotNull AiTranslator translator, boolean threaded) {
         this.translator = Objects.requireNonNull(translator);
         this.threaded = threaded;
+        if (threaded) throw new RuntimeException("Threading is not fully implemented yet. It works, but is not limited to a max number of threads, so it basically just request-bombs the API and kills it.");
     }
 
-    public void translate(@NotNull T subtitle, @NotNull String sourceLanguage, @NotNull String targetLanguage, @NotNull TranslationProcessFeedback translationProcessFeedback) throws Exception {
-
-        if (!translationProcessFeedback.running) return;
+    public void translate(@NotNull T subtitle, @NotNull String sourceLanguage, @NotNull String targetLanguage, @NotNull TranslationProcess process) throws Exception {
 
         List<List<IndexedLine>> linePackets = new ArrayList<>();
         List<IndexedLine> currentPacket = new ArrayList<>();
+        int totalTranslatableLineCount = 0;
         int index = 0;
         int lineCount = 0;
         for (AbstractSubtitleLine line : subtitle.getLines()) {
-            if (!translationProcessFeedback.running) return;
+            if (!process.running) return;
             if (line instanceof AbstractTranslatableSubtitleLine t) {
                 //Add translatable lines, but skip empty ones to not confuse the AI too much...
                 if (!t.getTextWithoutFormattingCodes().replace(AbstractTranslatableSubtitleLine.LINE_BREAK_UNIVERSAL, "").trim().isEmpty()) {
                     currentPacket.add(new IndexedLine(t, index));
                     lineCount++;
+                    totalTranslatableLineCount++;
                 }
             }
             //Start new packet and reset counter if max lines per packet reached
@@ -63,7 +64,10 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
             }
         }
 
-        if (!translationProcessFeedback.running) return;
+        if (!process.running) return;
+
+        process.currentSubtitleFinishedLines.clear();
+        process.currentSubtitleTranslatableLinesCount = totalTranslatableLineCount;
 
         if (this.threaded) {
 
@@ -83,7 +87,7 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
                 threadFeedbacks.add(feedback);
                 new Thread(() -> {
                     try {
-                        this.translatePacket(packet, linesString.toString(), sourceLanguage, targetLanguage, 0, feedback, translationProcessFeedback);
+                        this.translatePacket(packet, linesString.toString(), sourceLanguage, targetLanguage, 0, feedback, process);
                         feedback.completed = true;
                     } catch (Exception ex) {
                         feedback.exception = ex;
@@ -121,18 +125,18 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
 
             for (List<IndexedLine> packet : linePackets) {
 
-                if (!translationProcessFeedback.running) return;
+                if (!process.running) return;
 
                 StringBuilder linesString = new StringBuilder();
                 boolean firstLine = true;
                 for (IndexedLine line : packet) {
-                    if (!translationProcessFeedback.running) return;
+                    if (!process.running) return;
                     if (!firstLine) linesString.append("\n");
                     linesString.append(line.line.getTextWithoutFormattingCodes());
                     firstLine = false;
                 }
 
-                this.translatePacket(packet, linesString.toString(), sourceLanguage, targetLanguage, 0, dummyFeedback, translationProcessFeedback);
+                this.translatePacket(packet, linesString.toString(), sourceLanguage, targetLanguage, 0, dummyFeedback, process);
 
             }
 
@@ -140,28 +144,32 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
 
     }
 
-    protected void translatePacket(@NotNull List<IndexedLine> packet, @NotNull String linesString, @NotNull String sourceLanguage, @NotNull String targetLanguage, int failedTries, @NotNull TranslationThreadFeedback threadFeedback, @NotNull TranslationProcessFeedback translationProcessFeedback) throws Exception {
+    protected void translatePacket(@NotNull List<IndexedLine> packet, @NotNull String linesString, @NotNull String sourceLanguage, @NotNull String targetLanguage, int failedTries, @NotNull TranslationThreadFeedback threadFeedback, @NotNull TranslationProcess process) throws Exception {
 
         String translated = this.translator.translate(linesString, sourceLanguage, targetLanguage);
         String[] translatedLines = translated.split("\n");
 
         if (threadFeedback.stopped) return;
-        if (!translationProcessFeedback.running) return;
+        if (!process.running) return;
 
         if (translatedLines.length == packet.size()) {
             int translatedIndex = 0;
             for (String line : translatedLines) {
-                packet.get(translatedIndex).line.setTranslatedText(line);
+                if (threadFeedback.stopped) return;
+                if (!process.running) return;
+                AbstractTranslatableSubtitleLine line2 = packet.get(translatedIndex).line;
+                line2.setTranslatedText(line);
+                process.currentSubtitleFinishedLines.add(line2);
                 translatedIndex++;
             }
         } else {
             failedTries++;
-            if (!translationProcessFeedback.running) return;
+            if (!process.running) return;
             if (threadFeedback.stopped) return;
             if (failedTries <= Main.getOptions().triesBeforeErrorInvalidLineCount.getValue()) {
-                LOGGER.info("############### INVALID AMOUNT OF PACKET LINES RETURNED! TRYING AGAIN!");
+                LOGGER.info("AiTranslator returned invalid amount of translated lines! Trying again..");
                 ThreadUtils.sleep(Main.getOptions().waitMillisBeforeNextTry.getValue());
-                this.translatePacket(packet, linesString, sourceLanguage, targetLanguage, failedTries, threadFeedback, translationProcessFeedback);
+                this.translatePacket(packet, linesString, sourceLanguage, targetLanguage, failedTries, threadFeedback, process);
                 return;
             }
             throw new IllegalStateException("AiTranslator returned invalid amount of lines!");

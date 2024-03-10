@@ -22,9 +22,14 @@ public class Options extends AbstractOptions {
     public final Option<String> geminiHarmCategoryHateSpeechSetting = new Option<>(config, "gemini_harm_category_hate_speech_setting", "BLOCK_ONLY_HIGH", "gemini");
     public final Option<String> geminiHarmCategorySexuallyExplicitSetting = new Option<>(config, "gemini_harm_category_sexually_explicit_setting", "BLOCK_ONLY_HIGH", "gemini");
     public final Option<String> geminiHarmCategoryDangerousContentSetting = new Option<>(config, "gemini_harm_category_dangerous_content_setting", "BLOCK_ONLY_HIGH", "gemini");
-    public final Option<Integer> geminiTriesBeforeErrorSoftBlock = new Option<>(config, "gemini_tries_before_error_soft_block", 2000, "general");
-    public final Option<Integer> geminiTriesBeforeErrorHardBlock = new Option<>(config, "gemini_tries_before_error_hard_block", 10, "general");
-    public final Option<Integer> geminiTriesBeforeErrorGeneric = new Option<>(config, "gemini_tries_before_error_generic", 2000, "general");
+    public final Option<Integer> geminiTriesBeforeErrorSoftBlock = new Option<>(config, "gemini_tries_before_error_soft_block", 2000, "gemini");
+    public final Option<Integer> geminiTriesBeforeErrorHardBlock = new Option<>(config, "gemini_tries_before_error_hard_block", 2000, "gemini");
+    public final Option<Integer> geminiTriesBeforeErrorTimeoutOrConnectionFailed = new Option<>(config, "gemini_tries_before_error_timeout_or_connection_failed", 2000, "gemini");
+    public final Option<Integer> geminiTriesBeforeErrorGeneric = new Option<>(config, "gemini_tries_before_error_generic", 2000, "gemini");
+    public final Option<Integer> geminiOverrideSafetyThresholdSoftBlockAfterTries = new Option<>(config, "gemini_override_safety_threshold_soft_block_after_tries", 50, "gemini");
+    public final Option<Integer> geminiOverrideSafetyThresholdHardBlockAfterTries = new Option<>(config, "gemini_override_safety_threshold_hard_block_after_tries", 3, "gemini");
+    public final Option<Integer> geminiOverrideSafetyThresholdSoftBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_soft_block_tries_per_level", 20, "gemini");
+    public final Option<Integer> geminiOverrideSafetyThresholdHardBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_hard_block_tries_per_level", 10, "gemini");
 
     public Options() {
         this.config.syncConfig();

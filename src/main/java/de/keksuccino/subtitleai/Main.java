@@ -1,6 +1,5 @@
 package de.keksuccino.subtitleai;
 
-import de.keksuccino.subtitleai.subtitle.translation.TranslationProcessFeedback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +34,7 @@ public class Main {
 
         try {
 
-            Backend.translate(new TranslationProcessFeedback());
+            Backend.translate();
 
         } catch (Exception ex) {
             ex.printStackTrace();
