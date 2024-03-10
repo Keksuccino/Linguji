@@ -87,7 +87,7 @@ public class GeminiTranslator implements AiTranslator {
                 responseString = JsonUtils.getJsonFromPOST(request, entityBuilder.build());
             } catch (Exception ex) {
                 triesCounter.timeout++;
-                if (triesCounter.timeout <= Main.getOptions().geminiTriesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
+                if (triesCounter.timeout < Main.getOptions().geminiTriesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
                     thresholdOverrideContext.reset();
                     LOGGER.info("Gemini translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
                     ThreadUtils.sleep(Main.getOptions().waitMillisBeforeNextTry.getValue());
@@ -107,7 +107,7 @@ public class GeminiTranslator implements AiTranslator {
         if (response.promptFeedback != null) {
             if (response.promptFeedback.blockReason != null) {
                 triesCounter.hardBlock++;
-                if (triesCounter.hardBlock <= Main.getOptions().geminiTriesBeforeErrorHardBlock.getValue()) {
+                if (triesCounter.hardBlock < Main.getOptions().geminiTriesBeforeErrorHardBlock.getValue()) {
                     thresholdOverrideContext.resetSoft();
                     LOGGER.info("Gemini translation request failed! Trying again.. (HARD-BLOCKED: " + response.promptFeedback.blockReason + ")");
                     if (thresholdOverrideContext.shouldTryOverrideHard(triesCounter.hardBlock)) {
@@ -123,7 +123,7 @@ public class GeminiTranslator implements AiTranslator {
             if ((response.error.message != null) && !response.error.message.contains("location is not supported")) {
                 //If error is NOT "user location not supported", try again
                 triesCounter.generic++;
-                if (triesCounter.generic <= Main.getOptions().geminiTriesBeforeErrorGeneric.getValue()) {
+                if (triesCounter.generic < Main.getOptions().geminiTriesBeforeErrorGeneric.getValue()) {
                     thresholdOverrideContext.reset();
                     LOGGER.info("Gemini translation request failed! Trying again.. (ERROR CODE: " + response.error.code + " | MESSAGE: " + response.error.message + ")");
                     ThreadUtils.sleep(Main.getOptions().waitMillisBeforeNextTry.getValue());
@@ -140,7 +140,7 @@ public class GeminiTranslator implements AiTranslator {
             if (candidate != null) {
                 if (!"STOP".equalsIgnoreCase(candidate.finishReason)) {
                     triesCounter.softBlock++;
-                    if (triesCounter.softBlock <= Main.getOptions().geminiTriesBeforeErrorSoftBlock.getValue()) {
+                    if (triesCounter.softBlock < Main.getOptions().geminiTriesBeforeErrorSoftBlock.getValue()) {
                         thresholdOverrideContext.resetHard();
                         LOGGER.info("Gemini translation request failed! Trying again.. (SOFT-BLOCKED: " + candidate.finishReason + ")");
                         if (thresholdOverrideContext.shouldTryOverrideSoft(triesCounter.softBlock)) {
@@ -196,12 +196,12 @@ public class GeminiTranslator implements AiTranslator {
         protected boolean hardMaxedOut = false;
 
         protected boolean shouldTryOverrideSoft(int softBlockTries) {
-            if (Main.getOptions().geminiOverrideSafetyThresholdSoftBlockAfterTries.getValue() < 0) return false;
+            if (!Main.getOptions().geminiOverrideSafetyThresholdSoftBlock.getValue()) return false;
             return (softBlockTries >= Main.getOptions().geminiOverrideSafetyThresholdSoftBlockAfterTries.getValue());
         }
 
         protected boolean shouldTryOverrideHard(int hardBlockTries) {
-            if (Main.getOptions().geminiOverrideSafetyThresholdHardBlockAfterTries.getValue() < 0) return false;
+            if (!Main.getOptions().geminiOverrideSafetyThresholdHardBlock.getValue()) return false;
             return (hardBlockTries >= Main.getOptions().geminiOverrideSafetyThresholdHardBlockAfterTries.getValue());
         }
 
@@ -209,6 +209,9 @@ public class GeminiTranslator implements AiTranslator {
             if (this.softMaxedOut) {
                 this.resetSoft();
                 return;
+            }
+            if (Main.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel.getValue() <= 0) {
+                Main.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel.setValue(1);
             }
             if ((this.overrideSoftBlock == null) || (this.softBlockPerLevelTries >= Main.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel.getValue())) {
                 if (this.overrideSoftBlock == null) {
@@ -236,6 +239,9 @@ public class GeminiTranslator implements AiTranslator {
             if (this.hardMaxedOut) {
                 this.resetHard();
                 return;
+            }
+            if (Main.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel.getValue() <= 0) {
+                Main.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel.setValue(1);
             }
             if ((this.overrideHardBlock == null) || (this.hardBlockPerLevelTries >= Main.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel.getValue())) {
                 if (this.overrideHardBlock == null) {
