@@ -1,22 +1,51 @@
 
 plugins {
     id 'java'
+    id 'application'
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.25.0'
 }
 
-group 'de.keksuccino.subtitletranslateai'
+group 'de.keksuccino.polyglot'
 version '1.0.0'
 
 repositories {
     mavenCentral()
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-java.withSourcesJar()
+ext {
+    junitVersion = '5.10.0'
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'de.keksuccino.polyglot.polyglot'
+    mainClass = 'de.keksuccino.polyglot.polyglot.frontend.PolyglotApplication'
+}
+
+javafx {
+    version = '17.0.6'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
 
 dependencies {
 
-//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation('org.controlsfx:controlsfx:11.1.2')
+    implementation('net.synedra:validatorfx:0.4.0') {
+        exclude(group: 'org.openjfx')
+    }
+    implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
+    implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 
     implementation group: 'org.jetbrains', name: 'annotations', version: '24.1.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.22.1'
@@ -27,33 +56,18 @@ dependencies {
 
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
-    it.options.getRelease().set(17)
-}
-
-jar {
-
-//    manifest {
-//        attributes(
-//                'Main-Class' : "de.keksuccino.modmanager.ModManager"
-//        )
-//    }
-//
-//    zip64 = true
-//
-//    from {
-//        exclude('META-INF/LICENSE.txt')
-//        exclude('META-INF/NOTICE.txt')
-//        exclude('META-INF/DEPENDENCIES')
-//        exclude('META-INF/LICENSE')
-//        exclude('META-INF/NOTICE')
-//        exclude('META-INF/maven/commons-io/')
-//        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
-
-}
-
 test {
     useJUnitPlatform()
+}
+
+jlink {
+    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'app'
+    }
+}
+
+jlinkZip {
+    group = 'distribution'
 }
