@@ -1,4 +1,4 @@
-package de.keksuccino.subtitleai.ai.gemini;
+package de.keksuccino.subtitleai.translator.gemini.safety;
 
 public class GeminiSafetyRating {
 

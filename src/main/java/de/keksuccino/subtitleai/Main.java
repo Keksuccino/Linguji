@@ -10,15 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class Main {
 
-    //TODO Timeouts abfangen und in dem Fall einfach nochmal probieren: https://gist.github.com/Keksuccino/4bd978ee5b807c73a0faee908afd9b46
-
-    //TODO single-line translation implementieren (target ist immer eine Line, aber als Kontext wird vorherige und nachfolgende mitgesendet) ---> NUR FALLS NORMALER MODE FAILT !!!!
-
-    //TODO toggleable option: wenn X mal soft-block oder hard-block , alle profanity settings auf höchste Tolleranz stellen und Abschnitt erneut versuchen
-
     //TODO Threading auf maximal X Threads reduzieren (einstellbar), damit schneller übersetzt werden kann, ohne Minuten-Limit zu erreichen
 
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final String VERSION = "1.0.0";
 
     private static Options options;
 

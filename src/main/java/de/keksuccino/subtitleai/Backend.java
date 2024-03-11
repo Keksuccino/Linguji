@@ -1,7 +1,7 @@
 package de.keksuccino.subtitleai;
 
 import com.google.common.io.Files;
-import de.keksuccino.subtitleai.ai.gemini.GeminiTranslator;
+import de.keksuccino.subtitleai.translator.gemini.GeminiTranslationEngine;
 import de.keksuccino.subtitleai.subtitle.subtitles.AbstractSubtitle;
 import de.keksuccino.subtitleai.subtitle.subtitles.AssSubtitle;
 import de.keksuccino.subtitleai.subtitle.translation.SubtitleTranslator;
@@ -29,8 +29,8 @@ public class Backend {
 
             try {
 
-                GeminiTranslator geminiTranslator = new GeminiTranslator(Main.getOptions().geminiApiKey.getValue(), Main.getOptions().aiPrompt.getValue());
-                SubtitleTranslator<AssSubtitle> geminiAssSubtitleTranslator = new SubtitleTranslator<>(geminiTranslator, false);
+                GeminiTranslationEngine geminiTranslationEngine = new GeminiTranslationEngine(Main.getOptions().geminiApiKey.getValue(), Main.getOptions().aiPrompt.getValue());
+                SubtitleTranslator<AssSubtitle> geminiAssSubtitleTranslator = new SubtitleTranslator<>(geminiTranslationEngine, false);
 
                 String inDirString = Main.getOptions().inputDirectory.getValue();
                 String outDirString = Main.getOptions().outputDirectory.getValue();

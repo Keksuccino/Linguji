@@ -1,7 +1,7 @@
 package de.keksuccino.subtitleai.subtitle.translation;
 
 import de.keksuccino.subtitleai.Main;
-import de.keksuccino.subtitleai.ai.AiTranslator;
+import de.keksuccino.subtitleai.translator.ITranslationEngine;
 import de.keksuccino.subtitleai.subtitle.subtitles.AbstractSubtitle;
 import de.keksuccino.subtitleai.subtitle.subtitles.line.AbstractSubtitleLine;
 import de.keksuccino.subtitleai.subtitle.subtitles.line.AbstractTranslatableSubtitleLine;
@@ -18,10 +18,10 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @NotNull
-    protected final AiTranslator translator;
+    protected final ITranslationEngine translator;
     protected final boolean threaded;
 
-    public SubtitleTranslator(@NotNull AiTranslator translator, boolean threaded) {
+    public SubtitleTranslator(@NotNull ITranslationEngine translator, boolean threaded) {
         this.translator = Objects.requireNonNull(translator);
         this.threaded = threaded;
         if (threaded) throw new RuntimeException("Threading is not fully implemented yet. It works, but is not limited to a max number of threads, so it basically just request-bombs the API and kills it.");

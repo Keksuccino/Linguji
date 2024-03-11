@@ -12,7 +12,7 @@ public class MathUtils {
     			Integer.parseInt(value);
     		}
     		return true;
-    	} catch (Exception e) {}
+    	} catch (Exception ignored) {}
     	return false;
     }
 	
@@ -20,7 +20,7 @@ public class MathUtils {
 		try {
 			Integer.parseInt(value);
     		return true;
-    	} catch (Exception e) {}
+    	} catch (Exception ignored) {}
     	return false;
 	}
 	
@@ -28,7 +28,7 @@ public class MathUtils {
 		try {
 			Double.parseDouble(value);
     		return true;
-    	} catch (Exception e) {}
+    	} catch (Exception ignored) {}
     	return false;
 	}
 	
@@ -36,7 +36,7 @@ public class MathUtils {
 		try {
 			Long.parseLong(value);
     		return true;
-    	} catch (Exception e) {}
+    	} catch (Exception ignored) {}
     	return false;
 	}
 	
@@ -44,7 +44,7 @@ public class MathUtils {
 		try {
 			Float.parseFloat(value);
     		return true;
-    	} catch (Exception e) {}
+    	} catch (Exception ignored) {}
     	return false;
 	}
 	
@@ -85,7 +85,7 @@ public class MathUtils {
 		        double parse() {
 		            nextChar();
 		            double x = parseExpression();
-		            if (pos < in.length()) throw new RuntimeException("[KONKRETE] Unexpected: " + (char)ch);
+		            if (pos < in.length()) throw new RuntimeException("Unexpected: " + (char)ch);
 		            return x;
 		        }
 
@@ -127,9 +127,9 @@ public class MathUtils {
 		                else if (func.equals("sin")) x = Math.sin(Math.toRadians(x));
 		                else if (func.equals("cos")) x = Math.cos(Math.toRadians(x));
 		                else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
-		                else throw new RuntimeException("[KONKRETE] Unknown function: " + func);
+		                else throw new RuntimeException("Unknown function: " + func);
 		            } else {
-		                throw new RuntimeException("[KONKRETE] Unexpected: " + (char)ch);
+		                throw new RuntimeException("Unexpected: " + (char)ch);
 		            }
 
 		            if (eat('^')) x = Math.pow(x, parseFactor());
@@ -142,16 +142,6 @@ public class MathUtils {
 	    }
 	    
 	    return 0.0D;
-	}
-
-	@Deprecated
-	/**
-	 * Returns true if the given string can be calculated using {@link MathUtils#calculateFromString}.
-	 */
-	public static boolean isCalculateableString(String in) {
-		
-		return false;
-
 	}
 
 }

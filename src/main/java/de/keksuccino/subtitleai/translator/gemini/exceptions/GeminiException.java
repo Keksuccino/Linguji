@@ -1,4 +1,4 @@
-package de.keksuccino.subtitleai.ai.gemini.exceptions;
+package de.keksuccino.subtitleai.translator.gemini.exceptions;
 
 public class GeminiException extends Exception {
 

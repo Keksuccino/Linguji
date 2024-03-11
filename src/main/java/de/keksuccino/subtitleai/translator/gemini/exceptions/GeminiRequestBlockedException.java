@@ -1,9 +1,9 @@
-package de.keksuccino.subtitleai.ai.gemini.exceptions;
+package de.keksuccino.subtitleai.translator.gemini.exceptions;
 
-import de.keksuccino.subtitleai.ai.exceptions.ProfanityException;
+import de.keksuccino.subtitleai.translator.exceptions.SafetyException;
 import org.jetbrains.annotations.NotNull;
 
-public class GeminiRequestBlockedException extends ProfanityException {
+public class GeminiRequestBlockedException extends SafetyException {
 
     @NotNull
     public final String reason;

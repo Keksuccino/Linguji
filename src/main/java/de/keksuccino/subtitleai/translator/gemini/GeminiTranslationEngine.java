@@ -1,10 +1,16 @@
-package de.keksuccino.subtitleai.ai.gemini;
+package de.keksuccino.subtitleai.translator.gemini;
 
 import com.google.gson.*;
 import de.keksuccino.subtitleai.Main;
-import de.keksuccino.subtitleai.ai.AiTranslator;
-import de.keksuccino.subtitleai.ai.gemini.exceptions.GeminiException;
-import de.keksuccino.subtitleai.ai.gemini.exceptions.GeminiRequestBlockedException;
+import de.keksuccino.subtitleai.translator.ITranslationEngine;
+import de.keksuccino.subtitleai.translator.gemini.exceptions.GeminiException;
+import de.keksuccino.subtitleai.translator.gemini.exceptions.GeminiRequestBlockedException;
+import de.keksuccino.subtitleai.translator.gemini.request.GeminiContent;
+import de.keksuccino.subtitleai.translator.gemini.request.GeminiGenerateContentRequest;
+import de.keksuccino.subtitleai.translator.gemini.response.GeminiResponse;
+import de.keksuccino.subtitleai.translator.gemini.response.GeminiResponseCandidate;
+import de.keksuccino.subtitleai.translator.gemini.response.GeminiResponseCandidateContentPart;
+import de.keksuccino.subtitleai.translator.gemini.safety.GeminiSafetySetting;
 import de.keksuccino.subtitleai.util.HttpRequest;
 import de.keksuccino.subtitleai.util.JsonUtils;
 import de.keksuccino.subtitleai.util.ThreadUtils;
@@ -16,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
-public class GeminiTranslator implements AiTranslator {
+public class GeminiTranslationEngine implements ITranslationEngine {
 
     private static final Logger LOGGER = LogManager.getLogger();
     public static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent";
@@ -26,12 +32,12 @@ public class GeminiTranslator implements AiTranslator {
     @NotNull
     protected final String prompt;
 
-    public GeminiTranslator(@NotNull String apiKey) {
+    public GeminiTranslationEngine(@NotNull String apiKey) {
         this.apiKey = Objects.requireNonNull(apiKey);
         this.prompt = DEFAULT_PROMPT;
     }
 
-    public GeminiTranslator(@NotNull String apiKey, @NotNull String prompt) {
+    public GeminiTranslationEngine(@NotNull String apiKey, @NotNull String prompt) {
         this.apiKey = Objects.requireNonNull(apiKey);
         this.prompt = Objects.requireNonNull(prompt);
     }
@@ -39,6 +45,11 @@ public class GeminiTranslator implements AiTranslator {
     @NotNull
     public String translate(@NotNull String text, @NotNull String sourceLanguage, @NotNull String targetLanguage) throws Exception {
         return this._translate(text, sourceLanguage, targetLanguage, new GeminiTriesCounter(), new GeminiSafetyThresholdOverrideContext());
+    }
+
+    @Override
+    public @NotNull String getEngineName() {
+        return "Gemini Pro";
     }
 
     @NotNull

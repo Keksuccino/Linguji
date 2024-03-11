@@ -1,4 +1,4 @@
-package de.keksuccino.subtitleai.ai.gemini;
+package de.keksuccino.subtitleai.translator.gemini.response;
 
 public class GeminiResponseCandidateContent {
 

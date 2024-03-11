@@ -1,5 +1,6 @@
-package de.keksuccino.subtitleai.ai.gemini;
+package de.keksuccino.subtitleai.translator.gemini.request;
 
+import de.keksuccino.subtitleai.translator.gemini.safety.GeminiSafetySetting;
 import org.jetbrains.annotations.NotNull;
 
 public class GeminiGenerateContentRequest {

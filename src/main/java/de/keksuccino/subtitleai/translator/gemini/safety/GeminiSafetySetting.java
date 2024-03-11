@@ -1,4 +1,4 @@
-package de.keksuccino.subtitleai.ai.gemini;
+package de.keksuccino.subtitleai.translator.gemini.safety;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
