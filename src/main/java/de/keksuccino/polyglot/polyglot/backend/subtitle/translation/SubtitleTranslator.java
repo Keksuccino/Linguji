@@ -168,12 +168,12 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
             if (!process.running) return;
             if (threadFeedback.stopped) return;
             if (failedTries <= Backend.getOptions().triesBeforeErrorInvalidLineCount.getValue()) {
-                LOGGER.info("AiTranslator returned invalid amount of translated lines! Trying again..");
+                LOGGER.info("TranslationEngine returned invalid amount of translated lines! Trying again..");
                 ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                 this.translatePacket(packet, linesString, sourceLanguage, targetLanguage, failedTries, threadFeedback, process);
                 return;
             }
-            throw new IllegalStateException("AiTranslator returned invalid amount of lines!");
+            throw new IllegalStateException("TranslationEngine returned invalid amount of lines!");
         }
 
     }

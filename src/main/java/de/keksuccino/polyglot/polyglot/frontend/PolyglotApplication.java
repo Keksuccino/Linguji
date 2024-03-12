@@ -9,13 +9,11 @@ import java.io.IOException;
 
 public class PolyglotApplication extends javafx.application.Application {
 
-    //TODO Zeit bis Timeout geworfen wird kürzer machen (20 sek)
+    //TODO Zeit bis Timeout geworfen wird kürzer machen (20 sek) ( in getJsonFromPOST() )
 
     //TODO bei "Stop Process" click das unfertige File NICHT speichern
 
-    //TODO Bei Safety override config option adden, um direkt mit "BLOCK_NONE" zu überschreiben und andere Level zu skippen (default: true)
-
-    //TODO Safety Override nicht zurücksetzen, wenn Timeout (nicht reset() callen)
+    //TODO Console View schreiben (printet alles von loggern, etc.)
 
     @Nullable
     public static Stage stage;
@@ -32,8 +30,12 @@ public class PolyglotApplication extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
 
         PolyglotApplication.stage = stage;
+
+        stage.setMinWidth(830);
+        stage.setMinHeight(830);
+
         FXMLLoader fxmlLoader = new FXMLLoader(PolyglotApplication.class.getResource("main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 587, 845);
+        Scene scene = new Scene(fxmlLoader.load(), 830, 826);
 
         stage.setTitle("Polyglot v" + Backend.VERSION);
         stage.setScene(scene);

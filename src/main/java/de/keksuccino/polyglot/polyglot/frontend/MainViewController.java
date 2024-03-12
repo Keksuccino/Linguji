@@ -2,6 +2,9 @@ package de.keksuccino.polyglot.polyglot.frontend;
 
 import de.keksuccino.polyglot.polyglot.backend.Backend;
 import de.keksuccino.polyglot.polyglot.backend.subtitle.translation.TranslationProcess;
+import de.keksuccino.polyglot.polyglot.backend.translator.gemini.safety.GeminiSafetySetting;
+import de.keksuccino.polyglot.polyglot.backend.util.options.AbstractOptions;
+import de.keksuccino.polyglot.polyglot.frontend.util.SpinnerUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -9,17 +12,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
 
 public class MainViewController {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @FXML
     private ProgressBar subtitleProgressBar;
     @FXML
     private ProgressBar totalProgressBar;
-    @FXML
-    private ListView<?> subtitleLinesListView;
     @FXML
     private Button startTranslationButton;
     @FXML
@@ -34,6 +41,46 @@ public class MainViewController {
     private TextField sourceLangTextField;
     @FXML
     private TextField targetLangTextField;
+    @FXML
+    private TextField geminiApiKeyTextField;
+    @FXML
+    private TextField promptTextField;
+    @FXML
+    private Spinner<Integer> linesPerPacketSpinner;
+    @FXML
+    private Spinner<Integer> triesBeforeStopInvalidLineCountSpinner;
+    @FXML
+    private Spinner<Integer> triesBeforeStopTimeoutSpinner;
+    @FXML
+    private Spinner<Integer> triesBeforeStopGenericErrorSpinner;
+    @FXML
+    private Spinner<Integer> triesBeforeStopGeminiSoftBlockSpinner;
+    @FXML
+    private Spinner<Integer> triesBeforeStopGeminiHardBlockSpinner;
+    @FXML
+    private Spinner<Integer> triesBeforeOverrideGeminiThresholdSoftBlockSpinner;
+    @FXML
+    private Spinner<Integer> triesBeforeOverrideGeminiThresholdHardBlockSpinner;
+    @FXML
+    private Spinner<Long> waitAfterErrorSpinner;
+    @FXML
+    private ComboBox<GeminiSafetySetting.SafetyThreshold> geminiHarassmentSettingComboBox;
+    @FXML
+    private ComboBox<GeminiSafetySetting.SafetyThreshold> geminiHateSpeechSettingComboBox;
+    @FXML
+    private ComboBox<GeminiSafetySetting.SafetyThreshold> geminiSexuallyExplicitSettingComboBox;
+    @FXML
+    private ComboBox<GeminiSafetySetting.SafetyThreshold> geminiDangerousContentSettingComboBox;
+    @FXML
+    private CheckBox overrideGeminiSafetyThresholdSoftBlock;
+    @FXML
+    private CheckBox overrideGeminiSafetyThresholdHardBlock;
+    @FXML
+    private Spinner<Integer> triesPerGeminiThresholdOverrideSoftBlockSpinner;
+    @FXML
+    private Spinner<Integer> triesPerGeminiThresholdOverrideHardBlockSpinner;
+    @FXML
+    private CheckBox geminiThresholdOverrideSkipLowLevelsCheckBox;
 
     @Nullable
     private TranslationProcess translationProcess = null;
@@ -43,9 +90,33 @@ public class MainViewController {
 
         this.sourceLangTextField.setText(Backend.getOptions().sourceLanguage.getValue());
         this.targetLangTextField.setText(Backend.getOptions().targetLanguage.getValue());
+        this.inputDirLabel.setText(Backend.getOptions().inputDirectory.getValue());
+        this.outputDirLabel.setText(Backend.getOptions().outputDirectory.getValue());
+        this.geminiApiKeyTextField.setText(Backend.getOptions().geminiApiKey.getValue());
+        this.promptTextField.setText(Backend.getOptions().aiPrompt.getValue());
 
-        this.inputDirLabel.setText("Input Directory: " + Backend.getOptions().inputDirectory.getValue());
-        this.outputDirLabel.setText("Output Directory: " + Backend.getOptions().outputDirectory.getValue());
+        this.setupIntegerConfigOption(this.linesPerPacketSpinner, Backend.getOptions().linesPerPacket, 1, 10000);
+        this.setupIntegerConfigOption(this.triesBeforeStopInvalidLineCountSpinner, Backend.getOptions().triesBeforeErrorInvalidLineCount, 1, 10000);
+        this.setupIntegerConfigOption(this.triesBeforeStopTimeoutSpinner, Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed, 1, 10000);
+        this.setupIntegerConfigOption(this.triesBeforeStopGenericErrorSpinner, Backend.getOptions().triesBeforeErrorGeneric, 1, 10000);
+        this.setupIntegerConfigOption(this.triesBeforeStopGeminiSoftBlockSpinner, Backend.getOptions().geminiTriesBeforeErrorSoftBlock, 1, 10000);
+        this.setupIntegerConfigOption(this.triesBeforeStopGeminiHardBlockSpinner, Backend.getOptions().geminiTriesBeforeErrorHardBlock, 1, 10000);
+        this.setupIntegerConfigOption(this.triesBeforeOverrideGeminiThresholdSoftBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockAfterTries, 1, 10000);
+        this.setupIntegerConfigOption(this.triesBeforeOverrideGeminiThresholdHardBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdHardBlockAfterTries, 1, 10000);
+        this.setupLongConfigOption(this.waitAfterErrorSpinner, Backend.getOptions().waitMillisBeforeNextTry, 1L, 100000000000000L);
+
+        this.setupGeminiSafetyThresholdConfigOption(this.geminiHarassmentSettingComboBox, Backend.getOptions().geminiHarmCategoryHarassmentSetting);
+        this.setupGeminiSafetyThresholdConfigOption(this.geminiHateSpeechSettingComboBox, Backend.getOptions().geminiHarmCategoryHateSpeechSetting);
+        this.setupGeminiSafetyThresholdConfigOption(this.geminiSexuallyExplicitSettingComboBox, Backend.getOptions().geminiHarmCategorySexuallyExplicitSetting);
+        this.setupGeminiSafetyThresholdConfigOption(this.geminiDangerousContentSettingComboBox, Backend.getOptions().geminiHarmCategoryDangerousContentSetting);
+
+        this.setupBooleanConfigOption(this.overrideGeminiSafetyThresholdSoftBlock, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlock);
+        this.setupBooleanConfigOption(this.overrideGeminiSafetyThresholdHardBlock, Backend.getOptions().geminiOverrideSafetyThresholdHardBlock);
+
+        this.setupIntegerConfigOption(this.triesPerGeminiThresholdOverrideSoftBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel, 1, 10000);
+        this.setupIntegerConfigOption(this.triesPerGeminiThresholdOverrideHardBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel, 1, 10000);
+
+        this.setupBooleanConfigOption(this.geminiThresholdOverrideSkipLowLevelsCheckBox, Backend.getOptions().geminiOverrideSafetyThresholdSkipLowLevels);
 
         this.updateStartTranslationButtonState();
 
@@ -100,6 +171,20 @@ public class MainViewController {
     }
 
     @FXML
+    protected void onPromptTextFieldInput() {
+        String s = this.promptTextField.getText();
+        if (s != null) Backend.getOptions().aiPrompt.setValue(s);
+        this.updateStartTranslationButtonState();
+    }
+
+    @FXML
+    protected void onApiKeyTextFieldInput() {
+        String s = this.geminiApiKeyTextField.getText();
+        if (s != null) Backend.getOptions().geminiApiKey.setValue(s);
+        this.updateStartTranslationButtonState();
+    }
+
+    @FXML
     protected void onSourceLangTextFieldInput() {
         String s = this.sourceLangTextField.getText();
         if (s != null) Backend.getOptions().sourceLanguage.setValue(s);
@@ -133,7 +218,7 @@ public class MainViewController {
 
         Backend.getOptions().inputDirectory.setValue(selectedDirectory.getPath().replace("\\", "/"));
 
-        this.inputDirLabel.setText("Input Directory: " + Backend.getOptions().inputDirectory.getValue());
+        this.inputDirLabel.setText(Backend.getOptions().inputDirectory.getValue());
         this.updateStartTranslationButtonState();
 
     }
@@ -158,7 +243,7 @@ public class MainViewController {
 
         Backend.getOptions().outputDirectory.setValue(selectedDirectory.getPath().replace("\\", "/"));
 
-        this.outputDirLabel.setText("Output Directory: " + Backend.getOptions().outputDirectory.getValue());
+        this.outputDirLabel.setText(Backend.getOptions().outputDirectory.getValue());
         this.updateStartTranslationButtonState();
 
     }
@@ -177,6 +262,52 @@ public class MainViewController {
         this.chooseOutputDirButton.setDisable(disabled);
         this.targetLangTextField.setDisable(disabled);
         this.sourceLangTextField.setDisable(disabled);
+        this.promptTextField.setDisable(disabled);
+        this.geminiApiKeyTextField.setDisable(disabled);
+        this.linesPerPacketSpinner.setDisable(disabled);
+    }
+
+    protected void setupIntegerConfigOption(@NotNull Spinner<Integer> spinner, @NotNull AbstractOptions.Option<Integer> option, int minValue, int maxValue) {
+        if (option.getValue() < minValue) option.setValue(minValue);
+        if (option.getValue() > maxValue) option.setValue(maxValue);
+        SpinnerUtils.prepareIntegerSpinner(spinner, minValue, maxValue, option.getValue(), (oldValue, newValue) -> {
+            option.setValue(newValue);
+            if (option.getValue() < minValue) option.setValue(minValue);
+            if (option.getValue() > maxValue) option.setValue(maxValue);
+            this.updateStartTranslationButtonState();
+        });
+    }
+
+    protected void setupLongConfigOption(@NotNull Spinner<Long> spinner, @NotNull AbstractOptions.Option<Long> option, long minValue, long maxValue) {
+        if (option.getValue() < minValue) option.setValue(minValue);
+        if (option.getValue() > maxValue) option.setValue(maxValue);
+        SpinnerUtils.prepareLongSpinner(spinner, minValue, maxValue, option.getValue(), (oldValue, newValue) -> {
+            option.setValue(newValue);
+            if (option.getValue() < minValue) option.setValue(minValue);
+            if (option.getValue() > maxValue) option.setValue(maxValue);
+            this.updateStartTranslationButtonState();
+        });
+    }
+
+    protected void setupBooleanConfigOption(@NotNull CheckBox checkBox, @NotNull AbstractOptions.Option<Boolean> option) {
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue));
+        checkBox.setSelected(option.getValue());
+    }
+
+    protected void setupGeminiSafetyThresholdConfigOption(@NotNull ComboBox<GeminiSafetySetting.SafetyThreshold> comboBox, @NotNull AbstractOptions.Option<String> option) {
+        comboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(GeminiSafetySetting.SafetyThreshold object) {
+                return object.name;
+            }
+            @Override
+            public GeminiSafetySetting.SafetyThreshold fromString(String string) {
+                return GeminiSafetySetting.SafetyThreshold.getByName(string);
+            }
+        });
+        comboBox.getItems().addAll(GeminiSafetySetting.SafetyThreshold.values());
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.name));
+        comboBox.setValue(GeminiSafetySetting.SafetyThreshold.getByName(option.getValue()));
     }
 
 }

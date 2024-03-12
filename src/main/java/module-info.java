@@ -47,5 +47,7 @@ module de.keksuccino.polyglot.polyglot {
     opens de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles;
     opens de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line;
     opens de.keksuccino.polyglot.polyglot.backend.subtitle.translation;
+    exports de.keksuccino.polyglot.polyglot.frontend.util;
+    opens de.keksuccino.polyglot.polyglot.frontend.util;
 
 }

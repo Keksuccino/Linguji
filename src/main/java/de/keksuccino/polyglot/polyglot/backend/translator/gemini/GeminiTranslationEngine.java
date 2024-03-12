@@ -104,8 +104,8 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                 responseString = JsonUtils.getJsonFromPOST(request, entityBuilder.build());
             } catch (Exception ex) {
                 triesCounter.timeout++;
-                if (triesCounter.timeout < Backend.getOptions().geminiTriesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
-                    thresholdOverrideContext.reset();
+                if (triesCounter.timeout < Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
+                    //thresholdOverrideContext.reset();
                     LOGGER.info("Gemini translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
                     ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
@@ -128,7 +128,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
             if (response.promptFeedback.blockReason != null) {
                 triesCounter.hardBlock++;
                 if (triesCounter.hardBlock < Backend.getOptions().geminiTriesBeforeErrorHardBlock.getValue()) {
-                    thresholdOverrideContext.resetSoft();
+                    //thresholdOverrideContext.resetSoft();
                     LOGGER.info("Gemini translation request failed! Trying again.. (HARD-BLOCKED: " + response.promptFeedback.blockReason + ")");
                     if (thresholdOverrideContext.shouldTryOverrideHard(triesCounter.hardBlock)) {
                         thresholdOverrideContext.nextHard();
@@ -141,11 +141,12 @@ public class GeminiTranslationEngine implements ITranslationEngine {
             }
         }
         if (response.error != null) {
+            //TODO better use error code here? is the error code used exclusively for this specific error?
             if ((response.error.message != null) && !response.error.message.contains("location is not supported")) {
                 //If error is NOT "user location not supported", try again
                 triesCounter.generic++;
-                if (triesCounter.generic < Backend.getOptions().geminiTriesBeforeErrorGeneric.getValue()) {
-                    thresholdOverrideContext.reset();
+                if (triesCounter.generic < Backend.getOptions().triesBeforeErrorGeneric.getValue()) {
+                    //thresholdOverrideContext.reset();
                     LOGGER.info("Gemini translation request failed! Trying again.. (ERROR CODE: " + response.error.code + " | MESSAGE: " + response.error.message + ")");
                     ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
@@ -163,7 +164,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                 if (!"STOP".equalsIgnoreCase(candidate.finishReason)) {
                     triesCounter.softBlock++;
                     if (triesCounter.softBlock < Backend.getOptions().geminiTriesBeforeErrorSoftBlock.getValue()) {
-                        thresholdOverrideContext.resetHard();
+                        //thresholdOverrideContext.resetHard();
                         LOGGER.info("Gemini translation request failed! Trying again.. (SOFT-BLOCKED: " + candidate.finishReason + ")");
                         if (thresholdOverrideContext.shouldTryOverrideSoft(triesCounter.softBlock)) {
                             thresholdOverrideContext.nextSoft();
@@ -237,21 +238,29 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                 Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel.setValue(1);
             }
             if ((this.overrideSoftBlock == null) || (this.softBlockPerLevelTries >= Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel.getValue())) {
-                if (this.overrideSoftBlock == null) {
-                    this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_LOW_AND_ABOVE;
-                    this.softBlockPerLevelTries = 0;
-                } else if (this.overrideSoftBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_LOW_AND_ABOVE) {
-                    this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_MEDIUM_AND_ABOVE;
-                    this.softBlockPerLevelTries = 0;
-                } else if (this.overrideSoftBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_MEDIUM_AND_ABOVE) {
-                    this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_ONLY_HIGH;
-                    this.softBlockPerLevelTries = 0;
-                } else if (this.overrideSoftBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_ONLY_HIGH) {
-                    this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_NONE;
-                    this.softBlockPerLevelTries = 0;
+                if (!Backend.getOptions().geminiOverrideSafetyThresholdSkipLowLevels.getValue()) {
+                    if (this.overrideSoftBlock == null) {
+                        this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_LOW_AND_ABOVE;
+                        this.softBlockPerLevelTries = 0;
+                    } else if (this.overrideSoftBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_LOW_AND_ABOVE) {
+                        this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_MEDIUM_AND_ABOVE;
+                        this.softBlockPerLevelTries = 0;
+                    } else if (this.overrideSoftBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_MEDIUM_AND_ABOVE) {
+                        this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_ONLY_HIGH;
+                        this.softBlockPerLevelTries = 0;
+                    } else if (this.overrideSoftBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_ONLY_HIGH) {
+                        this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_NONE;
+                        this.softBlockPerLevelTries = 0;
+                    }
+                } else {
+                    if (this.overrideSoftBlock != GeminiSafetySetting.SafetyThreshold.BLOCK_NONE) {
+                        this.overrideSoftBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_NONE;
+                        this.softBlockPerLevelTries = 0;
+                    }
                 }
             }
-            if ((this.overrideSoftBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_NONE) && (this.softBlockPerLevelTries > 0)) {
+            //If still >= at this point, consider it maxed-out because otherwise it would've been reset earlier
+            if (this.softBlockPerLevelTries >= Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel.getValue()) {
                 this.softMaxedOut = true;
                 this.resetSoft();
             }
@@ -267,21 +276,29 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                 Backend.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel.setValue(1);
             }
             if ((this.overrideHardBlock == null) || (this.hardBlockPerLevelTries >= Backend.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel.getValue())) {
-                if (this.overrideHardBlock == null) {
-                    this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_LOW_AND_ABOVE;
-                    this.hardBlockPerLevelTries = 0;
-                } else if (this.overrideHardBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_LOW_AND_ABOVE) {
-                    this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_MEDIUM_AND_ABOVE;
-                    this.hardBlockPerLevelTries = 0;
-                } else if (this.overrideHardBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_MEDIUM_AND_ABOVE) {
-                    this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_ONLY_HIGH;
-                    this.hardBlockPerLevelTries = 0;
-                } else if (this.overrideHardBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_ONLY_HIGH) {
-                    this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_NONE;
-                    this.hardBlockPerLevelTries = 0;
+                if (!Backend.getOptions().geminiOverrideSafetyThresholdSkipLowLevels.getValue()) {
+                    if (this.overrideHardBlock == null) {
+                        this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_LOW_AND_ABOVE;
+                        this.hardBlockPerLevelTries = 0;
+                    } else if (this.overrideHardBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_LOW_AND_ABOVE) {
+                        this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_MEDIUM_AND_ABOVE;
+                        this.hardBlockPerLevelTries = 0;
+                    } else if (this.overrideHardBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_MEDIUM_AND_ABOVE) {
+                        this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_ONLY_HIGH;
+                        this.hardBlockPerLevelTries = 0;
+                    } else if (this.overrideHardBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_ONLY_HIGH) {
+                        this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_NONE;
+                        this.hardBlockPerLevelTries = 0;
+                    }
+                } else {
+                    if (this.overrideHardBlock != GeminiSafetySetting.SafetyThreshold.BLOCK_NONE) {
+                        this.overrideHardBlock = GeminiSafetySetting.SafetyThreshold.BLOCK_NONE;
+                        this.hardBlockPerLevelTries = 0;
+                    }
                 }
             }
-            if ((this.overrideHardBlock == GeminiSafetySetting.SafetyThreshold.BLOCK_NONE) && (this.hardBlockPerLevelTries > 0)) {
+            //If still >= at this point, consider it maxed-out because otherwise it would've been reset earlier
+            if (this.hardBlockPerLevelTries >= Backend.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel.getValue()) {
                 this.hardMaxedOut = true;
                 this.resetHard();
             }
