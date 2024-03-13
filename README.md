@@ -1,7 +1,7 @@
-# Lingudai
+# Linguji
 
-_**lingua** ( /ˈlin.ɡwa/ ) : Italian for "language"._<br>
-_**fukudai** ( /ˈlin.ɡwa/ ) : Japanese for "subtitle"._
+_**lingua** : Italian word for "language"._<br>
+_**jimaku** ( 字幕 / じまく ) : Japanese word for subtitles of movies, etc._
 
 <br>
 
