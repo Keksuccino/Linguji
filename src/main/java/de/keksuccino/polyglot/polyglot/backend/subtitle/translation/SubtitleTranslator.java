@@ -6,8 +6,8 @@ import de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line.AbstractS
 import de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line.AbstractTranslatableSubtitleLine;
 import de.keksuccino.polyglot.polyglot.backend.translator.ITranslationEngine;
 import de.keksuccino.polyglot.polyglot.backend.util.ThreadUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.LogHandler;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class SubtitleTranslator<T extends AbstractSubtitle> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
     @NotNull
     protected final ITranslationEngine translator;
@@ -92,7 +92,7 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
                     } catch (Exception ex) {
                         feedback.exception = ex;
                     }
-                }, "SubtitleTranslator Translation Thread").start();
+                }, "SubtitleTranslator Thread").start();
 
             }
 
@@ -168,7 +168,7 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
             if (!process.running) return;
             if (threadFeedback.stopped) return;
             if (failedTries <= Backend.getOptions().triesBeforeErrorInvalidLineCount.getValue()) {
-                LOGGER.info("TranslationEngine returned invalid amount of translated lines! Trying again..");
+                LOGGER.warn("TranslationEngine returned invalid amount of translated lines! Trying again..");
                 ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                 this.translatePacket(packet, linesString, sourceLanguage, targetLanguage, failedTries, threadFeedback, process);
                 return;

@@ -15,17 +15,17 @@ import de.keksuccino.polyglot.polyglot.backend.translator.gemini.safety.GeminiSa
 import de.keksuccino.polyglot.polyglot.backend.util.HttpRequest;
 import de.keksuccino.polyglot.polyglot.backend.util.JsonUtils;
 import de.keksuccino.polyglot.polyglot.backend.util.ThreadUtils;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.LogHandler;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.SimpleLogger;
 import org.apache.hc.client5.http.entity.EntityBuilder;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class GeminiTranslationEngine implements ITranslationEngine {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleLogger LOGGER = LogHandler.getLogger();
     public static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent";
 
     @NotNull
@@ -79,7 +79,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
 
             GeminiSafetySetting.SafetyThreshold overrideThreshold = (thresholdOverrideContext.overrideHardBlock != null) ? thresholdOverrideContext.overrideHardBlock : thresholdOverrideContext.overrideSoftBlock;
             if (overrideThreshold != null) {
-                LOGGER.info("Overriding all Gemini safety thresholds with: " + overrideThreshold.name + " (TRIGGER: " + ((thresholdOverrideContext.overrideSoftBlock != null) ? "SOFT-BLOCK" : "HARD-BLOCK") + ")");
+                LOGGER.warn("Overriding all Gemini safety thresholds with: " + overrideThreshold.name + " (TRIGGER: " + ((thresholdOverrideContext.overrideSoftBlock != null) ? "SOFT-BLOCK" : "HARD-BLOCK") + ")");
             }
 
             String json = gson.toJson(
@@ -106,7 +106,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                 triesCounter.timeout++;
                 if (triesCounter.timeout < Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
                     //thresholdOverrideContext.reset();
-                    LOGGER.info("Gemini translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
+                    LOGGER.warn("Gemini translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
                     ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
                     return this._translate(text, sourceLanguage, targetLanguage, process, triesCounter, thresholdOverrideContext);
@@ -129,7 +129,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                 triesCounter.hardBlock++;
                 if (triesCounter.hardBlock < Backend.getOptions().geminiTriesBeforeErrorHardBlock.getValue()) {
                     //thresholdOverrideContext.resetSoft();
-                    LOGGER.info("Gemini translation request failed! Trying again.. (HARD-BLOCKED: " + response.promptFeedback.blockReason + ")");
+                    LOGGER.warn("Gemini translation request failed! Trying again.. (HARD-BLOCKED: " + response.promptFeedback.blockReason + ")");
                     if (thresholdOverrideContext.shouldTryOverrideHard(triesCounter.hardBlock)) {
                         thresholdOverrideContext.nextHard();
                     }
@@ -147,7 +147,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                 triesCounter.generic++;
                 if (triesCounter.generic < Backend.getOptions().triesBeforeErrorGeneric.getValue()) {
                     //thresholdOverrideContext.reset();
-                    LOGGER.info("Gemini translation request failed! Trying again.. (ERROR CODE: " + response.error.code + " | MESSAGE: " + response.error.message + ")");
+                    LOGGER.warn("Gemini translation request failed! Trying again.. (ERROR CODE: " + response.error.code + " | MESSAGE: " + response.error.message + ")");
                     ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
                     return this._translate(text, sourceLanguage, targetLanguage, process, triesCounter, thresholdOverrideContext);
@@ -165,7 +165,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                     triesCounter.softBlock++;
                     if (triesCounter.softBlock < Backend.getOptions().geminiTriesBeforeErrorSoftBlock.getValue()) {
                         //thresholdOverrideContext.resetHard();
-                        LOGGER.info("Gemini translation request failed! Trying again.. (SOFT-BLOCKED: " + candidate.finishReason + ")");
+                        LOGGER.warn("Gemini translation request failed! Trying again.. (SOFT-BLOCKED: " + candidate.finishReason + ")");
                         if (thresholdOverrideContext.shouldTryOverrideSoft(triesCounter.softBlock)) {
                             thresholdOverrideContext.nextSoft();
                         }

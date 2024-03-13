@@ -3,6 +3,8 @@ package de.keksuccino.polyglot.polyglot.frontend;
 import de.keksuccino.polyglot.polyglot.backend.Backend;
 import de.keksuccino.polyglot.polyglot.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.polyglot.polyglot.backend.translator.gemini.safety.GeminiSafetySetting;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.LogHandler;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.SimpleLogger;
 import de.keksuccino.polyglot.polyglot.backend.util.options.AbstractOptions;
 import de.keksuccino.polyglot.polyglot.frontend.util.SpinnerUtils;
 import javafx.animation.Animation;
@@ -13,15 +15,13 @@ import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
 
 public class MainViewController {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
     @FXML
     private ProgressBar subtitleProgressBar;
@@ -160,7 +160,7 @@ public class MainViewController {
                 this.toggleAllConfigInputs(false);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOGGER.error("Error while trying to start translation process!", ex);
             if (this.translationProcess != null) {
                 this.translationProcess.running = false;
                 this.translationProcess = null;

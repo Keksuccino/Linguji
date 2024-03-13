@@ -1,15 +1,14 @@
 package de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.LogHandler;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
 
 public class AssTranslatableSubtitleLine extends AbstractTranslatableSubtitleLine {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
     public static final String ASS_LINE_BREAK = "\\N";
     public static final String ASS_SOFT_LINE_BREAK = "\\n";
@@ -48,6 +47,7 @@ public class AssTranslatableSubtitleLine extends AbstractTranslatableSubtitleLin
     @Override
     public @NotNull String serialize() {
         String t = (this.translatedText != null) ? this.translatedText : this.text;
+        if (t == null) t = "";
         return (this.prefix + this.textFormatting + t.replace(LINE_BREAK_UNIVERSAL, ASS_LINE_BREAK));
     }
 

@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -16,12 +17,16 @@ public class FileUtils {
     public static final boolean ON_OSX = false;
 
     public static void writeTextToFile(@NotNull File file, @NotNull String... textLines) {
+        writeTextToFile(file, false, textLines);
+    }
+
+    public static void writeTextToFile(@NotNull File file, boolean append, @NotNull String... textLines) {
         BufferedWriter writer = null;
         try {
-            if (file.isFile()) {
-                Files.delete(file.toPath());
-            }
-            writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
+//            if (file.isFile()) {
+//                Files.delete(file.toPath());
+//            }
+            writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING);
             if (textLines.length == 1) {
                 writer.append(textLines[0]);
             } else {
@@ -38,6 +43,10 @@ public class FileUtils {
 
     public static void writeTextToFile(@NotNull File file, @NotNull List<String> textLines) {
         writeTextToFile(file, textLines.toArray(new String[0]));
+    }
+
+    public static void writeTextToFile(@NotNull File file, boolean append, @NotNull List<String> textLines) {
+        writeTextToFile(file, append, textLines.toArray(new String[0]));
     }
 
     /** Reads all plain text lines from the given {@link InputStream}, closes it at the end and returns the text lines. **/

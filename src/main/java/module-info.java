@@ -31,6 +31,7 @@ module de.keksuccino.polyglot.polyglot {
     exports de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles;
     exports de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line;
     exports de.keksuccino.polyglot.polyglot.backend.subtitle.translation;
+    exports de.keksuccino.polyglot.polyglot.backend.util.logger;
 
     opens de.keksuccino.polyglot.polyglot.frontend;
     opens de.keksuccino.polyglot.polyglot.backend;
@@ -49,5 +50,6 @@ module de.keksuccino.polyglot.polyglot {
     opens de.keksuccino.polyglot.polyglot.backend.subtitle.translation;
     exports de.keksuccino.polyglot.polyglot.frontend.util;
     opens de.keksuccino.polyglot.polyglot.frontend.util;
+    opens de.keksuccino.polyglot.polyglot.backend.util.logger;
 
 }

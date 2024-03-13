@@ -7,12 +7,8 @@ import de.keksuccino.polyglot.polyglot.backend.subtitle.translation.SubtitleTran
 import de.keksuccino.polyglot.polyglot.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.polyglot.polyglot.backend.translator.gemini.GeminiTranslationEngine;
 import de.keksuccino.polyglot.polyglot.backend.util.FileUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.LogHandler;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,14 +18,12 @@ import java.util.Objects;
 
 public class Backend {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleLogger LOGGER = LogHandler.getLogger();
     public static final String VERSION = "1.0.0";
 
     private static Options options;
 
     public static void init() {
-
-        applyLoggerConfig();
 
         updateOptions();
 
@@ -110,21 +104,10 @@ public class Backend {
 
             process.running = false;
 
-        }, "Backend Translation Process Thread").start();
+        }, "Backend Translation Thread").start();
 
         return process;
 
-    }
-
-    /**
-     * Makes Log4J not suck without having to mess with a frickin properties file. (who tf set the default level to ERROR ?!)
-     */
-    public static void applyLoggerConfig() {
-        LoggerContext context = (LoggerContext) LogManager.getContext(false);
-        Configuration config = context.getConfiguration();
-        LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
-        loggerConfig.setLevel(Level.INFO);
-        context.updateLoggers();
     }
 
     public static void updateOptions() {

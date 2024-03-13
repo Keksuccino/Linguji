@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class PolyglotApplication extends javafx.application.Application {
 
+    //TODO Close action von Window setzen, damit kompletter prozess beendet wird und keine Threads weiter laufen
+
     //TODO Zeit bis Timeout geworfen wird kürzer machen (20 sek) ( in getJsonFromPOST() )
 
     //TODO bei "Stop Process" click das unfertige File NICHT speichern
@@ -37,7 +39,7 @@ public class PolyglotApplication extends javafx.application.Application {
         FXMLLoader fxmlLoader = new FXMLLoader(PolyglotApplication.class.getResource("main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 830, 826);
 
-        stage.setTitle("Polyglot v" + Backend.VERSION);
+        stage.setTitle("Linguji v" + Backend.VERSION);
         stage.setScene(scene);
         stage.show();
 

@@ -4,8 +4,8 @@ import de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line.AbstractS
 import de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line.AssTranslatableSubtitleLine;
 import de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line.SimpleSubtitleLine;
 import de.keksuccino.polyglot.polyglot.backend.util.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.LogHandler;
+import de.keksuccino.polyglot.polyglot.backend.util.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class AssSubtitle extends AbstractSubtitle {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
     @NotNull
     protected String header = "";
