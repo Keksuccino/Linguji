@@ -1,7 +1,7 @@
 # Linguji
 
 _**lingua** : Italian word for "language"._<br>
-_**jimaku** ( 字幕 / じまく ) : Japanese word for subtitles of movies, etc._
+_**jimaku** ( 字幕 / じまく ) : Japanese word for "subtitles"._
 
 <br>
 
