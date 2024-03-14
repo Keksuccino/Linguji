@@ -47,7 +47,7 @@ public class LogHandler {
     }
 
     private static void startFileWriterThread() {
-        new Thread(() -> {
+        Thread t = new Thread(() -> {
             while (true) {
                 try {
                     for (String s : new ArrayList<>(LOG_FILE_MESSAGE_QUEUE)) {
@@ -59,7 +59,9 @@ public class LogHandler {
                 }
                 ThreadUtils.sleep(50);
             }
-        }, "LogHandler File Writer Thread").start();
+        }, "LogHandler File Writer Thread");
+        t.setDaemon(true);
+        t.start();
     }
 
     /**

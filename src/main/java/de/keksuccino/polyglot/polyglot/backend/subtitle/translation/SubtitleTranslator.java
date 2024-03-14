@@ -85,14 +85,16 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
 
                 TranslationThreadFeedback feedback = new TranslationThreadFeedback();
                 threadFeedbacks.add(feedback);
-                new Thread(() -> {
+                Thread t = new Thread(() -> {
                     try {
                         this.translatePacket(packet, linesString.toString(), sourceLanguage, targetLanguage, 0, feedback, process);
                         feedback.completed = true;
                     } catch (Exception ex) {
                         feedback.exception = ex;
                     }
-                }, "SubtitleTranslator Thread").start();
+                }, "SubtitleTranslator Thread");
+                t.setDaemon(true);
+                t.start();
 
             }
 

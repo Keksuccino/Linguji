@@ -101,7 +101,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
             if (!process.running) return null;
 
             try {
-                responseString = JsonUtils.getJsonFromPOST(request, entityBuilder.build());
+                responseString = JsonUtils.getJsonFromPOST(request, entityBuilder.build(), 20);
             } catch (Exception ex) {
                 triesCounter.timeout++;
                 if (triesCounter.timeout < Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed.getValue()) {

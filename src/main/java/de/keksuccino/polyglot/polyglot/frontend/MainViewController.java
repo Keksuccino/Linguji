@@ -11,8 +11,11 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
@@ -81,6 +84,8 @@ public class MainViewController {
     private Spinner<Integer> triesPerGeminiThresholdOverrideHardBlockSpinner;
     @FXML
     private CheckBox geminiThresholdOverrideSkipLowLevelsCheckBox;
+    @FXML
+    private Button openConsoleWindowButton;
 
     @Nullable
     private TranslationProcess translationProcess = null;
@@ -168,6 +173,24 @@ public class MainViewController {
             }
             this.toggleAllConfigInputs(false);
         }
+    }
+
+    @FXML
+    protected void onOpenConsoleWindowButtonClick() {
+
+       try {
+
+           Stage stageConsoleWindow = new Stage();
+           FXMLLoader fxmlLoader = new FXMLLoader(PolyglotApplication.class.getResource("console-view.fxml"));
+           Scene scene = new Scene(fxmlLoader.load(), 830, 826);
+           stageConsoleWindow.setTitle("Console Output");
+           stageConsoleWindow.setScene(scene);
+           stageConsoleWindow.show();
+
+       } catch (Exception ex) {
+           LOGGER.error("Failed to open console window!", ex);
+       }
+
     }
 
     @FXML

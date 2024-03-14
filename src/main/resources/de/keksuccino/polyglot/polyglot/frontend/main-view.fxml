@@ -99,6 +99,7 @@
                <Font size="10.0" />
             </font>
          </Label>
+         <Button fx:id="openConsoleWindowButton" layoutX="14.0" layoutY="645.0" mnemonicParsing="false" onMouseClicked="#onOpenConsoleWindowButtonClick" prefHeight="25.0" prefWidth="762.0" text="Open Debug Log" AnchorPane.bottomAnchor="115.66666666666663" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
       </children>
    </AnchorPane>
 </VBox>

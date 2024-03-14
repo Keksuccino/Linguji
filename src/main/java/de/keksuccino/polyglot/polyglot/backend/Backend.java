@@ -42,7 +42,7 @@ public class Backend {
 
         TranslationProcess process = new TranslationProcess();
 
-        new Thread(() -> {
+        Thread t = new Thread(() -> {
 
             try {
 
@@ -81,6 +81,7 @@ public class Backend {
                             geminiAssSubtitleTranslator.translate(assSubtitle, sourceLang, targetLang, process);
                             subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED;
                         }
+                        if (!process.running) break;
                         //Write translated subtitle file if FINISHED
                         if (subtitle.translationFinishStatus == AbstractSubtitle.TranslationFinishStatus.FINISHED) {
                             Objects.requireNonNull(subtitle.sourceFile, "Source file of subtitle was NULL!");
@@ -104,7 +105,10 @@ public class Backend {
 
             process.running = false;
 
-        }, "Backend Translation Thread").start();
+        }, "Backend Translation Thread");
+
+        t.setDaemon(true);
+        t.start();
 
         return process;
 
