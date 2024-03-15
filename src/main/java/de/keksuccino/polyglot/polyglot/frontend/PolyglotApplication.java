@@ -9,14 +9,14 @@ import java.io.IOException;
 
 public class PolyglotApplication extends javafx.application.Application {
 
-    //TODO Console View schreiben (printet alles von loggern, etc.)
-
     @Nullable
     public static Stage stage;
 
     public static void main(String[] args) {
 
         Backend.init();
+
+        ConsoleViewMemory.init();
 
         launch();
 

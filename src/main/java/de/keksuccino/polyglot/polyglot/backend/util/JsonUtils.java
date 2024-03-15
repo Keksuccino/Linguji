@@ -98,7 +98,7 @@ public class JsonUtils {
 
             CloseableHttpClient httpClient = collector.put(HttpClients.createDefault());
             HttpGet get = new HttpGet(request.getUrl());
-            get.setConfig(RequestConfig.copy(get.getConfig()).setConnectionRequestTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).setResponseTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).build());
+//            get.setConfig(RequestConfig.copy(get.getConfig()).setConnectionRequestTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).setResponseTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).build());
             request.getHeader().forEach(get::addHeader);
             if (entity != null) get.setEntity(collector.put(entity));
             CloseableHttpResponse response = collector.put(httpClient.execute(get));
@@ -132,7 +132,7 @@ public class JsonUtils {
 
             CloseableHttpClient httpClient = collector.put(HttpClients.createDefault());
             HttpPost post = new HttpPost(request.getUrl());
-            post.setConfig(RequestConfig.copy(post.getConfig()).setConnectionRequestTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).setResponseTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).build());
+//            post.setConfig(RequestConfig.copy(post.getConfig()).setConnectionRequestTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).setResponseTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).build());
             request.getHeader().forEach(post::addHeader);
             if (entity != null) post.setEntity(collector.put(entity));
             CloseableHttpResponse response = collector.put(httpClient.execute(post));

@@ -12,6 +12,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
@@ -182,7 +183,10 @@ public class MainViewController {
 
            Stage stageConsoleWindow = new Stage();
            FXMLLoader fxmlLoader = new FXMLLoader(PolyglotApplication.class.getResource("console-view.fxml"));
-           Scene scene = new Scene(fxmlLoader.load(), 830, 826);
+           Parent root = fxmlLoader.load();
+           ConsoleViewController controller = fxmlLoader.getController();
+           controller.finishInitialization(stageConsoleWindow);
+           Scene scene = new Scene(root, 1067, 634);
            stageConsoleWindow.setTitle("Console Output");
            stageConsoleWindow.setScene(scene);
            stageConsoleWindow.show();
