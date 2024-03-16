@@ -11,3 +11,10 @@ It currently supports only ASS files and can batch-translate them from a source 
 
 <br>
 <img width="632" alt="Screenshot_1" src="https://github.com/Keksuccino/Linguji/assets/35544624/55a33c01-5edc-47e8-8656-d876c10dd96e">
+
+# Copyright & Licensing
+
+Linguji © Copyright 2024 Keksuccino.<br>
+Linguji is licensed under Apache-2.0.
+
+Linguji uses a modified version of [JavaFX Dark Theme](https://github.com/antoniopelusi/JavaFX-Dark-Theme) by Antonio Pelusi.
