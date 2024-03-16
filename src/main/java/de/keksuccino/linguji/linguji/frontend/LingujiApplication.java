@@ -6,6 +6,7 @@ import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
 import de.keksuccino.linguji.linguji.backend.util.os.OSUtils;
 import de.keksuccino.linguji.linguji.frontend.util.os.windows.FXWinUtil;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +38,10 @@ public class LingujiApplication extends javafx.application.Application {
         stage.setMinHeight(830);
 
         FXMLLoader fxmlLoader = new FXMLLoader(LingujiApplication.class.getResource("main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 830, 826);
+        Parent parent = fxmlLoader.load();
+        MainViewController controller = fxmlLoader.getController();
+        controller.finishInitialization(stage, parent);
+        Scene scene = new Scene(parent, 830, 826);
 
         stage.setTitle("Linguji v" + Backend.VERSION);
         stage.setScene(scene);

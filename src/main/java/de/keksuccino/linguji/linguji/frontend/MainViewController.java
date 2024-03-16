@@ -14,9 +14,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -24,6 +26,7 @@ import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
+import java.util.ArrayList;
 
 public class MainViewController {
 
@@ -131,6 +134,19 @@ public class MainViewController {
         Timeline tickTimeline = new Timeline(new KeyFrame(Duration.millis(100), actionEvent -> this.tick()));
         tickTimeline.setCycleCount(Animation.INDEFINITE);
         tickTimeline.play();
+
+    }
+
+    protected void finishInitialization(@NotNull Stage stage, @NotNull Parent parent) {
+
+        //Modify all tooltips
+        getAllNodes(parent).forEach(node -> {
+            if (node instanceof Control control) {
+                if (control.getTooltip() != null) {
+                    control.getTooltip().setShowDelay(Duration.millis(100));
+                }
+            }
+        });
 
     }
 
@@ -345,6 +361,20 @@ public class MainViewController {
         comboBox.getItems().addAll(GeminiSafetySetting.SafetyThreshold.values());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.name));
         comboBox.setValue(GeminiSafetySetting.SafetyThreshold.getByName(option.getValue()));
+    }
+
+    protected static ArrayList<Node> getAllNodes(Parent root) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        addAllDescendants(root, nodes);
+        return nodes;
+    }
+
+    protected static void addAllDescendants(Parent parent, ArrayList<Node> nodes) {
+        for (Node node : parent.getChildrenUnmodifiable()) {
+            nodes.add(node);
+            if (node instanceof Parent)
+                addAllDescendants((Parent)node, nodes);
+        }
     }
 
 }

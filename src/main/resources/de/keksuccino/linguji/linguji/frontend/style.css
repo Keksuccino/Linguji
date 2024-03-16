@@ -747,11 +747,13 @@
 
 
 /* Tooltip */
-.tooltip{
+.tooltip {
     -fx-background-radius: 0;
     -fx-border-radius: 0;
     border-radius: 0;
     -fx-text-fill: #AFB1B3;
     -fx-padding: 5;
     padding: 5;
+    -fx-font-size: 14;
+    -fx-wrap-text: true;
 }
