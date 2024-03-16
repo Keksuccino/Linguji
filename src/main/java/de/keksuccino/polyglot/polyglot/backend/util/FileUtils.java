@@ -1,5 +1,6 @@
 package de.keksuccino.polyglot.polyglot.backend.util;
 
+import de.keksuccino.polyglot.polyglot.backend.util.os.OSUtils;
 import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.net.URL;
@@ -13,8 +14,7 @@ import java.util.Locale;
 public class FileUtils {
 
     public static final String UTF8_BOM_CHAR = "\uFEFF";
-    //TODO make this actually represent if system is macOS or not
-    public static final boolean ON_OSX = false;
+    public static final boolean ON_OSX = OSUtils.isMacOS();
 
     public static void writeTextToFile(@NotNull File file, @NotNull String... textLines) {
         writeTextToFile(file, false, textLines);

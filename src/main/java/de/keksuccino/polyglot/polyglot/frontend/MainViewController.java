@@ -6,7 +6,9 @@ import de.keksuccino.polyglot.polyglot.backend.translator.gemini.safety.GeminiSa
 import de.keksuccino.polyglot.polyglot.backend.util.logger.LogHandler;
 import de.keksuccino.polyglot.polyglot.backend.util.logger.SimpleLogger;
 import de.keksuccino.polyglot.polyglot.backend.util.options.AbstractOptions;
+import de.keksuccino.polyglot.polyglot.backend.util.os.OSUtils;
 import de.keksuccino.polyglot.polyglot.frontend.util.SpinnerUtils;
+import de.keksuccino.polyglot.polyglot.frontend.util.os.windows.FXWinUtil;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -190,6 +192,14 @@ public class MainViewController {
            stageConsoleWindow.setTitle("Console Output");
            stageConsoleWindow.setScene(scene);
            stageConsoleWindow.show();
+
+           if (OSUtils.isWindows()) {
+               try {
+                   FXWinUtil.setDarkMode(stageConsoleWindow, true);
+               } catch (Exception ex) {
+                   LOGGER.error("Failed to set theme of Windows title bar!", ex);
+               }
+           }
 
        } catch (Exception ex) {
            LOGGER.error("Failed to open console window!", ex);

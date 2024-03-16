@@ -15,6 +15,9 @@ module de.keksuccino.polyglot.polyglot {
     requires org.apache.httpcomponents.core5.httpcore5.h2;
     requires com.google.common;
     requires org.apache.commons.lang3;
+    requires com.sun.jna;
+    requires com.sun.jna.platform;
+    requires javafx.graphics;
 
     exports de.keksuccino.polyglot.polyglot.frontend;
     exports de.keksuccino.polyglot.polyglot.backend;
@@ -25,6 +28,7 @@ module de.keksuccino.polyglot.polyglot {
     exports de.keksuccino.polyglot.polyglot.backend.translator.gemini.safety;
     exports de.keksuccino.polyglot.polyglot.backend.translator.gemini.exceptions;
     exports de.keksuccino.polyglot.polyglot.backend.util;
+    exports de.keksuccino.polyglot.polyglot.backend.util.os;
     exports de.keksuccino.polyglot.polyglot.backend.util.options;
     exports de.keksuccino.polyglot.polyglot.backend.util.config;
     exports de.keksuccino.polyglot.polyglot.backend.util.config.exceptions;
@@ -32,6 +36,8 @@ module de.keksuccino.polyglot.polyglot {
     exports de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line;
     exports de.keksuccino.polyglot.polyglot.backend.subtitle.translation;
     exports de.keksuccino.polyglot.polyglot.backend.util.logger;
+    exports de.keksuccino.polyglot.polyglot.frontend.util;
+    exports de.keksuccino.polyglot.polyglot.frontend.util.os.windows;
 
     opens de.keksuccino.polyglot.polyglot.frontend;
     opens de.keksuccino.polyglot.polyglot.backend;
@@ -42,14 +48,15 @@ module de.keksuccino.polyglot.polyglot {
     opens de.keksuccino.polyglot.polyglot.backend.translator.gemini.safety;
     opens de.keksuccino.polyglot.polyglot.backend.translator.gemini.exceptions;
     opens de.keksuccino.polyglot.polyglot.backend.util;
+    opens de.keksuccino.polyglot.polyglot.backend.util.os;
     opens de.keksuccino.polyglot.polyglot.backend.util.options;
     opens de.keksuccino.polyglot.polyglot.backend.util.config;
     opens de.keksuccino.polyglot.polyglot.backend.util.config.exceptions;
     opens de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles;
     opens de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line;
     opens de.keksuccino.polyglot.polyglot.backend.subtitle.translation;
-    exports de.keksuccino.polyglot.polyglot.frontend.util;
     opens de.keksuccino.polyglot.polyglot.frontend.util;
     opens de.keksuccino.polyglot.polyglot.backend.util.logger;
+    opens de.keksuccino.polyglot.polyglot.frontend.util.os.windows;
 
 }
