@@ -12,6 +12,12 @@ It currently supports only ASS files and can batch-translate them from a source 
 <br>
 <img width="639" alt="Screenshot_4" src="https://github.com/Keksuccino/Linguji/assets/35544624/e96e387e-980d-4869-8e0c-55c14e4c3442">
 
+# Getting Started
+
+To start translating subtitle files, simply **set a valid Gemini API key** and put all your subtitle files into the `input_subtitles` folder (by default) that should be in the same directory as the Linguji executable.
+
+Now simply hit the **Start Translation Process** button and see the magic happen!
+
 # Requirements
 
 - Java 17
