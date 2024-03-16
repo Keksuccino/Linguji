@@ -12,6 +12,10 @@ It currently supports only ASS files and can batch-translate them from a source 
 <br>
 <img width="639" alt="Screenshot_4" src="https://github.com/Keksuccino/Linguji/assets/35544624/e96e387e-980d-4869-8e0c-55c14e4c3442">
 
+# Requirements
+
+- Java 17
+
 # Copyright & Licensing
 
 Linguji © Copyright 2024 Keksuccino.<br>
