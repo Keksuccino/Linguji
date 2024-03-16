@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" prefHeight="634.0" prefWidth="1067.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.keksuccino.linguji.linguji.frontend.ConsoleViewController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <AnchorPane prefHeight="343.0" prefWidth="1027.0" VBox.vgrow="ALWAYS">
+         <children>
+            <ListView fx:id="consoleListView" focusTraversable="false" layoutX="14.0" layoutY="14.0" prefHeight="547.0" prefWidth="1027.0" AnchorPane.bottomAnchor="46.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <CheckBox fx:id="autoScrollingCheckBox" layoutY="561.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="134.0" text="Auto-Scrolling" textFill="#e0e0e0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="0.0" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

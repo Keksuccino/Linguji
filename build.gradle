@@ -7,7 +7,7 @@ plugins {
     id 'org.beryx.jlink' version '2.25.0'
 }
 
-group 'de.keksuccino.polyglot'
+group 'de.keksuccino.linguji'
 version '1.0.0'
 
 repositories {
@@ -26,8 +26,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'de.keksuccino.polyglot.polyglot'
-    mainClass = 'de.keksuccino.polyglot.polyglot.frontend.PolyglotApplication'
+    mainModule = 'de.keksuccino.linguji.linguji'
+    mainClass = 'de.keksuccino.linguji.linguji.frontend.LingujiApplication'
 }
 
 javafx {
@@ -67,7 +67,7 @@ jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         name = 'linguji'
-        jvmArgs = [ "--add-opens=javafx.graphics/javafx.stage=de.keksuccino.polyglot.polyglot", "--add-exports=javafx.graphics/com.sun.javafx.tk.quantum=de.keksuccino.polyglot.polyglot" ]
+        jvmArgs = [ "--add-opens=javafx.graphics/javafx.stage=de.keksuccino.linguji.linguji", "--add-exports=javafx.graphics/com.sun.javafx.tk.quantum=de.keksuccino.linguji.linguji" ]
     }
 }
 

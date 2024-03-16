@@ -1,4 +1,4 @@
-module de.keksuccino.polyglot.polyglot {
+module de.keksuccino.linguji.linguji {
 
     requires javafx.controls;
     requires javafx.fxml;
@@ -19,44 +19,44 @@ module de.keksuccino.polyglot.polyglot {
     requires com.sun.jna.platform;
     requires javafx.graphics;
 
-    exports de.keksuccino.polyglot.polyglot.frontend;
-    exports de.keksuccino.polyglot.polyglot.backend;
-    exports de.keksuccino.polyglot.polyglot.backend.translator;
-    exports de.keksuccino.polyglot.polyglot.backend.translator.gemini;
-    exports de.keksuccino.polyglot.polyglot.backend.translator.gemini.response;
-    exports de.keksuccino.polyglot.polyglot.backend.translator.gemini.request;
-    exports de.keksuccino.polyglot.polyglot.backend.translator.gemini.safety;
-    exports de.keksuccino.polyglot.polyglot.backend.translator.gemini.exceptions;
-    exports de.keksuccino.polyglot.polyglot.backend.util;
-    exports de.keksuccino.polyglot.polyglot.backend.util.os;
-    exports de.keksuccino.polyglot.polyglot.backend.util.options;
-    exports de.keksuccino.polyglot.polyglot.backend.util.config;
-    exports de.keksuccino.polyglot.polyglot.backend.util.config.exceptions;
-    exports de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles;
-    exports de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line;
-    exports de.keksuccino.polyglot.polyglot.backend.subtitle.translation;
-    exports de.keksuccino.polyglot.polyglot.backend.util.logger;
-    exports de.keksuccino.polyglot.polyglot.frontend.util;
-    exports de.keksuccino.polyglot.polyglot.frontend.util.os.windows;
+    exports de.keksuccino.linguji.linguji.frontend;
+    exports de.keksuccino.linguji.linguji.backend;
+    exports de.keksuccino.linguji.linguji.backend.translator;
+    exports de.keksuccino.linguji.linguji.backend.translator.gemini;
+    exports de.keksuccino.linguji.linguji.backend.translator.gemini.response;
+    exports de.keksuccino.linguji.linguji.backend.translator.gemini.request;
+    exports de.keksuccino.linguji.linguji.backend.translator.gemini.safety;
+    exports de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions;
+    exports de.keksuccino.linguji.linguji.backend.util;
+    exports de.keksuccino.linguji.linguji.backend.util.os;
+    exports de.keksuccino.linguji.linguji.backend.util.options;
+    exports de.keksuccino.linguji.linguji.backend.util.config;
+    exports de.keksuccino.linguji.linguji.backend.util.config.exceptions;
+    exports de.keksuccino.linguji.linguji.backend.subtitle.subtitles;
+    exports de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line;
+    exports de.keksuccino.linguji.linguji.backend.subtitle.translation;
+    exports de.keksuccino.linguji.linguji.backend.util.logger;
+    exports de.keksuccino.linguji.linguji.frontend.util;
+    exports de.keksuccino.linguji.linguji.frontend.util.os.windows;
 
-    opens de.keksuccino.polyglot.polyglot.frontend;
-    opens de.keksuccino.polyglot.polyglot.backend;
-    opens de.keksuccino.polyglot.polyglot.backend.translator;
-    opens de.keksuccino.polyglot.polyglot.backend.translator.gemini;
-    opens de.keksuccino.polyglot.polyglot.backend.translator.gemini.response;
-    opens de.keksuccino.polyglot.polyglot.backend.translator.gemini.request;
-    opens de.keksuccino.polyglot.polyglot.backend.translator.gemini.safety;
-    opens de.keksuccino.polyglot.polyglot.backend.translator.gemini.exceptions;
-    opens de.keksuccino.polyglot.polyglot.backend.util;
-    opens de.keksuccino.polyglot.polyglot.backend.util.os;
-    opens de.keksuccino.polyglot.polyglot.backend.util.options;
-    opens de.keksuccino.polyglot.polyglot.backend.util.config;
-    opens de.keksuccino.polyglot.polyglot.backend.util.config.exceptions;
-    opens de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles;
-    opens de.keksuccino.polyglot.polyglot.backend.subtitle.subtitles.line;
-    opens de.keksuccino.polyglot.polyglot.backend.subtitle.translation;
-    opens de.keksuccino.polyglot.polyglot.frontend.util;
-    opens de.keksuccino.polyglot.polyglot.backend.util.logger;
-    opens de.keksuccino.polyglot.polyglot.frontend.util.os.windows;
+    opens de.keksuccino.linguji.linguji.frontend;
+    opens de.keksuccino.linguji.linguji.backend;
+    opens de.keksuccino.linguji.linguji.backend.translator;
+    opens de.keksuccino.linguji.linguji.backend.translator.gemini;
+    opens de.keksuccino.linguji.linguji.backend.translator.gemini.response;
+    opens de.keksuccino.linguji.linguji.backend.translator.gemini.request;
+    opens de.keksuccino.linguji.linguji.backend.translator.gemini.safety;
+    opens de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions;
+    opens de.keksuccino.linguji.linguji.backend.util;
+    opens de.keksuccino.linguji.linguji.backend.util.os;
+    opens de.keksuccino.linguji.linguji.backend.util.options;
+    opens de.keksuccino.linguji.linguji.backend.util.config;
+    opens de.keksuccino.linguji.linguji.backend.util.config.exceptions;
+    opens de.keksuccino.linguji.linguji.backend.subtitle.subtitles;
+    opens de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line;
+    opens de.keksuccino.linguji.linguji.backend.subtitle.translation;
+    opens de.keksuccino.linguji.linguji.frontend.util;
+    opens de.keksuccino.linguji.linguji.backend.util.logger;
+    opens de.keksuccino.linguji.linguji.frontend.util.os.windows;
 
 }
