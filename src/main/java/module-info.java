@@ -18,6 +18,7 @@ module de.keksuccino.linguji.linguji {
     requires com.sun.jna;
     requires com.sun.jna.platform;
     requires javafx.graphics;
+    requires jdk.crypto.ec;
 
     exports de.keksuccino.linguji.linguji.frontend;
     exports de.keksuccino.linguji.linguji.backend;

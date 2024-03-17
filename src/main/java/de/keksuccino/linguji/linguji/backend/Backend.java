@@ -19,7 +19,7 @@ import java.util.Objects;
 public class Backend {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "1.0.1";
 
     private static Options options;
 

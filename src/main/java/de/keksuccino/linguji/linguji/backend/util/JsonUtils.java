@@ -83,7 +83,7 @@ public class JsonUtils {
     }
 
     @NotNull
-    public static String getJsonFromGET(@NotNull HttpRequest request, @Nullable HttpEntity entity, long timeoutSeconds) throws Exception {
+    public static String getJsonFromGET(@NotNull HttpRequest request, @Nullable HttpEntity entity) throws Exception {
 
         Objects.requireNonNull(request);
 
@@ -117,7 +117,7 @@ public class JsonUtils {
     }
 
     @NotNull
-    public static String getJsonFromPOST(@NotNull HttpRequest request, @Nullable HttpEntity entity, long timeoutSeconds) throws Exception {
+    public static String getJsonFromPOST(@NotNull HttpRequest request, @Nullable HttpEntity entity) throws Exception {
 
         Objects.requireNonNull(request);
 
