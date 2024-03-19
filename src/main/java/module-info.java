@@ -28,6 +28,8 @@ module de.keksuccino.linguji.linguji {
     exports de.keksuccino.linguji.linguji.backend.translator.gemini.request;
     exports de.keksuccino.linguji.linguji.backend.translator.gemini.safety;
     exports de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions;
+    exports de.keksuccino.linguji.linguji.backend.translator.libretranslate;
+    exports de.keksuccino.linguji.linguji.backend.translator.libretranslate.response;
     exports de.keksuccino.linguji.linguji.backend.util;
     exports de.keksuccino.linguji.linguji.backend.util.os;
     exports de.keksuccino.linguji.linguji.backend.util.options;
@@ -48,6 +50,8 @@ module de.keksuccino.linguji.linguji {
     opens de.keksuccino.linguji.linguji.backend.translator.gemini.request;
     opens de.keksuccino.linguji.linguji.backend.translator.gemini.safety;
     opens de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions;
+    opens de.keksuccino.linguji.linguji.backend.translator.libretranslate;
+    opens de.keksuccino.linguji.linguji.backend.translator.libretranslate.response;
     opens de.keksuccino.linguji.linguji.backend.util;
     opens de.keksuccino.linguji.linguji.backend.util.os;
     opens de.keksuccino.linguji.linguji.backend.util.options;

@@ -54,11 +54,11 @@
                <Tooltip prefWidth="400.0" text="The source language of your original subtitle files." />
             </tooltip></Label>
          <Separator layoutX="82.0" layoutY="106.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="14.0" />
-         <TextField fx:id="sourceLangTextField" layoutX="238.0" layoutY="162.0" onKeyTyped="#onSourceLangTextFieldInput" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <TextField fx:id="sourceLangTextField" layoutX="238.0" layoutY="162.0" onKeyTyped="#onSourceLangTextFieldInput" prefHeight="25.0" prefWidth="90.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The source language of your original subtitle files." />
             </tooltip></TextField>
-         <TextField fx:id="targetLangTextField" layoutX="624.0" layoutY="162.0" onKeyTyped="#onTargetLangTextFieldInput" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <TextField fx:id="targetLangTextField" layoutX="637.3333333333334" layoutY="162.0" onKeyTyped="#onTargetLangTextFieldInput" prefHeight="25.0" prefWidth="90.0" AnchorPane.leftAnchor="637.0" AnchorPane.rightAnchor="63.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The target language your subtitle files should get translated to." />
             </tooltip></TextField>
@@ -251,6 +251,26 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="The debug log gives information about requests to and answers from the AI and shows errors that happened during the translation process." />
             </tooltip></Button>
+         <TextField fx:id="sourceLanguageShortTextField" layoutX="334.0" layoutY="162.0" onKeyTyped="#onSourceLangShortTextFieldInput" prefWidth="43.0" AnchorPane.leftAnchor="334.0">
+            <tooltip>
+               <Tooltip prefWidth="400.0" text="This is the short version of the source language. This is usually a language code." />
+            </tooltip>
+         </TextField>
+         <TextField fx:id="targetLanguageShortTextField" layoutX="733.0" layoutY="162.0" onKeyTyped="#onTargetLangShortTextFieldInput" prefWidth="43.0" AnchorPane.rightAnchor="14.0">
+            <tooltip>
+               <Tooltip prefWidth="400.0" text="This is the short version of the target language. This is usually a language code." />
+            </tooltip>
+         </TextField>
+         <CheckBox fx:id="geminiUseFallbackAfterHardBlockCheckBox" layoutX="636.3333333333334" layoutY="584.0" mnemonicParsing="false" AnchorPane.leftAnchor="636.3333333333334">
+            <tooltip>
+               <Tooltip prefWidth="400.0" text="If LibreTranslate should get used as fallback after Gemini failed to translate a packet due to the request getting hard-blocked and overriding the threshold didn't fix it." />
+            </tooltip>
+         </CheckBox>
+         <Label layoutX="401.0" layoutY="588.0" prefHeight="17.0" prefWidth="226.0" text="Fallback After Hard-Block Override Failed" AnchorPane.leftAnchor="400.0">
+            <tooltip>
+               <Tooltip prefWidth="400.0" text="If LibreTranslate should get used as fallback after Gemini failed to translate a packet due to the request getting hard-blocked and overriding the threshold didn't fix it." />
+            </tooltip>
+         </Label>
       </children>
    </AnchorPane>
 </VBox>

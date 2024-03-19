@@ -91,6 +91,12 @@ public class MainViewController {
     private CheckBox geminiThresholdOverrideSkipLowLevelsCheckBox;
     @FXML
     private Button openConsoleWindowButton;
+    @FXML
+    private TextField targetLanguageShortTextField;
+    @FXML
+    private TextField sourceLanguageShortTextField;
+    @FXML
+    private CheckBox geminiUseFallbackAfterHardBlockCheckBox;
 
     @Nullable
     private TranslationProcess translationProcess = null;
@@ -100,6 +106,8 @@ public class MainViewController {
 
         this.sourceLangTextField.setText(Backend.getOptions().sourceLanguage.getValue());
         this.targetLangTextField.setText(Backend.getOptions().targetLanguage.getValue());
+        this.sourceLanguageShortTextField.setText(Backend.getOptions().sourceLanguageShort.getValue());
+        this.targetLanguageShortTextField.setText(Backend.getOptions().targetLanguageShort.getValue());
         this.inputDirLabel.setText(Backend.getOptions().inputDirectory.getValue());
         this.outputDirLabel.setText(Backend.getOptions().outputDirectory.getValue());
         this.geminiApiKeyTextField.setText(Backend.getOptions().geminiApiKey.getValue());
@@ -114,19 +122,16 @@ public class MainViewController {
         this.setupIntegerConfigOption(this.triesBeforeOverrideGeminiThresholdSoftBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockAfterTries, 1, 10000);
         this.setupIntegerConfigOption(this.triesBeforeOverrideGeminiThresholdHardBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdHardBlockAfterTries, 1, 10000);
         this.setupLongConfigOption(this.waitAfterErrorSpinner, Backend.getOptions().waitMillisBeforeNextTry, 1L, 100000000000000L);
-
         this.setupGeminiSafetyThresholdConfigOption(this.geminiHarassmentSettingComboBox, Backend.getOptions().geminiHarmCategoryHarassmentSetting);
         this.setupGeminiSafetyThresholdConfigOption(this.geminiHateSpeechSettingComboBox, Backend.getOptions().geminiHarmCategoryHateSpeechSetting);
         this.setupGeminiSafetyThresholdConfigOption(this.geminiSexuallyExplicitSettingComboBox, Backend.getOptions().geminiHarmCategorySexuallyExplicitSetting);
         this.setupGeminiSafetyThresholdConfigOption(this.geminiDangerousContentSettingComboBox, Backend.getOptions().geminiHarmCategoryDangerousContentSetting);
-
         this.setupBooleanConfigOption(this.overrideGeminiSafetyThresholdSoftBlock, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlock);
         this.setupBooleanConfigOption(this.overrideGeminiSafetyThresholdHardBlock, Backend.getOptions().geminiOverrideSafetyThresholdHardBlock);
-
         this.setupIntegerConfigOption(this.triesPerGeminiThresholdOverrideSoftBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel, 1, 10000);
         this.setupIntegerConfigOption(this.triesPerGeminiThresholdOverrideHardBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel, 1, 10000);
-
         this.setupBooleanConfigOption(this.geminiThresholdOverrideSkipLowLevelsCheckBox, Backend.getOptions().geminiOverrideSafetyThresholdSkipLowLevels);
+        this.setupBooleanConfigOption(this.geminiUseFallbackAfterHardBlockCheckBox, Backend.getOptions().geminiUseFallbackAfterHardBlockOverride);
 
         this.updateStartTranslationButtonState();
 
@@ -247,6 +252,20 @@ public class MainViewController {
     protected void onTargetLangTextFieldInput() {
         String s = this.targetLangTextField.getText();
         if (s != null) Backend.getOptions().targetLanguage.setValue(s);
+        this.updateStartTranslationButtonState();
+    }
+
+    @FXML
+    protected void onSourceLangShortTextFieldInput() {
+        String s = this.sourceLanguageShortTextField.getText();
+        if (s != null) Backend.getOptions().sourceLanguageShort.setValue(s);
+        this.updateStartTranslationButtonState();
+    }
+
+    @FXML
+    protected void onTargetLangShortTextFieldInput() {
+        String s = this.targetLanguageShortTextField.getText();
+        if (s != null) Backend.getOptions().targetLanguageShort.setValue(s);
         this.updateStartTranslationButtonState();
     }
 
