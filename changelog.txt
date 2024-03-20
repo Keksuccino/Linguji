@@ -1,5 +1,7 @@
 Changelog v1.0.2
 
+Note: Some default settings values changed in this update. It is recommended to delete the old config.txt file or update said settings with their new default values.
+
 - New default value for "Tries Before Stop (Hard-Block)" (Gemini) is "5" (was "50" before)
 - New default value for "Override After Tries (Hard-Block)" (Gemini) is "1" (was "3" before)
 - New default value for "Tries Per Threshold Override (Hard-Block)" (Gemini) is "2" (was "10" before)
