@@ -1,3 +1,4 @@
 Changelog v1.0.2
 
+- New default value for "Tries Before Stop (Hard-Block)" (Gemini) is "10" (was "50" before)
 - New default value for "Tries Per Threshold Override (Hard-Block)" (Gemini) is "5" (was "10" before)
