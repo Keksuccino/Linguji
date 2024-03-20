@@ -49,20 +49,12 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="The directory where all translated subtitle files get saved to." />
             </tooltip></Label>
-         <Label layoutX="14.0" layoutY="165.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="166.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The source language of your original subtitle files." />
             </tooltip></Label>
          <Separator layoutX="82.0" layoutY="106.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="14.0" />
-         <TextField fx:id="sourceLangTextField" layoutX="238.0" layoutY="162.0" onKeyTyped="#onSourceLangTextFieldInput" prefHeight="25.0" prefWidth="90.0" AnchorPane.leftAnchor="238.0">
-            <tooltip>
-               <Tooltip prefWidth="400.0" text="The source language of your original subtitle files." />
-            </tooltip></TextField>
-         <TextField fx:id="targetLangTextField" layoutX="637.3333333333334" layoutY="162.0" onKeyTyped="#onTargetLangTextFieldInput" prefHeight="25.0" prefWidth="90.0" AnchorPane.leftAnchor="637.0" AnchorPane.rightAnchor="63.0">
-            <tooltip>
-               <Tooltip prefWidth="400.0" text="The target language your subtitle files should get translated to." />
-            </tooltip></TextField>
-         <Label layoutX="400.0" layoutY="166.0" prefHeight="17.0" prefWidth="219.0" text="Target Language" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="167.0" prefHeight="17.0" prefWidth="219.0" text="Target Language" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The target language your subtitle files should get translated to." />
             </tooltip></Label>
@@ -84,27 +76,27 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="The prompt used for the AI to translate subtitles." />
             </tooltip></TextField>
-         <Label layoutX="14.0" layoutY="198.0" prefHeight="17.0" prefWidth="219.0" text="Lines Per Packet" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="199.0" prefHeight="17.0" prefWidth="219.0" text="Lines Per Packet" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The subtitle lines that should get send to the AI with each request. Don't make this number too big or the AI will probably fail to translate the text." wrapText="true" />
             </tooltip></Label>
-         <Spinner fx:id="linesPerPacketSpinner" editable="true" layoutX="238.0" layoutY="194.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <Spinner fx:id="linesPerPacketSpinner" editable="true" layoutX="238.0" layoutY="195.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The subtitle lines that should get send to the AI with each request. Don't make this number too big or the AI will probably fail to translate the text." wrapText="true" />
             </tooltip></Spinner>
-         <Spinner fx:id="waitAfterErrorSpinner" editable="true" layoutX="624.0" layoutY="194.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <Spinner fx:id="waitAfterErrorSpinner" editable="true" layoutX="636.6666666666666" layoutY="195.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How long the tool should wait after an error happend. Making this number too small could result in the AI API blocking you for request spam." wrapText="true" />
             </tooltip></Spinner>
-         <Label layoutX="400.0" layoutY="198.0" prefHeight="17.0" prefWidth="219.0" text="Wait After Error (Milliseconds)" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="199.0" prefHeight="17.0" prefWidth="219.0" text="Wait After Error (Milliseconds)" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How long the tool should wait after an error happend. Making this number too small could result in the AI API blocking you for request spam." wrapText="true" />
             </tooltip></Label>
-         <Label layoutX="14.0" layoutY="230.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Invalid Line Count)" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="231.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Invalid Line Count)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the AI returned an invalid amount of translated lines." />
             </tooltip></Label>
-         <Spinner fx:id="triesBeforeStopInvalidLineCountSpinner" editable="true" layoutX="238.0" layoutY="226.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <Spinner fx:id="triesBeforeStopInvalidLineCountSpinner" editable="true" layoutX="238.0" layoutY="227.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the AI returned an invalid amount of translated lines." />
             </tooltip></Spinner>
@@ -135,19 +127,19 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after Gemini hard-blocked the request for safety reasons." />
             </tooltip></Label>
-         <Spinner fx:id="triesBeforeStopTimeoutSpinner" editable="true" layoutX="624.0" layoutY="226.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <Spinner fx:id="triesBeforeStopTimeoutSpinner" editable="true" layoutX="636.6666666666666" layoutY="227.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the request timed out." />
             </tooltip></Spinner>
-         <Label layoutX="400.0" layoutY="230.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Timeout)" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="231.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Timeout)" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the request timed out." />
             </tooltip></Label>
-         <Label layoutX="14.0" layoutY="262.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Generic Error)" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="263.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Generic Error)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after a generic error happened." />
             </tooltip></Label>
-         <Spinner fx:id="triesBeforeStopGenericErrorSpinner" editable="true" layoutX="238.0" layoutY="258.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <Spinner fx:id="triesBeforeStopGenericErrorSpinner" editable="true" layoutX="238.0" layoutY="259.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after a generic error happened." />
             </tooltip></Spinner>
@@ -251,16 +243,6 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="The debug log gives information about requests to and answers from the AI and shows errors that happened during the translation process." />
             </tooltip></Button>
-         <TextField fx:id="sourceLanguageShortTextField" layoutX="334.0" layoutY="162.0" onKeyTyped="#onSourceLangShortTextFieldInput" prefWidth="43.0" AnchorPane.leftAnchor="334.0">
-            <tooltip>
-               <Tooltip prefWidth="400.0" text="This is the short version of the source language. This is usually a language code." />
-            </tooltip>
-         </TextField>
-         <TextField fx:id="targetLanguageShortTextField" layoutX="733.0" layoutY="162.0" onKeyTyped="#onTargetLangShortTextFieldInput" prefWidth="43.0" AnchorPane.rightAnchor="14.0">
-            <tooltip>
-               <Tooltip prefWidth="400.0" text="This is the short version of the target language. This is usually a language code." />
-            </tooltip>
-         </TextField>
          <CheckBox fx:id="geminiUseFallbackAfterHardBlockCheckBox" layoutX="636.3333333333334" layoutY="584.0" mnemonicParsing="false" AnchorPane.leftAnchor="636.3333333333334">
             <tooltip>
                <Tooltip prefWidth="400.0" text="If LibreTranslate should get used as fallback after Gemini failed to translate a packet due to the request getting hard-blocked and overriding the threshold didn't fix it." />
@@ -271,6 +253,8 @@
                <Tooltip prefWidth="400.0" text="If LibreTranslate should get used as fallback after Gemini failed to translate a packet due to the request getting hard-blocked and overriding the threshold didn't fix it." />
             </tooltip>
          </Label>
+         <ComboBox fx:id="sourceLangComboBox" layoutX="238.0" layoutY="162.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0" />
+         <ComboBox fx:id="targetLangComboBox" layoutX="637.0" layoutY="162.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0" />
       </children>
    </AnchorPane>
 </VBox>

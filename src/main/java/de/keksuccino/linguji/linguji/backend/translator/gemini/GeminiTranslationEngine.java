@@ -3,9 +3,10 @@ package de.keksuccino.linguji.linguji.backend.translator.gemini;
 import com.google.gson.Gson;
 import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
-import de.keksuccino.linguji.linguji.backend.translator.ITranslationEngine;
+import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
+import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions.GeminiException;
-import de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions.GeminiRequestBlockedException;
+import de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions.GeminiRequestHardBlockedException;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.request.GeminiContent;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.request.GeminiGenerateContentRequest;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.response.GeminiResponse;
@@ -15,6 +16,7 @@ import de.keksuccino.linguji.linguji.backend.translator.gemini.safety.GeminiSafe
 import de.keksuccino.linguji.linguji.backend.util.HttpRequest;
 import de.keksuccino.linguji.linguji.backend.util.JsonUtils;
 import de.keksuccino.linguji.linguji.backend.util.ThreadUtils;
+import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
 import org.apache.hc.client5.http.entity.EntityBuilder;
@@ -23,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
-public class GeminiTranslationEngine implements ITranslationEngine {
+public class GeminiTranslationEngine extends AbstractTranslationEngine {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
     public static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent";
@@ -33,29 +35,23 @@ public class GeminiTranslationEngine implements ITranslationEngine {
     @NotNull
     protected final String prompt;
 
-    public GeminiTranslationEngine(@NotNull String apiKey) {
-        this.apiKey = Objects.requireNonNull(apiKey);
-        this.prompt = DEFAULT_PROMPT;
+    public GeminiTranslationEngine(@NotNull String apiKey, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
+        this(apiKey, DEFAULT_PROMPT, sourceLanguage, targetLanguage);
     }
 
-    public GeminiTranslationEngine(@NotNull String apiKey, @NotNull String prompt) {
+    public GeminiTranslationEngine(@NotNull String apiKey, @NotNull String prompt, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
+        super(sourceLanguage, targetLanguage);
         this.apiKey = Objects.requireNonNull(apiKey);
         this.prompt = Objects.requireNonNull(prompt);
     }
 
-    @Nullable
     @Override
-    public String translate(@NotNull String text, @NotNull String sourceLanguage, @NotNull String targetLanguage, @NotNull TranslationProcess process) throws Exception {
-        return this._translate(text, sourceLanguage, targetLanguage, process, new GeminiTriesCounter(), new GeminiSafetyThresholdOverrideContext());
-    }
-
-    @Override
-    public @NotNull String getEngineName() {
-        return "Gemini Pro";
+    public @Nullable String translate(@NotNull String text, @NotNull TranslationProcess process) throws Exception {
+        return this._translate(text, process, new GeminiTriesCounter(), new GeminiSafetyThresholdOverrideContext());
     }
 
     @Nullable
-    protected String _translate(@NotNull String text, @NotNull String sourceLanguage, @NotNull String targetLanguage, @NotNull TranslationProcess process, @NotNull GeminiTriesCounter triesCounter, @NotNull GeminiSafetyThresholdOverrideContext thresholdOverrideContext) throws Exception {
+    protected String _translate(@NotNull String text, @NotNull TranslationProcess process, @NotNull GeminiTriesCounter triesCounter, @NotNull GeminiSafetyThresholdOverrideContext thresholdOverrideContext) throws Exception {
 
         if (!process.running) return null;
 
@@ -75,10 +71,10 @@ public class GeminiTranslationEngine implements ITranslationEngine {
             entityBuilder.setContentEncoding("UTF-8");
             entityBuilder.setContentType(ContentType.APPLICATION_JSON);
 
-            String promptFinal = this.getFinalPrompt(text, sourceLanguage, targetLanguage);
+            String promptFinal = this.getFinalPrompt(text);
 
             GeminiSafetySetting.SafetyThreshold overrideThreshold = (thresholdOverrideContext.overrideHardBlock != null) ? thresholdOverrideContext.overrideHardBlock : thresholdOverrideContext.overrideSoftBlock;
-            if (overrideThreshold != null) {
+            if ((overrideThreshold != null)) {
                 LOGGER.warn("Overriding all Gemini safety thresholds with: " + overrideThreshold.name + " (TRIGGER: " + ((thresholdOverrideContext.overrideSoftBlock != null) ? "SOFT-BLOCK" : "HARD-BLOCK") + ")");
             }
 
@@ -109,7 +105,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                     LOGGER.warn("Gemini translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
                     ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
-                    return this._translate(text, sourceLanguage, targetLanguage, process, triesCounter, thresholdOverrideContext);
+                    return this._translate(text, process, triesCounter, thresholdOverrideContext);
                 }
                 throw ex;
             }
@@ -135,9 +131,9 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                     }
                     ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
-                    return this._translate(text, sourceLanguage, targetLanguage, process, triesCounter, thresholdOverrideContext);
+                    return this._translate(text, process, triesCounter, thresholdOverrideContext);
                 }
-                throw new GeminiRequestBlockedException(response.promptFeedback.blockReason.toUpperCase(), responseString);
+                throw new GeminiRequestHardBlockedException(response.promptFeedback.blockReason.toUpperCase(), responseString);
             }
         }
         if (response.error != null) {
@@ -150,7 +146,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                     LOGGER.warn("Gemini translation request failed! Trying again.. (ERROR CODE: " + response.error.code + " | MESSAGE: " + response.error.message + ")");
                     ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
-                    return this._translate(text, sourceLanguage, targetLanguage, process, triesCounter, thresholdOverrideContext);
+                    return this._translate(text, process, triesCounter, thresholdOverrideContext);
                 }
             }
             throw new GeminiException("Error Code: " + response.error.code + " | Status: " + response.error.status + " | Message: " + response.error.message);
@@ -171,7 +167,7 @@ public class GeminiTranslationEngine implements ITranslationEngine {
                         }
                         ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                         if (!process.running) return null;
-                        return this._translate(text, sourceLanguage, targetLanguage, process, triesCounter, thresholdOverrideContext);
+                        return this._translate(text, process, triesCounter, thresholdOverrideContext);
                     }
                     throw new GeminiException("Gemini translation request soft-blocked! Finish reason: " + candidate.finishReason + " | Full Response: " + responseString);
                 }
@@ -190,6 +186,11 @@ public class GeminiTranslationEngine implements ITranslationEngine {
     }
 
     @Override
+    public @NotNull String getEngineName() {
+        return "Gemini Pro";
+    }
+
+    @Override
     public int getMaxCharacterLength() {
         return 1500;
     }
@@ -197,6 +198,11 @@ public class GeminiTranslationEngine implements ITranslationEngine {
     @Override
     public @NotNull String getRawPrompt() {
         return this.prompt;
+    }
+
+    @Override
+    public @NotNull LanguageType getLanguageType() {
+        return LanguageType.DISPLAY;
     }
 
     protected static class GeminiTriesCounter {

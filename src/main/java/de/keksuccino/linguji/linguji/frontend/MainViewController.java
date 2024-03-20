@@ -3,6 +3,7 @@ package de.keksuccino.linguji.linguji.frontend;
 import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.safety.GeminiSafetySetting;
+import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
 import de.keksuccino.linguji.linguji.backend.util.options.AbstractOptions;
@@ -46,9 +47,9 @@ public class MainViewController {
     @FXML
     private Label outputDirLabel;
     @FXML
-    private TextField sourceLangTextField;
+    private ComboBox<Locale> sourceLangComboBox;
     @FXML
-    private TextField targetLangTextField;
+    private ComboBox<Locale> targetLangComboBox;
     @FXML
     private TextField geminiApiKeyTextField;
     @FXML
@@ -92,10 +93,6 @@ public class MainViewController {
     @FXML
     private Button openConsoleWindowButton;
     @FXML
-    private TextField targetLanguageShortTextField;
-    @FXML
-    private TextField sourceLanguageShortTextField;
-    @FXML
     private CheckBox geminiUseFallbackAfterHardBlockCheckBox;
 
     @Nullable
@@ -104,15 +101,13 @@ public class MainViewController {
     @FXML
     protected void initialize() {
 
-        this.sourceLangTextField.setText(Backend.getOptions().sourceLanguage.getValue());
-        this.targetLangTextField.setText(Backend.getOptions().targetLanguage.getValue());
-        this.sourceLanguageShortTextField.setText(Backend.getOptions().sourceLanguageShort.getValue());
-        this.targetLanguageShortTextField.setText(Backend.getOptions().targetLanguageShort.getValue());
         this.inputDirLabel.setText(Backend.getOptions().inputDirectory.getValue());
         this.outputDirLabel.setText(Backend.getOptions().outputDirectory.getValue());
         this.geminiApiKeyTextField.setText(Backend.getOptions().geminiApiKey.getValue());
         this.promptTextField.setText(Backend.getOptions().aiPrompt.getValue());
 
+        this.setupLocaleConfigOption(this.sourceLangComboBox, Backend.getOptions().sourceLanguageLocale);
+        this.setupLocaleConfigOption(this.targetLangComboBox, Backend.getOptions().targetLanguageLocale);
         this.setupIntegerConfigOption(this.linesPerPacketSpinner, Backend.getOptions().linesPerPacket, 1, 10000);
         this.setupIntegerConfigOption(this.triesBeforeStopInvalidLineCountSpinner, Backend.getOptions().triesBeforeErrorInvalidLineCount, 1, 10000);
         this.setupIntegerConfigOption(this.triesBeforeStopTimeoutSpinner, Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed, 1, 10000);
@@ -131,7 +126,7 @@ public class MainViewController {
         this.setupIntegerConfigOption(this.triesPerGeminiThresholdOverrideSoftBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel, 1, 10000);
         this.setupIntegerConfigOption(this.triesPerGeminiThresholdOverrideHardBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel, 1, 10000);
         this.setupBooleanConfigOption(this.geminiThresholdOverrideSkipLowLevelsCheckBox, Backend.getOptions().geminiOverrideSafetyThresholdSkipLowLevels);
-        this.setupBooleanConfigOption(this.geminiUseFallbackAfterHardBlockCheckBox, Backend.getOptions().geminiUseFallbackAfterHardBlockOverride);
+        this.setupBooleanConfigOption(this.geminiUseFallbackAfterHardBlockCheckBox, Backend.getOptions().useFallbackTranslator);
 
         this.updateStartTranslationButtonState();
 
@@ -242,34 +237,6 @@ public class MainViewController {
     }
 
     @FXML
-    protected void onSourceLangTextFieldInput() {
-        String s = this.sourceLangTextField.getText();
-        if (s != null) Backend.getOptions().sourceLanguage.setValue(s);
-        this.updateStartTranslationButtonState();
-    }
-
-    @FXML
-    protected void onTargetLangTextFieldInput() {
-        String s = this.targetLangTextField.getText();
-        if (s != null) Backend.getOptions().targetLanguage.setValue(s);
-        this.updateStartTranslationButtonState();
-    }
-
-    @FXML
-    protected void onSourceLangShortTextFieldInput() {
-        String s = this.sourceLanguageShortTextField.getText();
-        if (s != null) Backend.getOptions().sourceLanguageShort.setValue(s);
-        this.updateStartTranslationButtonState();
-    }
-
-    @FXML
-    protected void onTargetLangShortTextFieldInput() {
-        String s = this.targetLanguageShortTextField.getText();
-        if (s != null) Backend.getOptions().targetLanguageShort.setValue(s);
-        this.updateStartTranslationButtonState();
-    }
-
-    @FXML
     protected void onChooseInputDirButtonClick() {
 
         if (LingujiApplication.stage == null) return;
@@ -323,16 +290,14 @@ public class MainViewController {
         this.startTranslationButton.setDisable(
                 Backend.getOptions().geminiApiKey.getValue().trim().isEmpty()
                         || Backend.getOptions().inputDirectory.getValue().trim().isEmpty()
-                        || Backend.getOptions().outputDirectory.getValue().trim().isEmpty()
-                        || Backend.getOptions().sourceLanguage.getValue().trim().isEmpty()
-                        || Backend.getOptions().targetLanguage.getValue().trim().isEmpty());
+                        || Backend.getOptions().outputDirectory.getValue().trim().isEmpty());
     }
 
     protected void toggleAllConfigInputs(boolean disabled) {
         this.chooseInputDirButton.setDisable(disabled);
         this.chooseOutputDirButton.setDisable(disabled);
-        this.targetLangTextField.setDisable(disabled);
-        this.sourceLangTextField.setDisable(disabled);
+        this.sourceLangComboBox.setDisable(disabled);
+        this.targetLangComboBox.setDisable(disabled);
         this.promptTextField.setDisable(disabled);
         this.geminiApiKeyTextField.setDisable(disabled);
         this.linesPerPacketSpinner.setDisable(disabled);
@@ -379,6 +344,22 @@ public class MainViewController {
         comboBox.getItems().addAll(GeminiSafetySetting.SafetyThreshold.values());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.name));
         comboBox.setValue(GeminiSafetySetting.SafetyThreshold.getByName(option.getValue()));
+    }
+
+    protected void setupLocaleConfigOption(@NotNull ComboBox<Locale> comboBox, @NotNull AbstractOptions.Option<String> option) {
+        comboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Locale object) {
+                return object.getDisplayName();
+            }
+            @Override
+            public Locale fromString(String string) {
+                return Locale.getByDisplayName(string);
+            }
+        });
+        comboBox.getItems().addAll(Locale.getOrderedAlphabeticallyByDisplayName());
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.getName()));
+        comboBox.setValue(Locale.getByName(option.getValue()));
     }
 
     protected static ArrayList<Node> getAllNodes(Parent root) {

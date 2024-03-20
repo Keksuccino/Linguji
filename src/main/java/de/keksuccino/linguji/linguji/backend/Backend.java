@@ -7,6 +7,7 @@ import de.keksuccino.linguji.linguji.backend.subtitle.translation.SubtitleTransl
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.GeminiTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.util.FileUtils;
+import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class Backend {
+
+    //TODO wenn fallback, dann line packets in SubtitleTranslator kleiner machen
+    // - Max 2 Zeilen pro packet
+    // - Line packet wird translatePacket() mitgegeben, also einfach in sub-packs splitten
+
+    //TODO In GUI fixen: Gemini Fallback toggle zu allgemeinem "Use Fallback" toggle ändern
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
     public static final String VERSION = "1.0.1";
@@ -46,7 +53,11 @@ public class Backend {
 
             try {
 
-                GeminiTranslationEngine geminiTranslationEngine = new GeminiTranslationEngine(Backend.getOptions().geminiApiKey.getValue(), Backend.getOptions().aiPrompt.getValue());
+                Locale sourceLang = Locale.getByName(Backend.getOptions().sourceLanguageLocale.getValue());
+                Locale targetLang = Locale.getByName(Backend.getOptions().targetLanguageLocale.getValue());
+                if ((sourceLang == null) || (targetLang == null)) throw new IllegalArgumentException("Source or target language invalid! Needs to be a valid language!");
+
+                GeminiTranslationEngine geminiTranslationEngine = new GeminiTranslationEngine(Backend.getOptions().geminiApiKey.getValue(), Backend.getOptions().aiPrompt.getValue(), sourceLang, targetLang);
                 SubtitleTranslator<AssSubtitle> geminiAssSubtitleTranslator = new SubtitleTranslator<>(geminiTranslationEngine, false);
 
                 String inDirString = Backend.getOptions().inputDirectory.getValue();
@@ -54,9 +65,6 @@ public class Backend {
                 if (inDirString.trim().isEmpty() || outDirString.trim().isEmpty()) throw new FileNotFoundException("Input or output directory is empty! Needs to be a valid directory!");
                 File inDir = FileUtils.createDirectory(new File(inDirString), false);
                 File outDir = FileUtils.createDirectory(new File(outDirString), false);
-                String sourceLang = Backend.getOptions().sourceLanguage.getValue();
-                String targetLang = Backend.getOptions().targetLanguage.getValue();
-                if (sourceLang.trim().isEmpty() || targetLang.trim().isEmpty()) throw new IllegalArgumentException("Source or target language is empty! Needs to be a valid language!");
 
                 List<AbstractSubtitle> subtitles = new ArrayList<>();
                 for (File file : Objects.requireNonNull(inDir.listFiles(), "Failed to get subtitle files from input directory!")) {
@@ -78,7 +86,7 @@ public class Backend {
                     try {
                         //Handle ASS subtitles
                         if (subtitle instanceof AssSubtitle assSubtitle) {
-                            geminiAssSubtitleTranslator.translate(assSubtitle, sourceLang, targetLang, process);
+                            geminiAssSubtitleTranslator.translate(assSubtitle, process);
                             subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED;
                         }
                         if (!process.running) break;

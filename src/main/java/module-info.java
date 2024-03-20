@@ -41,6 +41,7 @@ module de.keksuccino.linguji.linguji {
     exports de.keksuccino.linguji.linguji.backend.util.logger;
     exports de.keksuccino.linguji.linguji.frontend.util;
     exports de.keksuccino.linguji.linguji.frontend.util.os.windows;
+    exports de.keksuccino.linguji.linguji.backend.util.lang;
 
     opens de.keksuccino.linguji.linguji.frontend;
     opens de.keksuccino.linguji.linguji.backend;
@@ -63,5 +64,6 @@ module de.keksuccino.linguji.linguji {
     opens de.keksuccino.linguji.linguji.frontend.util;
     opens de.keksuccino.linguji.linguji.backend.util.logger;
     opens de.keksuccino.linguji.linguji.frontend.util.os.windows;
+    opens de.keksuccino.linguji.linguji.backend.util.lang;
 
 }

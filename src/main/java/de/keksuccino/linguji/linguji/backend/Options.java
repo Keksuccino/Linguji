@@ -19,10 +19,9 @@ public class Options extends AbstractOptions {
     public final Option<String> inputDirectory = new Option<>(config, "input_directory", "input_subtitles", "general");
     public final Option<String> outputDirectory = new Option<>(config, "output_directory", "output_subtitles", "general");
     public final Option<String> outputFileSuffix = new Option<>(config, "output_file_suffix", "", "general");
-    public final Option<String> sourceLanguage = new Option<>(config, "source_language", "English", "general");
-    public final Option<String> targetLanguage = new Option<>(config, "target_language", "German", "general");
-    public final Option<String> sourceLanguageShort = new Option<>(config, "source_language_short", "en", "general");
-    public final Option<String> targetLanguageShort = new Option<>(config, "target_language_short", "de", "general");
+    public final Option<String> sourceLanguageLocale = new Option<>(config, "source_language_locale", "english", "general");
+    public final Option<String> targetLanguageLocale = new Option<>(config, "target_language_locale", "german", "general");
+    public final Option<Boolean> useFallbackTranslator = new Option<>(config, "use_fallback_translator", true, "general");
 
     public final Option<String> geminiApiKey = new Option<>(config, "gemini_api_key", "", "gemini");
     public final Option<String> geminiHarmCategoryHarassmentSetting = new Option<>(config, "gemini_harm_category_harassment_setting", "BLOCK_ONLY_HIGH", "gemini");
@@ -32,19 +31,18 @@ public class Options extends AbstractOptions {
     /** Min should be 1 **/
     public final Option<Integer> geminiTriesBeforeErrorSoftBlock = new Option<>(config, "gemini_tries_before_error_soft_block", 2000, "gemini");
     /** Min should be 1 **/
-    public final Option<Integer> geminiTriesBeforeErrorHardBlock = new Option<>(config, "gemini_tries_before_error_hard_block", 50, "gemini");
+    public final Option<Integer> geminiTriesBeforeErrorHardBlock = new Option<>(config, "gemini_tries_before_error_hard_block", 5, "gemini");
     public final Option<Boolean> geminiOverrideSafetyThresholdSoftBlock = new Option<>(config, "gemini_override_safety_threshold_soft_block", true, "gemini");
     public final Option<Boolean> geminiOverrideSafetyThresholdHardBlock = new Option<>(config, "gemini_override_safety_threshold_hard_block", true, "gemini");
     /** Min should be 1 **/
     public final Option<Integer> geminiOverrideSafetyThresholdSoftBlockAfterTries = new Option<>(config, "gemini_override_safety_threshold_soft_block_after_tries", 50, "gemini");
     /** Min should be 1 **/
-    public final Option<Integer> geminiOverrideSafetyThresholdHardBlockAfterTries = new Option<>(config, "gemini_override_safety_threshold_hard_block_after_tries", 3, "gemini");
+    public final Option<Integer> geminiOverrideSafetyThresholdHardBlockAfterTries = new Option<>(config, "gemini_override_safety_threshold_hard_block_after_tries", 1, "gemini");
     /** Min should be 1 **/
     public final Option<Integer> geminiOverrideSafetyThresholdSoftBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_soft_block_tries_per_level", 20, "gemini");
     /** Min should be 1 **/
-    public final Option<Integer> geminiOverrideSafetyThresholdHardBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_hard_block_tries_per_level", 10, "gemini");
+    public final Option<Integer> geminiOverrideSafetyThresholdHardBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_hard_block_tries_per_level", 2, "gemini");
     public final Option<Boolean> geminiOverrideSafetyThresholdSkipLowLevels = new Option<>(config, "gemini_override_safety_threshold_skip_low_levels", true, "gemini");
-    public final Option<Boolean> geminiUseFallbackAfterHardBlockOverride = new Option<>(config, "use_fallback_after_hard_block_override", true, "gemini");
 
     public final Option<String> libreTranslateUrl = new Option<>(config, "libre_translate_url", "https://trans.zillyhuhn.com/translate", "libre_translate");
     public final Option<String> libreTranslateApiKey = new Option<>(config, "libre_translate_api_key", "", "libre_translate");

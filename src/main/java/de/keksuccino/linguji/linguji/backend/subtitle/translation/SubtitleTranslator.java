@@ -4,7 +4,8 @@ import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AbstractSubtitle;
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line.AbstractSubtitleLine;
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line.AbstractTranslatableSubtitleLine;
-import de.keksuccino.linguji.linguji.backend.translator.ITranslationEngine;
+import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
+import de.keksuccino.linguji.linguji.backend.translator.libretranslate.LibreTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.util.ThreadUtils;
 import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
@@ -18,16 +19,19 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
     @NotNull
-    protected final ITranslationEngine translator;
+    protected final AbstractTranslationEngine translator;
     protected final boolean threaded;
+    @NotNull
+    public AbstractTranslationEngine fallbackTranslator;
 
-    public SubtitleTranslator(@NotNull ITranslationEngine translator, boolean threaded) {
+    public SubtitleTranslator(@NotNull AbstractTranslationEngine translator, boolean threaded) {
         this.translator = Objects.requireNonNull(translator);
+        this.fallbackTranslator = new LibreTranslationEngine(Backend.getOptions().libreTranslateUrl.getValue(), Backend.getOptions().libreTranslateApiKey.getValue(), this.translator.sourceLanguage, this.translator.targetLanguage);
         this.threaded = threaded;
         if (threaded) throw new RuntimeException("Threading is not fully implemented yet. It works, but is not limited to a max number of threads, so it basically just request-bombs the API and kills it.");
     }
 
-    public void translate(@NotNull T subtitle, @NotNull String sourceLanguage, @NotNull String targetLanguage, @NotNull TranslationProcess process) throws Exception {
+    public void translate(@NotNull T subtitle, @NotNull TranslationProcess process) throws Exception {
 
         List<List<IndexedLine>> linePackets = new ArrayList<>();
         List<IndexedLine> currentPacket = new ArrayList<>();
@@ -87,7 +91,7 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
                 threadFeedbacks.add(feedback);
                 Thread t = new Thread(() -> {
                     try {
-                        this.translatePacket(packet, linesString.toString(), sourceLanguage, targetLanguage, 0, feedback, process);
+                        this.translatePacket(packet, linesString.toString(), 0, false, feedback, process);
                         feedback.completed = true;
                     } catch (Exception ex) {
                         feedback.exception = ex;
@@ -138,7 +142,7 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
                     firstLine = false;
                 }
 
-                this.translatePacket(packet, linesString.toString(), sourceLanguage, targetLanguage, 0, dummyFeedback, process);
+                this.translatePacket(packet, linesString.toString(), 0, false, dummyFeedback, process);
 
             }
 
@@ -146,9 +150,39 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
 
     }
 
-    protected void translatePacket(@NotNull List<IndexedLine> packet, @NotNull String linesString, @NotNull String sourceLanguage, @NotNull String targetLanguage, int failedTries, @NotNull TranslationThreadFeedback threadFeedback, @NotNull TranslationProcess process) throws Exception {
+    protected void translatePacket(@NotNull List<IndexedLine> packet, @NotNull String linesString, int failedTries, boolean fallback, @NotNull TranslationThreadFeedback threadFeedback, @NotNull TranslationProcess process) throws Exception {
 
-        String translated = this.translator.translate(linesString, sourceLanguage, targetLanguage, process);
+        if (threadFeedback.stopped) return;
+        if (!process.running) return;
+
+        Exception translateException = null;
+        String translated = null;
+        try {
+            translated = fallback ? this.fallbackTranslator.translate(linesString, process) : this.translator.translate(linesString, process);
+        } catch (Exception ex) {
+            if (Backend.getOptions().useFallbackTranslator.getValue() && !fallback) {
+                translateException = ex;
+            } else {
+                throw ex;
+            }
+        }
+
+        if (threadFeedback.stopped) return;
+        if (!process.running) return;
+
+        //Handle fallback translator
+        if ((translateException != null) || (translated == null)) {
+            if (Backend.getOptions().useFallbackTranslator.getValue()) {
+                if (translateException != null) {
+                    LOGGER.warn("Translation of line packet failed with an error! Trying to translate with fallback translator..", translateException);
+                } else {
+                    LOGGER.warn("Main translator returned NULL as translation! Trying to translate with fallback translator..");
+                }
+                fallback = true;
+                translated = this.fallbackTranslator.translate(linesString, process);
+            }
+        }
+
         if (translated == null) return;
         String[] translatedLines = translated.split("\n");
 
@@ -172,7 +206,7 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
             if (failedTries <= Backend.getOptions().triesBeforeErrorInvalidLineCount.getValue()) {
                 LOGGER.warn("TranslationEngine returned invalid amount of translated lines! Trying again..");
                 ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
-                this.translatePacket(packet, linesString, sourceLanguage, targetLanguage, failedTries, threadFeedback, process);
+                this.translatePacket(packet, linesString, failedTries, fallback, threadFeedback, process);
                 return;
             }
             throw new IllegalStateException("TranslationEngine returned invalid amount of lines!");

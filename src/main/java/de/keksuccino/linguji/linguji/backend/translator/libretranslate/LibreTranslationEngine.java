@@ -2,22 +2,23 @@ package de.keksuccino.linguji.linguji.backend.translator.libretranslate;
 
 import com.google.gson.Gson;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
-import de.keksuccino.linguji.linguji.backend.translator.ITranslationEngine;
+import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
+import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
 import de.keksuccino.linguji.linguji.backend.translator.libretranslate.response.LibreTranslateResponse;
 import de.keksuccino.linguji.linguji.backend.util.HttpRequest;
 import de.keksuccino.linguji.linguji.backend.util.JsonUtils;
+import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
 import org.apache.hc.client5.http.entity.EntityBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
 
 // LibreTranslate Servers: https://github.com/LibreTranslate/LibreTranslate?tab=readme-ov-file#mirrors
 
-public class LibreTranslationEngine implements ITranslationEngine {
+public class LibreTranslationEngine extends AbstractTranslationEngine {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
@@ -26,13 +27,14 @@ public class LibreTranslationEngine implements ITranslationEngine {
     @NotNull
     public final String apiUrl;
 
-    public LibreTranslationEngine(@NotNull String apiUrl, @Nullable String apiKey) {
+    public LibreTranslationEngine(@NotNull String apiUrl, @Nullable String apiKey, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
+        super(sourceLanguage, targetLanguage);
         this.apiKey = apiKey;
         this.apiUrl = apiUrl;
     }
 
     @Override
-    public @Nullable String translate(@NotNull String text, @NotNull String sourceLanguage, @NotNull String targetLanguage, @NotNull TranslationProcess process) throws Exception {
+    public @Nullable String translate(@NotNull String text, @NotNull TranslationProcess process) throws Exception {
 
         if (!process.running) return null;
 
@@ -48,8 +50,8 @@ public class LibreTranslationEngine implements ITranslationEngine {
         LibreTranslateRequest request = new LibreTranslateRequest();
         request.api_key = this.apiKey;
         request.q = text;
-        request.source = sourceLanguage;
-        request.target = targetLanguage;
+        request.source = this.getSourceLanguageString();
+        request.target = this.getTargetLanguageString();
 
         String json = Objects.requireNonNull(gson.toJson(request));
 
@@ -82,6 +84,11 @@ public class LibreTranslationEngine implements ITranslationEngine {
     @Override
     public @NotNull String getRawPrompt() {
         return "";
+    }
+
+    @Override
+    public @NotNull LanguageType getLanguageType() {
+        return LanguageType.ISO;
     }
 
 }
