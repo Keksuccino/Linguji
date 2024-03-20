@@ -1,1 +1,3 @@
- 
+Changelog v1.0.2
+
+- New default value for "Tries Per Threshold Override (Hard-Block)" (Gemini) is "5" (was "10" before)
