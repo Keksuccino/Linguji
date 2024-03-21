@@ -58,7 +58,7 @@ public class Backend {
                 if ((sourceLang == null) || (targetLang == null)) throw new IllegalArgumentException("Source or target language invalid! Needs to be a valid language!");
 
                 GeminiTranslationEngine geminiTranslationEngine = new GeminiTranslationEngine(Backend.getOptions().geminiApiKey.getValue(), Backend.getOptions().aiPrompt.getValue(), sourceLang, targetLang);
-                SubtitleTranslator<AssSubtitle> geminiAssSubtitleTranslator = new SubtitleTranslator<>(geminiTranslationEngine, false);
+                SubtitleTranslator<AssSubtitle> geminiAssSubtitleTranslator = new SubtitleTranslator<>(geminiTranslationEngine);
 
                 String inDirString = Backend.getOptions().inputDirectory.getValue();
                 String outDirString = Backend.getOptions().outputDirectory.getValue();

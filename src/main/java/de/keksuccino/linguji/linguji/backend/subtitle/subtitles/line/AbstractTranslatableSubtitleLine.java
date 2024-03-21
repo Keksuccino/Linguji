@@ -9,6 +9,7 @@ public abstract class AbstractTranslatableSubtitleLine extends AbstractSubtitleL
 
     @Nullable
     protected volatile String translatedText = null;
+    public volatile boolean problematic = false;
 
     /**
      * Returns the text without formatting codes. Line breaks ({@code <br>}) don't get removed.

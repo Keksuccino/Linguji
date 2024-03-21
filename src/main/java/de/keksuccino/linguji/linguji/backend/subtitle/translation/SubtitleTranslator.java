@@ -20,15 +20,12 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
 
     @NotNull
     protected final AbstractTranslationEngine translator;
-    protected final boolean threaded;
     @NotNull
     public AbstractTranslationEngine fallbackTranslator;
 
-    public SubtitleTranslator(@NotNull AbstractTranslationEngine translator, boolean threaded) {
+    public SubtitleTranslator(@NotNull AbstractTranslationEngine translator) {
         this.translator = Objects.requireNonNull(translator);
         this.fallbackTranslator = new LibreTranslationEngine(Backend.getOptions().libreTranslateUrl.getValue(), Backend.getOptions().libreTranslateApiKey.getValue(), this.translator.sourceLanguage, this.translator.targetLanguage);
-        this.threaded = threaded;
-        if (threaded) throw new RuntimeException("Threading is not fully implemented yet. It works, but is not limited to a max number of threads, so it basically just request-bombs the API and kills it.");
     }
 
     public void translate(@NotNull T subtitle, @NotNull TranslationProcess process) throws Exception {
@@ -73,126 +70,98 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
         process.currentSubtitleFinishedLines.clear();
         process.currentSubtitleTranslatableLinesCount = totalTranslatableLineCount;
 
-        if (this.threaded) {
+        for (List<IndexedLine> packet : linePackets) {
 
-            List<TranslationThreadFeedback> threadFeedbacks = new ArrayList<>();
+            if (!process.running) return;
 
-            for (List<IndexedLine> packet : linePackets) {
-
-                StringBuilder linesString = new StringBuilder();
-                boolean firstLine = true;
-                for (IndexedLine line : packet) {
-                    if (!firstLine) linesString.append("\n");
-                    linesString.append(line.line.getTextWithoutFormattingCodes());
-                    firstLine = false;
-                }
-
-                TranslationThreadFeedback feedback = new TranslationThreadFeedback();
-                threadFeedbacks.add(feedback);
-                Thread t = new Thread(() -> {
-                    try {
-                        this.translatePacket(packet, linesString.toString(), 0, false, feedback, process);
-                        feedback.completed = true;
-                    } catch (Exception ex) {
-                        feedback.exception = ex;
-                    }
-                }, "SubtitleTranslator Thread");
-                t.setDaemon(true);
-                t.start();
-
-            }
-
-            //Wait for all translation threads
-            while (true) {
-                boolean completed = true;
-                Exception ex = null;
-                for (TranslationThreadFeedback feedback : threadFeedbacks) {
-                    if (feedback.exception != null) {
-                        completed = false;
-                        ex = feedback.exception;
-                        break;
-                    }
-                    if (!feedback.completed) {
-                        completed = false;
-                        break;
-                    }
-                }
-                if (ex != null) {
-                    threadFeedbacks.forEach(feedback -> feedback.stopped = true);
-                    throw ex;
-                }
-                if (completed) break;
-                ThreadUtils.sleep(100);
-            }
-
-        } else {
-
-            TranslationThreadFeedback dummyFeedback = new TranslationThreadFeedback();
-
-            for (List<IndexedLine> packet : linePackets) {
-
-                if (!process.running) return;
-
-                StringBuilder linesString = new StringBuilder();
-                boolean firstLine = true;
-                for (IndexedLine line : packet) {
-                    if (!process.running) return;
-                    if (!firstLine) linesString.append("\n");
-                    linesString.append(line.line.getTextWithoutFormattingCodes());
-                    firstLine = false;
-                }
-
-                this.translatePacket(packet, linesString.toString(), 0, false, dummyFeedback, process);
-
-            }
+            this.translatePacket(packet, this.buildLinesString(packet, process), 0, false, false, process);
 
         }
 
     }
 
-    protected void translatePacket(@NotNull List<IndexedLine> packet, @NotNull String linesString, int failedTries, boolean fallback, @NotNull TranslationThreadFeedback threadFeedback, @NotNull TranslationProcess process) throws Exception {
+    protected void translatePacket(@NotNull List<IndexedLine> packet, @NotNull String linesString, int failedTries, boolean fallback, boolean forceMain, @NotNull TranslationProcess process) throws Exception {
 
-        if (threadFeedback.stopped) return;
         if (!process.running) return;
 
         Exception translateException = null;
         String translated = null;
         try {
-            translated = fallback ? this.fallbackTranslator.translate(linesString, process) : this.translator.translate(linesString, process);
+            translated = (fallback && !forceMain) ? this.fallbackTranslator.translate(linesString, process) : this.translator.translate(linesString, process);
         } catch (Exception ex) {
-            if (Backend.getOptions().useFallbackTranslator.getValue() && !fallback) {
+            if (!forceMain && Backend.getOptions().useFallbackTranslator.getValue() && !fallback) {
                 translateException = ex;
             } else {
                 throw ex;
             }
         }
 
-        if (threadFeedback.stopped) return;
         if (!process.running) return;
+
+        if (forceMain && (translated == null)) return;
 
         //Handle fallback translator
         if ((translateException != null) || (translated == null)) {
             if (Backend.getOptions().useFallbackTranslator.getValue()) {
                 if (translateException != null) {
-                    LOGGER.warn("Translation of line packet failed with an error! Trying to translate with fallback translator..", translateException);
+                    LOGGER.warn("Translation of line packet failed with an error! Trying to translate with combination of main and fallback translator..", translateException);
                 } else {
-                    LOGGER.warn("Main translator returned NULL as translation! Trying to translate with fallback translator..");
+                    LOGGER.warn("Main translator returned NULL as translation! Trying to translate with combination of main and fallback translator..");
                 }
                 fallback = true;
-                translated = this.fallbackTranslator.translate(linesString, process);
+                if (Backend.getOptions().fallbackLinePacketSize.getValue() > Backend.getOptions().linesPerPacket.getValue()) {
+                    Backend.getOptions().fallbackLinePacketSize.setValue(Backend.getOptions().linesPerPacket.getValue());
+                }
+                if (packet.size() <= Backend.getOptions().fallbackLinePacketSize.getValue()) {
+                    this.translatePacket(packet, linesString, failedTries, fallback, forceMain, process);
+                } else {
+                    //Split packet into small 2-line packets for the fallback translator
+                    List<List<IndexedLine>> splitPackets = new ArrayList<>();
+                    splitPackets.add(new ArrayList<>());
+                    for (IndexedLine line : packet) {
+                        if (!process.running) return;
+                        List<IndexedLine> current = splitPackets.get(splitPackets.size()-1);
+                        if (current.size() >= Backend.getOptions().fallbackLinePacketSize.getValue()) {
+                            current = new ArrayList<>();
+                            splitPackets.add(current);
+                        }
+                        current.add(line);
+                    }
+                    for (List<IndexedLine> splitPacket : splitPackets) {
+                        if (!process.running) return;
+                        String splitLinesString = this.buildLinesString(splitPacket, process);
+                        boolean failed = false;
+                        boolean packContainsUntranslatedLines = false;
+                        try {
+                            this.translatePacket(splitPacket, splitLinesString, failedTries, false, true, process);
+                        } catch (Exception ex) {
+                            LOGGER.warn("Fallback Logic: Main translator failed to translate split-packet! Trying fallback translator now..");
+                            failed = true;
+                        }
+                        if (!process.running) return;
+                        if (!failed) {
+                            packContainsUntranslatedLines = this.containsUntranslatedLines(splitPacket, process);
+                            if (packContainsUntranslatedLines) {
+                                LOGGER.warn("Fallback Logic: Main translator failed to translate split-packet! Trying fallback translator now..");
+                            }
+                        }
+                        if (failed || packContainsUntranslatedLines) {
+                            this.translatePacket(splitPacket, splitLinesString, failedTries, fallback, false, process);
+                        }
+                    }
+                }
+                return;
             }
         }
 
         if (translated == null) return;
         String[] translatedLines = translated.split("\n");
 
-        if (threadFeedback.stopped) return;
         if (!process.running) return;
 
         if (translatedLines.length == packet.size()) {
             int translatedIndex = 0;
             for (String line : translatedLines) {
-                if (threadFeedback.stopped) return;
                 if (!process.running) return;
                 AbstractTranslatableSubtitleLine line2 = packet.get(translatedIndex).line;
                 line2.setTranslatedText(line);
@@ -202,11 +171,10 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
         } else {
             failedTries++;
             if (!process.running) return;
-            if (threadFeedback.stopped) return;
             if (failedTries <= Backend.getOptions().triesBeforeErrorInvalidLineCount.getValue()) {
                 LOGGER.warn("TranslationEngine returned invalid amount of translated lines! Trying again..");
                 ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
-                this.translatePacket(packet, linesString, failedTries, fallback, threadFeedback, process);
+                this.translatePacket(packet, linesString, failedTries, fallback, forceMain, process);
                 return;
             }
             throw new IllegalStateException("TranslationEngine returned invalid amount of lines!");
@@ -214,15 +182,36 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
 
     }
 
-    protected record IndexedLine(@NotNull AbstractTranslatableSubtitleLine line, int index) {
+    protected void markProblematicLines(@NotNull List<IndexedLine> packet, @NotNull TranslationProcess process) {
+
+
+
     }
 
-    protected static class TranslationThreadFeedback {
+    protected boolean containsUntranslatedLines(@NotNull List<IndexedLine> packet, @NotNull TranslationProcess process) {
+        for (IndexedLine line : packet) {
+            if (!process.running) return false;
+            if (line.line.getTranslatedText() == null) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        protected volatile boolean stopped = false;
-        protected volatile boolean completed = false;
-        protected volatile Exception exception = null;
+    @NotNull
+    protected String buildLinesString(@NotNull List<IndexedLine> packet, @NotNull TranslationProcess process) {
+        StringBuilder linesString = new StringBuilder();
+        boolean firstLine = true;
+        for (IndexedLine line : packet) {
+            if (!process.running) return "";
+            if (!firstLine) linesString.append("\n");
+            linesString.append(line.line.getTextWithoutFormattingCodes());
+            firstLine = false;
+        }
+        return linesString.toString();
+    }
 
+    protected record IndexedLine(@NotNull AbstractTranslatableSubtitleLine line, int index) {
     }
 
 }

@@ -3,7 +3,6 @@ package de.keksuccino.linguji.linguji.backend.util.logger;
 import de.keksuccino.linguji.linguji.backend.util.DateUtils;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 
 public class SimpleLogger {
@@ -24,11 +23,7 @@ public class SimpleLogger {
 
     public void info(@NotNull String message, @NotNull Throwable throwable) {
         this.logger.info(message, throwable);
-        StringBuilder finalMsg = new StringBuilder(message);
-        for (StackTraceElement e : throwable.getStackTrace()) {
-            finalMsg.append("\n").append(e.toString());
-        }
-        LogHandler.onMessage(this.formatMessage(finalMsg.toString(), "INFO"));
+        LogHandler.onMessage(this.formatMessage(this.appendThrowable(message, throwable), "INFO"));
     }
 
     public void warn(@NotNull String message) {
@@ -38,11 +33,7 @@ public class SimpleLogger {
 
     public void warn(@NotNull String message, @NotNull Throwable throwable) {
         this.logger.warn(message, throwable);
-        StringBuilder finalMsg = new StringBuilder(message);
-        for (StackTraceElement e : throwable.getStackTrace()) {
-            finalMsg.append("\n").append(e.toString());
-        }
-        LogHandler.onMessage(this.formatMessage(finalMsg.toString(), "WARN"));
+        LogHandler.onMessage(this.formatMessage(this.appendThrowable(message, throwable), "WARN"));
     }
 
     public void error(@NotNull String message) {
@@ -52,12 +43,17 @@ public class SimpleLogger {
 
     public void error(@NotNull String message, @NotNull Throwable throwable) {
         this.logger.error(message, throwable);
+        LogHandler.onMessage(this.formatMessage(this.appendThrowable(message, throwable), "ERROR"));
+    }
+
+    @NotNull
+    protected String appendThrowable(@NotNull String message, @NotNull Throwable throwable) {
         StringBuilder finalMsg = new StringBuilder(message);
         finalMsg.append("\n").append(throwable.toString());
         for (StackTraceElement traceElement : throwable.getStackTrace()) {
             finalMsg.append("\n").append("\tat ").append(traceElement.toString());
         }
-        LogHandler.onMessage(this.formatMessage(finalMsg.toString(), "ERROR"));
+        return finalMsg.toString();
     }
 
     @NotNull

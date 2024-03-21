@@ -22,6 +22,7 @@ public class Options extends AbstractOptions {
     public final Option<String> sourceLanguageLocale = new Option<>(config, "source_language_locale", "english", "general");
     public final Option<String> targetLanguageLocale = new Option<>(config, "target_language_locale", "german", "general");
     public final Option<Boolean> useFallbackTranslator = new Option<>(config, "use_fallback_translator", true, "general");
+    public final Option<Integer> fallbackLinePacketSize = new Option<>(config, "fallback_line_packet_size", 2, "general");
 
     public final Option<String> geminiApiKey = new Option<>(config, "gemini_api_key", "", "gemini");
     public final Option<String> geminiHarmCategoryHarassmentSetting = new Option<>(config, "gemini_harm_category_harassment_setting", "BLOCK_ONLY_HIGH", "gemini");
