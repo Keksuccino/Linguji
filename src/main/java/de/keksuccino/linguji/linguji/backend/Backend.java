@@ -19,11 +19,19 @@ import java.util.Objects;
 
 public class Backend {
 
-    //TODO wenn fallback, dann line packets in SubtitleTranslator kleiner machen
-    // - Max 2 Zeilen pro packet
-    // - Line packet wird translatePacket() mitgegeben, also einfach in sub-packs splitten
-
     //TODO In GUI fixen: Gemini Fallback toggle zu allgemeinem "Use Fallback" toggle ändern
+
+    //TODO add timeout handling for LibreTranslate
+
+    //TODO MyMemory als fallback translator adden
+
+    //TODO Setting, um fallback translator zu wählen (Libre, MyMemory)
+
+    //TODO Eventuell "Primär" und "Sekundär" Translator adden (erst wird mit primär, dann mit sekundär und DANN mit fallback übersetzt)
+
+    //TODO Wenn möglich, irgendwann support für Nous-Hermes-2-Mixtral GenAI model adden (self-hosted)
+
+    //TODO Wenn möglich, irgendwann support für Llama-2 GenAI model adden (self-hosted)
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
     public static final String VERSION = "1.0.1";
