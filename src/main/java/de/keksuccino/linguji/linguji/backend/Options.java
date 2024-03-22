@@ -1,5 +1,7 @@
 package de.keksuccino.linguji.linguji.backend;
 
+import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehaviour;
+import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
 import de.keksuccino.linguji.linguji.backend.util.config.Config;
 import de.keksuccino.linguji.linguji.backend.util.options.AbstractOptions;
 
@@ -21,7 +23,9 @@ public class Options extends AbstractOptions {
     public final Option<String> outputFileSuffix = new Option<>(config, "output_file_suffix", "", "general");
     public final Option<String> sourceLanguageLocale = new Option<>(config, "source_language_locale", "english", "general");
     public final Option<String> targetLanguageLocale = new Option<>(config, "target_language_locale", "german", "general");
-    public final Option<Boolean> useFallbackTranslator = new Option<>(config, "use_fallback_translator", true, "general");
+    public final Option<String> primaryTranslationEngine = new Option<>(config, "primary_translation_engine", TranslationEngines.GEMINI_PRO.getName(), "general");
+    public final Option<String> fallbackTranslationEngine = new Option<>(config, "fallback_translation_engine", TranslationEngines.DEEPLX.getName(), "general");
+    public final Option<String> fallbackTranslatorBehaviour = new Option<>(config, "fallback_translator_behaviour", FallbackTranslatorBehaviour.TRANSLATE_FULL_PACKET.getName(), "general");
 
     public final Option<String> geminiApiKey = new Option<>(config, "gemini_api_key", "", "gemini");
     public final Option<String> geminiHarmCategoryHarassmentSetting = new Option<>(config, "gemini_harm_category_harassment_setting", "BLOCK_ONLY_HIGH", "gemini");
@@ -46,6 +50,10 @@ public class Options extends AbstractOptions {
 
     public final Option<String> libreTranslateUrl = new Option<>(config, "libre_translate_url", "https://trans.zillyhuhn.com/translate", "libre_translate");
     public final Option<String> libreTranslateApiKey = new Option<>(config, "libre_translate_api_key", "", "libre_translate");
+
+    public final Option<String> deepLApiKey = new Option<>(config, "deepl_api_key", "", "deepl");
+
+    public final Option<String> deepLXUrl = new Option<>(config, "deeplx_url", "http://localhost:1188/translate", "deeplx");
 
     public Options() {
         this.config.syncConfig();

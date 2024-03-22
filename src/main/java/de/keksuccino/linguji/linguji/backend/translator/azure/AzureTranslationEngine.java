@@ -18,23 +18,13 @@ public class AzureTranslationEngine extends AbstractTranslationEngine {
     public final String clientTraceId;
 
     public AzureTranslationEngine(@NotNull String clientTraceId, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
-        super(sourceLanguage, targetLanguage);
+        super(null, sourceLanguage, targetLanguage);
         this.clientTraceId = Objects.requireNonNull(clientTraceId);
     }
 
     @Override
     public @Nullable String translate(@NotNull String text, @NotNull TranslationProcess process) throws Exception {
         return null;
-    }
-
-    @Override
-    public @NotNull String getEngineName() {
-        return "Azure Text Translation";
-    }
-
-    @Override
-    public int getMaxCharacterLength() {
-        return 0;
     }
 
     @Override

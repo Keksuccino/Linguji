@@ -2,6 +2,9 @@ package de.keksuccino.linguji.linguji.frontend;
 
 import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
+import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehaviour;
+import de.keksuccino.linguji.linguji.backend.translator.TranslationEngineBuilder;
+import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.safety.GeminiSafetySetting;
 import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
@@ -93,7 +96,11 @@ public class MainViewController {
     @FXML
     private Button openConsoleWindowButton;
     @FXML
-    private CheckBox geminiUseFallbackAfterHardBlockCheckBox;
+    private ComboBox<FallbackTranslatorBehaviour> fallbackTranslatorBehaviourComboBox;
+    @FXML
+    private ComboBox<TranslationEngineBuilder<?>> primaryTranslationEngineComboBox;
+    @FXML
+    private ComboBox<TranslationEngineBuilder<?>> fallbackTranslationEngineComboBox;
 
     @Nullable
     private TranslationProcess translationProcess = null;
@@ -126,7 +133,9 @@ public class MainViewController {
         this.setupIntegerConfigOption(this.triesPerGeminiThresholdOverrideSoftBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockTriesPerLevel, 1, 10000);
         this.setupIntegerConfigOption(this.triesPerGeminiThresholdOverrideHardBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdHardBlockTriesPerLevel, 1, 10000);
         this.setupBooleanConfigOption(this.geminiThresholdOverrideSkipLowLevelsCheckBox, Backend.getOptions().geminiOverrideSafetyThresholdSkipLowLevels);
-        this.setupBooleanConfigOption(this.geminiUseFallbackAfterHardBlockCheckBox, Backend.getOptions().useFallbackTranslator);
+        this.setupTranslationEngineBuilderConfigOption(this.primaryTranslationEngineComboBox, Backend.getOptions().primaryTranslationEngine);
+        this.setupTranslationEngineBuilderConfigOption(this.fallbackTranslationEngineComboBox, Backend.getOptions().fallbackTranslationEngine);
+        this.setupFallbackTranslationBehaviourConfigOption(this.fallbackTranslatorBehaviourComboBox, Backend.getOptions().fallbackTranslatorBehaviour);
 
         this.updateStartTranslationButtonState();
 
@@ -360,6 +369,38 @@ public class MainViewController {
         comboBox.getItems().addAll(Locale.getOrderedAlphabeticallyByDisplayName());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.getName()));
         comboBox.setValue(Locale.getByName(option.getValue()));
+    }
+
+    protected void setupTranslationEngineBuilderConfigOption(@NotNull ComboBox<TranslationEngineBuilder<?>> comboBox, @NotNull AbstractOptions.Option<String> option) {
+        comboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(TranslationEngineBuilder<?> object) {
+                return object.getDisplayName();
+            }
+            @Override
+            public TranslationEngineBuilder<?> fromString(String string) {
+                return TranslationEngines.getByDisplayName(string);
+            }
+        });
+        comboBox.getItems().addAll(TranslationEngines.getBuilders());
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.getName()));
+        comboBox.setValue(TranslationEngines.getByName(option.getValue()));
+    }
+
+    protected void setupFallbackTranslationBehaviourConfigOption(@NotNull ComboBox<FallbackTranslatorBehaviour> comboBox, @NotNull AbstractOptions.Option<String> option) {
+        comboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(FallbackTranslatorBehaviour object) {
+                return object.getDisplayName();
+            }
+            @Override
+            public FallbackTranslatorBehaviour fromString(String string) {
+                return FallbackTranslatorBehaviour.getByDisplayName(string);
+            }
+        });
+        comboBox.getItems().addAll(FallbackTranslatorBehaviour.values());
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.getName()));
+        comboBox.setValue(FallbackTranslatorBehaviour.getByName(option.getValue()));
     }
 
     protected static ArrayList<Node> getAllNodes(Parent root) {

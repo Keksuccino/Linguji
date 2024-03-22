@@ -5,7 +5,8 @@ import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AbstractSubtitle
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AssSubtitle;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.SubtitleTranslator;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
-import de.keksuccino.linguji.linguji.backend.translator.gemini.GeminiTranslationEngine;
+import de.keksuccino.linguji.linguji.backend.translator.SharedTranslatorOptions;
+import de.keksuccino.linguji.linguji.backend.translator.TranslationEngineBuilder;
 import de.keksuccino.linguji.linguji.backend.util.FileUtils;
 import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
@@ -19,22 +20,16 @@ import java.util.Objects;
 
 public class Backend {
 
-    //TODO In GUI fixen: Gemini Fallback toggle zu allgemeinem "Use Fallback" toggle ändern
-
     //TODO add timeout handling for LibreTranslate
 
-    //TODO MyMemory als fallback translator adden
-
-    //TODO Setting, um fallback translator zu wählen (Libre, MyMemory)
-
-    //TODO Eventuell "Primär" und "Sekundär" Translator adden (erst wird mit primär, dann mit sekundär und DANN mit fallback übersetzt)
+    //TODO MyMemory als translator adden
 
     //TODO Wenn möglich, irgendwann support für Nous-Hermes-2-Mixtral GenAI model adden (self-hosted)
 
     //TODO Wenn möglich, irgendwann support für Llama-2 GenAI model adden (self-hosted)
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
-    public static final String VERSION = "1.0.1";
+    public static final String VERSION = "1.1.0";
 
     private static Options options;
 
@@ -65,8 +60,9 @@ public class Backend {
                 Locale targetLang = Locale.getByName(Backend.getOptions().targetLanguageLocale.getValue());
                 if ((sourceLang == null) || (targetLang == null)) throw new IllegalArgumentException("Source or target language invalid! Needs to be a valid language!");
 
-                GeminiTranslationEngine geminiTranslationEngine = new GeminiTranslationEngine(Backend.getOptions().geminiApiKey.getValue(), Backend.getOptions().aiPrompt.getValue(), sourceLang, targetLang);
-                SubtitleTranslator<AssSubtitle> geminiAssSubtitleTranslator = new SubtitleTranslator<>(geminiTranslationEngine);
+                TranslationEngineBuilder<?> primaryBuilder = Objects.requireNonNull(SharedTranslatorOptions.getPrimaryTranslationEngine());
+                TranslationEngineBuilder<?> fallbackBuilder = Objects.requireNonNull(SharedTranslatorOptions.getFallbackTranslationEngine());
+                SubtitleTranslator<AssSubtitle> geminiAssSubtitleTranslator = new SubtitleTranslator<>(Objects.requireNonNull(primaryBuilder.createInstance()), Objects.requireNonNull(fallbackBuilder.createInstance()));
 
                 String inDirString = Backend.getOptions().inputDirectory.getValue();
                 String outDirString = Backend.getOptions().outputDirectory.getValue();
@@ -106,7 +102,7 @@ public class Backend {
                             String outFileSuffix = Backend.getOptions().outputFileSuffix.getValue();
                             File translateOutFile = new File(outDir, fileName + outFileSuffix + "." + fileExtension);
                             FileUtils.writeTextToFile(translateOutFile, subtitle.serialize());
-                            LOGGER.info("Translation of file successfully finished and saved to: " + translateOutFile.getAbsolutePath());
+                            LOGGER.info("Translation of subtitle file successfully finished and saved to: " + translateOutFile.getAbsolutePath());
                         }
                     } catch (Exception ex) {
                         subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED_WITH_EXCEPTIONS;

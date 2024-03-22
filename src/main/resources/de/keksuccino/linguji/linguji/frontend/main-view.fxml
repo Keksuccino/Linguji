@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" minHeight="826.0" minWidth="830.0" prefHeight="826.0" prefWidth="830.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.keksuccino.linguji.linguji.frontend.MainViewController">
+<VBox alignment="CENTER" minHeight="860.0" minWidth="830.0" prefHeight="860.0" prefWidth="830.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.keksuccino.linguji.linguji.frontend.MainViewController">
    <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -49,20 +49,20 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="The directory where all translated subtitle files get saved to." />
             </tooltip></Label>
-         <Label layoutX="14.0" layoutY="166.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="198.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The source language of your original subtitle files." />
             </tooltip></Label>
          <Separator layoutX="82.0" layoutY="106.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="14.0" />
-         <Label layoutX="400.0" layoutY="167.0" prefHeight="17.0" prefWidth="219.0" text="Target Language" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="199.0" prefHeight="17.0" prefWidth="219.0" text="Target Language" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The target language your subtitle files should get translated to." />
             </tooltip></Label>
-         <Label layoutX="14.0" layoutY="334.0" prefHeight="17.0" prefWidth="97.0" text="API Key" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="366.0" prefHeight="17.0" prefWidth="97.0" text="API Key" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
             </tooltip></Label>
-         <TextField fx:id="geminiApiKeyTextField" layoutX="238.0" layoutY="331.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="238.0" AnchorPane.rightAnchor="14.0">
+         <TextField fx:id="geminiApiKeyTextField" layoutX="238.0" layoutY="363.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="238.0" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
             </tooltip></TextField>
@@ -76,36 +76,36 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="The prompt used for the AI to translate subtitles." />
             </tooltip></TextField>
-         <Label layoutX="14.0" layoutY="199.0" prefHeight="17.0" prefWidth="219.0" text="Lines Per Packet" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="231.0" prefHeight="17.0" prefWidth="219.0" text="Lines Per Packet" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The subtitle lines that should get send to the AI with each request. Don't make this number too big or the AI will probably fail to translate the text." wrapText="true" />
             </tooltip></Label>
-         <Spinner fx:id="linesPerPacketSpinner" editable="true" layoutX="238.0" layoutY="195.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <Spinner fx:id="linesPerPacketSpinner" editable="true" layoutX="238.0" layoutY="227.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The subtitle lines that should get send to the AI with each request. Don't make this number too big or the AI will probably fail to translate the text." wrapText="true" />
             </tooltip></Spinner>
-         <Spinner fx:id="waitAfterErrorSpinner" editable="true" layoutX="636.6666666666666" layoutY="195.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <Spinner fx:id="waitAfterErrorSpinner" editable="true" layoutX="636.6666666666666" layoutY="227.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How long the tool should wait after an error happend. Making this number too small could result in the AI API blocking you for request spam." wrapText="true" />
             </tooltip></Spinner>
-         <Label layoutX="400.0" layoutY="199.0" prefHeight="17.0" prefWidth="219.0" text="Wait After Error (Milliseconds)" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="231.0" prefHeight="17.0" prefWidth="219.0" text="Wait After Error (Milliseconds)" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How long the tool should wait after an error happend. Making this number too small could result in the AI API blocking you for request spam." wrapText="true" />
             </tooltip></Label>
-         <Label layoutX="14.0" layoutY="231.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Invalid Line Count)" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="263.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Invalid Line Count)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the AI returned an invalid amount of translated lines." />
             </tooltip></Label>
-         <Spinner fx:id="triesBeforeStopInvalidLineCountSpinner" editable="true" layoutX="238.0" layoutY="227.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <Spinner fx:id="triesBeforeStopInvalidLineCountSpinner" editable="true" layoutX="238.0" layoutY="259.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the AI returned an invalid amount of translated lines." />
             </tooltip></Spinner>
-         <Separator layoutX="82.0" layoutY="307.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="14.0" />
-         <Label layoutX="14.0" layoutY="367.0" prefHeight="17.0" prefWidth="249.0" text="Tries Before Stop (Soft-Block)" AnchorPane.leftAnchor="14.0">
+         <Separator layoutX="82.0" layoutY="339.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="14.0" />
+         <Label layoutX="14.0" layoutY="399.0" prefHeight="17.0" prefWidth="249.0" text="Tries Before Stop (Soft-Block)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after Gemini soft-blocked the request for safety reasons." />
             </tooltip></Label>
-         <Spinner fx:id="triesBeforeStopGeminiSoftBlockSpinner" editable="true" layoutX="238.0" layoutY="363.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <Spinner fx:id="triesBeforeStopGeminiSoftBlockSpinner" editable="true" layoutX="238.0" layoutY="395.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after Gemini soft-blocked the request for safety reasons." />
             </tooltip></Spinner>
@@ -114,123 +114,123 @@
                <Font size="17.0" />
             </font>
          </Label>
-         <Label layoutX="14.0" layoutY="294.0" prefHeight="17.0" prefWidth="61.0" text="Gemini">
+         <Label layoutX="14.0" layoutY="326.0" prefHeight="17.0" prefWidth="61.0" text="Gemini">
             <font>
                <Font size="17.0" />
             </font>
          </Label>
-         <Spinner fx:id="triesBeforeStopGeminiHardBlockSpinner" editable="true" layoutX="624.0" layoutY="363.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <Spinner fx:id="triesBeforeStopGeminiHardBlockSpinner" editable="true" layoutX="636.6666666666666" layoutY="395.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after Gemini hard-blocked the request for safety reasons." />
             </tooltip></Spinner>
-         <Label layoutX="400.0" layoutY="367.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Hard-Block)" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="399.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Hard-Block)" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after Gemini hard-blocked the request for safety reasons." />
             </tooltip></Label>
-         <Spinner fx:id="triesBeforeStopTimeoutSpinner" editable="true" layoutX="636.6666666666666" layoutY="227.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <Spinner fx:id="triesBeforeStopTimeoutSpinner" editable="true" layoutX="636.6666666666666" layoutY="259.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the request timed out." />
             </tooltip></Spinner>
-         <Label layoutX="400.0" layoutY="231.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Timeout)" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="263.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Timeout)" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the request timed out." />
             </tooltip></Label>
-         <Label layoutX="14.0" layoutY="263.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Generic Error)" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="295.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Generic Error)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after a generic error happened." />
             </tooltip></Label>
-         <Spinner fx:id="triesBeforeStopGenericErrorSpinner" editable="true" layoutX="238.0" layoutY="259.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <Spinner fx:id="triesBeforeStopGenericErrorSpinner" editable="true" layoutX="238.0" layoutY="291.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after a generic error happened." />
             </tooltip></Spinner>
-         <Label layoutX="14.0" layoutY="473.0" prefHeight="17.0" prefWidth="219.0" text="Override Safety Threshold (Soft-Block)" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="505.0" prefHeight="17.0" prefWidth="219.0" text="Override Safety Threshold (Soft-Block)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="If the tool should override the safety threshold after the request got soft-blocked for safety reasons." />
             </tooltip></Label>
-         <CheckBox fx:id="overrideGeminiSafetyThresholdSoftBlock" layoutX="238.0" layoutY="469.0" mnemonicParsing="false" AnchorPane.leftAnchor="238.0">
+         <CheckBox fx:id="overrideGeminiSafetyThresholdSoftBlock" layoutX="238.0" layoutY="501.0" mnemonicParsing="false" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="If the tool should override the safety threshold after the request got soft-blocked for safety reasons." />
             </tooltip></CheckBox>
-         <Label layoutX="400.0" layoutY="473.0" prefHeight="17.0" prefWidth="219.0" text="Override After Tries" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="505.0" prefHeight="17.0" prefWidth="219.0" text="Override After Tries" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="After how many tries the tool should override the safety threshold after the request got soft-blocked for safety reasons." />
             </tooltip></Label>
-         <Separator layoutX="14.0" layoutY="460.0" prefHeight="3.0" prefWidth="749.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-         <Spinner fx:id="triesBeforeOverrideGeminiThresholdSoftBlockSpinner" editable="true" layoutX="624.0" layoutY="469.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <Separator layoutX="14.0" layoutY="492.0" prefHeight="3.0" prefWidth="749.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+         <Spinner fx:id="triesBeforeOverrideGeminiThresholdSoftBlockSpinner" editable="true" layoutX="636.6666666666666" layoutY="501.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="After how many tries the tool should override the safety threshold after the request got soft-blocked for safety reasons." />
             </tooltip></Spinner>
-         <Separator layoutX="14.0" layoutY="502.0" prefHeight="3.0" prefWidth="749.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-         <Label layoutX="14.0" layoutY="514.0" prefHeight="17.0" prefWidth="219.0" text="Override Safety Threshold (Hard-Block)" AnchorPane.leftAnchor="14.0">
+         <Separator layoutX="14.0" layoutY="534.0" prefHeight="3.0" prefWidth="749.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+         <Label layoutX="14.0" layoutY="546.0" prefHeight="17.0" prefWidth="219.0" text="Override Safety Threshold (Hard-Block)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="If the tool should override the safety threshold after the request got hard-blocked for safety reasons." />
             </tooltip></Label>
-         <CheckBox fx:id="overrideGeminiSafetyThresholdHardBlock" layoutX="238.0" layoutY="510.0" mnemonicParsing="false" AnchorPane.leftAnchor="238.0">
+         <CheckBox fx:id="overrideGeminiSafetyThresholdHardBlock" layoutX="238.0" layoutY="542.0" mnemonicParsing="false" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="If the tool should override the safety threshold after the request got hard-blocked for safety reasons." />
             </tooltip></CheckBox>
-         <Label layoutX="400.0" layoutY="514.0" prefHeight="17.0" prefWidth="219.0" text="Override After Tries" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="546.0" prefHeight="17.0" prefWidth="219.0" text="Override After Tries" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="After how many tries the tool should override the safety threshold after the request got hard-blocked for safety reasons." />
             </tooltip></Label>
-         <Spinner fx:id="triesBeforeOverrideGeminiThresholdHardBlockSpinner" editable="true" layoutX="624.0" layoutY="510.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <Spinner fx:id="triesBeforeOverrideGeminiThresholdHardBlockSpinner" editable="true" layoutX="636.6666666666666" layoutY="542.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="After how many tries the tool should override the safety threshold after the request got hard-blocked for safety reasons." />
             </tooltip></Spinner>
-         <Separator layoutX="14.0" layoutY="543.0" prefHeight="3.0" prefWidth="749.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-         <Label layoutX="14.0" layoutY="399.0" prefHeight="17.0" prefWidth="219.0" text="Safety Threshold (Harassment)" AnchorPane.leftAnchor="14.0">
+         <Separator layoutX="14.0" layoutY="575.0" prefHeight="3.0" prefWidth="749.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+         <Label layoutX="14.0" layoutY="431.0" prefHeight="17.0" prefWidth="219.0" text="Safety Threshold (Harassment)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The safety threshold for the Harassment category." />
             </tooltip></Label>
-         <ComboBox fx:id="geminiHarassmentSettingComboBox" layoutX="238.0" layoutY="395.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <ComboBox fx:id="geminiHarassmentSettingComboBox" layoutX="238.0" layoutY="427.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The safety threshold for the Harassment category." />
             </tooltip></ComboBox>
-         <Label layoutX="400.0" layoutY="399.0" prefHeight="17.0" prefWidth="219.0" text="Safety Threshold (Hate Speech)" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="431.0" prefHeight="17.0" prefWidth="219.0" text="Safety Threshold (Hate Speech)" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The safety threshold for the Hate Speech category." />
             </tooltip></Label>
-         <ComboBox fx:id="geminiHateSpeechSettingComboBox" layoutX="624.0" layoutY="395.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <ComboBox fx:id="geminiHateSpeechSettingComboBox" layoutX="636.6666666666666" layoutY="427.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The safety threshold for the Hate Speech category." />
             </tooltip></ComboBox>
-         <Label layoutX="14.0" layoutY="431.0" prefHeight="17.0" prefWidth="219.0" text="Safety Threshold (Sexually Explicit)" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="463.0" prefHeight="17.0" prefWidth="219.0" text="Safety Threshold (Sexually Explicit)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The safety threshold for the Sexually Explicit category." />
             </tooltip></Label>
-         <ComboBox fx:id="geminiSexuallyExplicitSettingComboBox" layoutX="238.0" layoutY="427.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <ComboBox fx:id="geminiSexuallyExplicitSettingComboBox" layoutX="238.0" layoutY="459.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The safety threshold for the Sexually Explicit category." />
             </tooltip></ComboBox>
-         <Label layoutX="400.0" layoutY="431.0" prefHeight="17.0" prefWidth="219.0" text="Safety Threshold (Dangerous Content)" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="463.0" prefHeight="17.0" prefWidth="219.0" text="Safety Threshold (Dangerous Content)" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The safety threshold for the Dangerous Content category." />
             </tooltip></Label>
-         <ComboBox fx:id="geminiDangerousContentSettingComboBox" layoutX="624.0" layoutY="427.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <ComboBox fx:id="geminiDangerousContentSettingComboBox" layoutX="636.6666666666666" layoutY="459.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The safety threshold for the Dangerous Content category." />
             </tooltip></ComboBox>
-         <Label layoutX="14.0" layoutY="556.0" prefHeight="17.0" prefWidth="249.0" text="Tries Per Threshold Override (Soft-Block)" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="588.0" prefHeight="17.0" prefWidth="249.0" text="Tries Per Threshold Override (Soft-Block)" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the request with an overridden safety threshold after the request got soft-blocked for safety reasons. After that it will try with the normal threshold again." />
             </tooltip></Label>
-         <Spinner fx:id="triesPerGeminiThresholdOverrideSoftBlockSpinner" editable="true" layoutX="238.0" layoutY="552.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
+         <Spinner fx:id="triesPerGeminiThresholdOverrideSoftBlockSpinner" editable="true" layoutX="238.0" layoutY="584.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the request with an overridden safety threshold after the request got soft-blocked for safety reasons. After that it will try with the normal threshold again." />
             </tooltip></Spinner>
-         <Spinner fx:id="triesPerGeminiThresholdOverrideHardBlockSpinner" editable="true" layoutX="624.0" layoutY="552.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
+         <Spinner fx:id="triesPerGeminiThresholdOverrideHardBlockSpinner" editable="true" layoutX="636.6666666666666" layoutY="584.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the request with an overridden safety threshold after the request got hard-blocked for safety reasons. After that it will try with the normal threshold again." />
             </tooltip></Spinner>
-         <Label layoutX="400.0" layoutY="556.0" prefHeight="17.0" prefWidth="226.0" text="Tries Per Threshold Override (Hard-Block)" AnchorPane.leftAnchor="400.0">
+         <Label layoutX="400.0" layoutY="588.0" prefHeight="17.0" prefWidth="226.0" text="Tries Per Threshold Override (Hard-Block)" AnchorPane.leftAnchor="400.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the request with an overridden safety threshold after the request got hard-blocked for safety reasons. After that it will try with the normal threshold again." />
             </tooltip></Label>
-         <Label layoutX="14.0" layoutY="588.0" prefHeight="17.0" prefWidth="219.0" text="Skip Low Threshold Levels On Override" AnchorPane.leftAnchor="14.0">
+         <Label layoutX="14.0" layoutY="620.0" prefHeight="17.0" prefWidth="219.0" text="Skip Low Threshold Levels On Override" AnchorPane.leftAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="If the tool should directly jump to &quot;BLOCK_NONE&quot; when overriding the safety threshold after the request got soft-blocked or hard-blocked for safety reasons." />
             </tooltip></Label>
-         <CheckBox fx:id="geminiThresholdOverrideSkipLowLevelsCheckBox" layoutX="238.0" layoutY="584.0" mnemonicParsing="false" AnchorPane.leftAnchor="238.0">
+         <CheckBox fx:id="geminiThresholdOverrideSkipLowLevelsCheckBox" layoutX="238.0" layoutY="616.0" mnemonicParsing="false" AnchorPane.leftAnchor="238.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="If the tool should directly jump to &quot;BLOCK_NONE&quot; when overriding the safety threshold after the request got soft-blocked or hard-blocked for safety reasons." />
             </tooltip></CheckBox>
@@ -243,18 +243,22 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="The debug log gives information about requests to and answers from the AI and shows errors that happened during the translation process." />
             </tooltip></Button>
-         <CheckBox fx:id="geminiUseFallbackAfterHardBlockCheckBox" layoutX="636.3333333333334" layoutY="584.0" mnemonicParsing="false" AnchorPane.leftAnchor="636.3333333333334">
+         <ComboBox fx:id="sourceLangComboBox" layoutX="238.0" layoutY="194.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0" />
+         <ComboBox fx:id="targetLangComboBox" layoutX="636.6666666666666" layoutY="194.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0" />
+         <Label layoutX="14.0" layoutY="166.0" prefHeight="17.0" prefWidth="219.0" text="Primary Translator" AnchorPane.leftAnchor="14.0" />
+         <Label layoutX="400.0" layoutY="166.0" prefHeight="17.0" prefWidth="219.0" text="Fallback Translator" AnchorPane.leftAnchor="400.0" />
+         <ComboBox fx:id="primaryTranslationEngineComboBox" layoutX="238.0" layoutY="162.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0" />
+         <ComboBox fx:id="fallbackTranslationEngineComboBox" layoutX="636.0" layoutY="162.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6" AnchorPane.rightAnchor="14.0" />
+         <Label layoutX="401.0" layoutY="295.0" prefHeight="17.0" prefWidth="219.0" text="Fallback Translator Behaviour" AnchorPane.leftAnchor="400.0">
             <tooltip>
-               <Tooltip prefWidth="400.0" text="If LibreTranslate should get used as fallback after Gemini failed to translate a packet due to the request getting hard-blocked and overriding the threshold didn't fix it." />
-            </tooltip>
-         </CheckBox>
-         <Label layoutX="401.0" layoutY="588.0" prefHeight="17.0" prefWidth="226.0" text="Fallback After Hard-Block Override Failed" AnchorPane.leftAnchor="400.0">
-            <tooltip>
-               <Tooltip prefWidth="400.0" text="If LibreTranslate should get used as fallback after Gemini failed to translate a packet due to the request getting hard-blocked and overriding the threshold didn't fix it." />
+               <Tooltip prefWidth="400.0" text="How/If the fallback translator should translate packets." />
             </tooltip>
          </Label>
-         <ComboBox fx:id="sourceLangComboBox" layoutX="238.0" layoutY="162.0" prefWidth="139.0" AnchorPane.leftAnchor="238.0" />
-         <ComboBox fx:id="targetLangComboBox" layoutX="637.0" layoutY="162.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6666666666666" AnchorPane.rightAnchor="14.0" />
+         <ComboBox fx:id="fallbackTranslatorBehaviourComboBox" layoutX="637.0" layoutY="291.0" prefWidth="139.0" AnchorPane.leftAnchor="636.6" AnchorPane.rightAnchor="14.000000000000028">
+            <tooltip>
+               <Tooltip prefWidth="400.0" text="How/If the fallback translator should translate packets." />
+            </tooltip>
+         </ComboBox>
       </children>
    </AnchorPane>
 </VBox>

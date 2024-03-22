@@ -6,6 +6,7 @@ import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Objects;
 
 public abstract class AbstractTranslationEngine {
 
@@ -18,22 +19,25 @@ public abstract class AbstractTranslationEngine {
     public static final String[] PROFANITY_FILTER = new String[] {};
 
     @NotNull
+    protected final TranslationEngineBuilder<?> builder;
+    @NotNull
     public Locale sourceLanguage;
     @NotNull
     public Locale targetLanguage;
 
-    public AbstractTranslationEngine(@NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
-        this.sourceLanguage = sourceLanguage;
-        this.targetLanguage = targetLanguage;
+    public AbstractTranslationEngine(@NotNull TranslationEngineBuilder<?> builder, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
+        this.builder = Objects.requireNonNull(builder);
+        this.sourceLanguage = Objects.requireNonNull(sourceLanguage);
+        this.targetLanguage = Objects.requireNonNull(targetLanguage);
+    }
+
+    @NotNull
+    public TranslationEngineBuilder<?> getBuilder() {
+        return this.builder;
     }
 
     @Nullable
     public abstract String translate(@NotNull String text, @NotNull TranslationProcess process) throws Exception;
-
-    @NotNull
-    public abstract String getEngineName();
-
-    public abstract int getMaxCharacterLength();
 
     @NotNull
     public abstract String getRawPrompt();

@@ -1,8 +1,11 @@
 package de.keksuccino.linguji.linguji.backend.translator.libretranslate;
 
 import com.google.gson.Gson;
+import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
+import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
+import de.keksuccino.linguji.linguji.backend.util.ThreadUtils;
 import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
 import de.keksuccino.linguji.linguji.backend.translator.libretranslate.response.LibreTranslateResponse;
 import de.keksuccino.linguji.linguji.backend.util.HttpRequest;
@@ -16,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
-// LibreTranslate Servers: https://github.com/LibreTranslate/LibreTranslate?tab=readme-ov-file#mirrors
+// Libre Translate Servers: https://github.com/LibreTranslate/LibreTranslate?tab=readme-ov-file#mirrors
 
 public class LibreTranslationEngine extends AbstractTranslationEngine {
 
@@ -28,13 +31,17 @@ public class LibreTranslationEngine extends AbstractTranslationEngine {
     public final String apiUrl;
 
     public LibreTranslationEngine(@NotNull String apiUrl, @Nullable String apiKey, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
-        super(sourceLanguage, targetLanguage);
+        super(TranslationEngines.LIBRE_TRANSLATE, sourceLanguage, targetLanguage);
         this.apiKey = apiKey;
         this.apiUrl = apiUrl;
     }
 
     @Override
     public @Nullable String translate(@NotNull String text, @NotNull TranslationProcess process) throws Exception {
+        return this._translate(text, 0, process);
+    }
+
+    protected @Nullable String _translate(@NotNull String text, int timeoutTries, @NotNull TranslationProcess process) throws Exception {
 
         if (!process.running) return null;
 
@@ -55,30 +62,33 @@ public class LibreTranslationEngine extends AbstractTranslationEngine {
 
         String json = Objects.requireNonNull(gson.toJson(request));
 
-        LOGGER.info("--> Sending to LibreTranslate: " + json);
+        LOGGER.info("--> Sending to Libre Translate: " + json);
 
         entityBuilder.setText(json);
 
         if (!process.running) return null;
 
-        String responseString = Objects.requireNonNull(JsonUtils.getJsonFromPOST(httpRequest, entityBuilder.build()));
+        String responseString;
 
-        LOGGER.info("<-- Response from LibreTranslate: " + responseString);
+        try {
+            responseString = Objects.requireNonNull(JsonUtils.getJsonFromPOST(httpRequest, entityBuilder.build()));
+        } catch (Exception ex) {
+            timeoutTries++;
+            if (timeoutTries < Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
+                LOGGER.warn("Libre Translate translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
+                ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
+                if (!process.running) return null;
+                return this._translate(text, timeoutTries, process);
+            }
+            throw ex;
+        }
+
+        LOGGER.info("<-- Response from Libre Translate: " + responseString);
 
         LibreTranslateResponse response = Objects.requireNonNull(gson.fromJson(responseString, LibreTranslateResponse.class));
 
         return response.translatedText;
 
-    }
-
-    @Override
-    public @NotNull String getEngineName() {
-        return "Libre Translate";
-    }
-
-    @Override
-    public int getMaxCharacterLength() {
-        return 10000000;
     }
 
     @Override

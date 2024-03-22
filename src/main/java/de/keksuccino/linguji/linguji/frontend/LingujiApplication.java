@@ -35,13 +35,13 @@ public class LingujiApplication extends javafx.application.Application {
         LingujiApplication.stage = stage;
 
         stage.setMinWidth(830);
-        stage.setMinHeight(830);
+        stage.setMinHeight(870);
 
         FXMLLoader fxmlLoader = new FXMLLoader(LingujiApplication.class.getResource("main-view.fxml"));
         Parent parent = fxmlLoader.load();
         MainViewController controller = fxmlLoader.getController();
         controller.finishInitialization(stage, parent);
-        Scene scene = new Scene(parent, 830, 826);
+        Scene scene = new Scene(parent, 830, 860);
 
         stage.setTitle("Linguji v" + Backend.VERSION);
         stage.setScene(scene);

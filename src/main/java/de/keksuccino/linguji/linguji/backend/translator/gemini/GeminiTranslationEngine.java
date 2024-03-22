@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
+import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
 import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions.GeminiException;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions.GeminiRequestHardBlockedException;
@@ -40,7 +41,7 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
     }
 
     public GeminiTranslationEngine(@NotNull String apiKey, @NotNull String prompt, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
-        super(sourceLanguage, targetLanguage);
+        super(TranslationEngines.GEMINI_PRO, sourceLanguage, targetLanguage);
         this.apiKey = Objects.requireNonNull(apiKey);
         this.prompt = Objects.requireNonNull(prompt);
     }
@@ -183,16 +184,6 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
             }
         }
 
-    }
-
-    @Override
-    public @NotNull String getEngineName() {
-        return "Gemini Pro";
-    }
-
-    @Override
-    public int getMaxCharacterLength() {
-        return 1500;
     }
 
     @Override
