@@ -20,7 +20,9 @@ import java.util.Objects;
 
 public class Backend {
 
-    //TODO add timeout handling for LibreTranslate
+    //TODO wenn "invalid lines", checken ob leere Zeilen enthalten sind (sollte niemals der Fall sein) und rausfiltern, dann nochmal checken
+
+    //TODO eigenen timeout thread oder nochmal schauen, wie in HtmlClient timeout richtig angepasst wird
 
     //TODO MyMemory als translator adden
 
