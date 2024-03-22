@@ -101,6 +101,14 @@ public class MainViewController {
     private ComboBox<TranslationEngineBuilder<?>> primaryTranslationEngineComboBox;
     @FXML
     private ComboBox<TranslationEngineBuilder<?>> fallbackTranslationEngineComboBox;
+    @FXML
+    private TextField deeplApiKeyTextField;
+    @FXML
+    private TextField deeplxApiUrlTextField;
+    @FXML
+    private TextField libreApiUrlTextField;
+    @FXML
+    private TextField libreApiKeyTextField;
 
     @Nullable
     private TranslationProcess translationProcess = null;
@@ -136,6 +144,10 @@ public class MainViewController {
         this.setupTranslationEngineBuilderConfigOption(this.primaryTranslationEngineComboBox, Backend.getOptions().primaryTranslationEngine);
         this.setupTranslationEngineBuilderConfigOption(this.fallbackTranslationEngineComboBox, Backend.getOptions().fallbackTranslationEngine);
         this.setupFallbackTranslationBehaviourConfigOption(this.fallbackTranslatorBehaviourComboBox, Backend.getOptions().fallbackTranslatorBehaviour);
+        this.setupStringConfigOption(this.deeplApiKeyTextField, Backend.getOptions().deepLApiKey);
+        this.setupStringConfigOption(this.deeplxApiUrlTextField, Backend.getOptions().deepLXUrl);
+        this.setupStringConfigOption(this.libreApiUrlTextField, Backend.getOptions().libreTranslateUrl);
+        this.setupStringConfigOption(this.libreApiKeyTextField, Backend.getOptions().libreTranslateApiKey);
 
         this.updateStartTranslationButtonState();
 
@@ -310,6 +322,14 @@ public class MainViewController {
         this.promptTextField.setDisable(disabled);
         this.geminiApiKeyTextField.setDisable(disabled);
         this.linesPerPacketSpinner.setDisable(disabled);
+    }
+
+    protected void setupStringConfigOption(@NotNull TextField textField, @NotNull AbstractOptions.Option<String> option) {
+        textField.setText(option.getValue());
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) option.setValue(newValue);
+            this.updateStartTranslationButtonState();
+        });
     }
 
     protected void setupIntegerConfigOption(@NotNull Spinner<Integer> spinner, @NotNull AbstractOptions.Option<Integer> option, int minValue, int maxValue) {

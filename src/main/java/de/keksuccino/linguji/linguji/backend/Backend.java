@@ -62,7 +62,7 @@ public class Backend {
 
                 TranslationEngineBuilder<?> primaryBuilder = Objects.requireNonNull(SharedTranslatorOptions.getPrimaryTranslationEngine());
                 TranslationEngineBuilder<?> fallbackBuilder = Objects.requireNonNull(SharedTranslatorOptions.getFallbackTranslationEngine());
-                SubtitleTranslator<AssSubtitle> geminiAssSubtitleTranslator = new SubtitleTranslator<>(Objects.requireNonNull(primaryBuilder.createInstance()), Objects.requireNonNull(fallbackBuilder.createInstance()));
+                SubtitleTranslator<AssSubtitle> subtitleTranslator = new SubtitleTranslator<>(Objects.requireNonNull(primaryBuilder.createInstance()), Objects.requireNonNull(fallbackBuilder.createInstance()));
 
                 String inDirString = Backend.getOptions().inputDirectory.getValue();
                 String outDirString = Backend.getOptions().outputDirectory.getValue();
@@ -90,7 +90,7 @@ public class Backend {
                     try {
                         //Handle ASS subtitles
                         if (subtitle instanceof AssSubtitle assSubtitle) {
-                            geminiAssSubtitleTranslator.translate(assSubtitle, process);
+                            subtitleTranslator.translate(assSubtitle, process);
                             subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED;
                         }
                         if (!process.running) break;

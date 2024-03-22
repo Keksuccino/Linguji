@@ -34,7 +34,7 @@ public class SharedTranslatorOptions {
 
     @Nullable
     public static FallbackTranslatorBehaviour getFallbackTranslatorBehaviour() {
-        return FallbackTranslatorBehaviour.getByDisplayName(Backend.getOptions().fallbackTranslatorBehaviour.getValue());
+        return FallbackTranslatorBehaviour.getByName(Backend.getOptions().fallbackTranslatorBehaviour.getValue());
     }
 
 }

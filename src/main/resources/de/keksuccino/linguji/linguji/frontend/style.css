@@ -240,6 +240,26 @@
 }
 
 
+/* ScrollPane */
+.scroll-pane{
+    -fx-background-radius: 0;
+    -fx-background: transparent;
+    background: transparent;
+    -fx-background-color: transparent;
+    background-color: transparent;
+    -fx-border-color: #3E3E40;
+    border-color: #3E3E40;
+    -fx-border-width: 1;
+    border-width: 1;
+    -fx-padding: 1;
+    padding: 1;
+}
+.scroll-pane .horizontal,
+.scroll-pane .vertical {
+    -fx-background-insets: 0 -1 0 0;
+}
+
+
 /* Button */
 .button{
     -fx-background-radius: 0;
