@@ -2,8 +2,8 @@ package de.keksuccino.linguji.linguji.backend;
 
 import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehaviour;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
-import de.keksuccino.linguji.linguji.backend.util.config.Config;
-import de.keksuccino.linguji.linguji.backend.util.options.AbstractOptions;
+import de.keksuccino.linguji.linguji.backend.lib.config.Config;
+import de.keksuccino.linguji.linguji.backend.lib.options.AbstractOptions;
 
 public class Options extends AbstractOptions {
 
@@ -11,7 +11,6 @@ public class Options extends AbstractOptions {
 
     public final Option<String> aiPrompt = new Option<>(config, "ai_prompt", "Translate the following text from %source_lang% to %target_lang%. Only translate %source_lang% text, no other languages. There are \"<br>\" in the text, which are special line breaks. Don't remove these special \"<br>\" line breaks and don't add new ones. Don't merge normal text lines. Most parts of the text are conversations, so context is important. Reply only with the translation. This is the text:\\n\\n%text_to_translate%", "general");
     public final Option<Integer> linesPerPacket = new Option<>(config, "lines_per_packet", 15, "general");
-    public final Option<Long> waitMillisBeforeNextTry = new Option<>(config, "wait_millis_before_next_try", 3000L, "general");
     /** Min should be 1 **/
     public final Option<Integer> triesBeforeErrorInvalidLineCount = new Option<>(config, "tries_before_error_invalid_line_count", 2000, "general");
     /** Min should be 1 **/
@@ -26,6 +25,7 @@ public class Options extends AbstractOptions {
     public final Option<String> primaryTranslationEngine = new Option<>(config, "primary_translation_engine", TranslationEngines.GEMINI_PRO.getName(), "general");
     public final Option<String> fallbackTranslationEngine = new Option<>(config, "fallback_translation_engine", TranslationEngines.DEEPLX.getName(), "general");
     public final Option<String> fallbackTranslatorBehaviour = new Option<>(config, "fallback_translator_behaviour", FallbackTranslatorBehaviour.TRANSLATE_FULL_PACKET.getName(), "general");
+    public final Option<Long> waitMillisBetweenRequests = new Option<>(config, "wait_millis_between_requests", 3000L, "general");
 
     public final Option<String> geminiApiKey = new Option<>(config, "gemini_api_key", "", "gemini");
     public final Option<String> geminiHarmCategoryHarassmentSetting = new Option<>(config, "gemini_harm_category_harassment_setting", "BLOCK_ONLY_HIGH", "gemini");
@@ -53,7 +53,8 @@ public class Options extends AbstractOptions {
 
     public final Option<String> deepLApiKey = new Option<>(config, "deepl_api_key", "", "deepl");
 
-    public final Option<String> deepLXUrl = new Option<>(config, "deeplx_url", "http://localhost:1188/translate", "deeplx");
+    public final Option<String> deepLxUrl = new Option<>(config, "deeplx_url", "http://localhost:1188/translate", "deeplx");
+    public final Option<Integer> deepLxTriesBeforeErrorEmptyResponse = new Option<>(config, "deeplx_tries_before_error_empty_response", 50, "deeplx");
 
     public Options() {
         this.config.syncConfig();

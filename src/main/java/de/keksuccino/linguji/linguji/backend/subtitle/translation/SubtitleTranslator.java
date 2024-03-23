@@ -7,11 +7,11 @@ import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line.AbstractTra
 import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehaviour;
 import de.keksuccino.linguji.linguji.backend.translator.SharedTranslatorOptions;
-import de.keksuccino.linguji.linguji.backend.util.ThreadUtils;
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -141,11 +141,12 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
         if (translateException != null) throw translateException;
         if (translatedNormal == null) return;
 
-        String[] translatedNormalLines = translatedNormal.split("\n");
+        List<String> translatedNormalLines = new ArrayList<>(Arrays.asList(translatedNormal.split("\n")));
+        translatedNormalLines.removeIf(s -> s.trim().isEmpty()); //remove empty lines, because they got removed earlier, so there should be no empty lines in the translation either
 
         if (!process.running) return;
 
-        if (translatedNormalLines.length == packet.size()) {
+        if (translatedNormalLines.size() == packet.size()) {
             int translatedIndex = 0;
             for (String line : translatedNormalLines) {
                 if (!process.running) return;
@@ -160,7 +161,6 @@ public class SubtitleTranslator<T extends AbstractSubtitle> {
             if (!process.running) return;
             if (failedTries <= Backend.getOptions().triesBeforeErrorInvalidLineCount.getValue()) {
                 LOGGER.warn("TranslationEngine returned invalid amount of translated lines! Trying again..");
-                ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                 this.translatePacket(packet, failedTries, fallbackFullPacket, process);
                 return;
             }

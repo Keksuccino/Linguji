@@ -7,10 +7,10 @@ import de.keksuccino.linguji.linguji.backend.subtitle.translation.SubtitleTransl
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.SharedTranslatorOptions;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngineBuilder;
-import de.keksuccino.linguji.linguji.backend.util.FileUtils;
-import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.FileUtils;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,8 +21,6 @@ import java.util.Objects;
 public class Backend {
 
     //TODO wenn "invalid lines", checken ob leere Zeilen enthalten sind (sollte niemals der Fall sein) und rausfiltern, dann nochmal checken
-
-    //TODO eigenen timeout thread oder nochmal schauen, wie in HtmlClient timeout richtig angepasst wird
 
     //TODO MyMemory als translator adden
 

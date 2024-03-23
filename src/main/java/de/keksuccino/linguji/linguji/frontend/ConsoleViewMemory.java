@@ -1,6 +1,6 @@
 package de.keksuccino.linguji.linguji.frontend;
 
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

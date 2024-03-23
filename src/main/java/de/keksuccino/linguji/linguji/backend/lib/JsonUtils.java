@@ -1,13 +1,15 @@
-package de.keksuccino.linguji.linguji.backend.util;
+package de.keksuccino.linguji.linguji.backend.lib;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.util.Timeout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +85,7 @@ public class JsonUtils {
     }
 
     @NotNull
-    public static String getJsonFromGET(@NotNull HttpRequest request, @Nullable HttpEntity entity) throws Exception {
+    public static String getJsonFromGET(@NotNull HttpRequest request, @Nullable HttpEntity entity, long timeoutSeconds) throws Exception {
 
         Objects.requireNonNull(request);
 
@@ -92,9 +94,10 @@ public class JsonUtils {
 
         try {
 
-            CloseableHttpClient httpClient = collector.put(HttpClients.createDefault());
+            RequestConfig requestConfig = RequestConfig.custom().setResponseTimeout(Timeout.ofSeconds(timeoutSeconds)).setConnectionRequestTimeout(Timeout.ofSeconds(timeoutSeconds)).build();
+            //ConnectionConfig connectionConfig = ConnectionConfig.custom().setConnectTimeout(Timeout.ofSeconds(20)).build();
+            CloseableHttpClient httpClient = collector.put(HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build());
             HttpGet get = new HttpGet(request.getUrl());
-//            get.setConfig(RequestConfig.copy(get.getConfig()).setConnectionRequestTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).setResponseTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).build());
             request.getHeader().forEach(get::addHeader);
             if (entity != null) get.setEntity(collector.put(entity));
             CloseableHttpResponse response = collector.put(httpClient.execute(get));
@@ -112,12 +115,14 @@ public class JsonUtils {
             throw ex;
         }
 
+        collector.closeQuietly();
+
         return jsonString;
 
     }
 
     @NotNull
-    public static String getJsonFromPOST(@NotNull HttpRequest request, @Nullable HttpEntity entity) throws Exception {
+    public static String getJsonFromPOST(@NotNull HttpRequest request, @Nullable HttpEntity entity, long timeoutSeconds) throws Exception {
 
         Objects.requireNonNull(request);
 
@@ -126,9 +131,10 @@ public class JsonUtils {
 
         try {
 
-            CloseableHttpClient httpClient = collector.put(HttpClients.createDefault());
+            RequestConfig requestConfig = RequestConfig.custom().setResponseTimeout(Timeout.ofSeconds(timeoutSeconds)).setConnectionRequestTimeout(Timeout.ofSeconds(timeoutSeconds)).build();
+            //ConnectionConfig connectionConfig = ConnectionConfig.custom().setConnectTimeout(Timeout.ofSeconds(20)).build();
+            CloseableHttpClient httpClient = collector.put(HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build());
             HttpPost post = new HttpPost(request.getUrl());
-//            post.setConfig(RequestConfig.copy(post.getConfig()).setConnectionRequestTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).setResponseTimeout(Timeout.of(Duration.of(timeoutSeconds, ChronoUnit.SECONDS))).build());
             request.getHeader().forEach(post::addHeader);
             if (entity != null) post.setEntity(collector.put(entity));
             CloseableHttpResponse response = collector.put(httpClient.execute(post));
@@ -145,6 +151,8 @@ public class JsonUtils {
             collector.closeQuietly();
             throw ex;
         }
+
+        collector.closeQuietly();
 
         return jsonString;
 

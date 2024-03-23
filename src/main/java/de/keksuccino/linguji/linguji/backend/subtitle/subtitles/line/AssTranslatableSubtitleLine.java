@@ -1,7 +1,7 @@
 package de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line;
 
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;

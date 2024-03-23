@@ -2,8 +2,8 @@ package de.keksuccino.linguji.linguji.backend.translator.azure;
 
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
-import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
-import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.lang.LanguageType;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;

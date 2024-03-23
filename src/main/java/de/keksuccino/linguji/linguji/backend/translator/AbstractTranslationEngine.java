@@ -1,8 +1,10 @@
 package de.keksuccino.linguji.linguji.backend.translator;
 
+import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
-import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
-import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.ThreadUtils;
+import de.keksuccino.linguji.linguji.backend.lib.lang.LanguageType;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +26,7 @@ public abstract class AbstractTranslationEngine {
     public Locale sourceLanguage;
     @NotNull
     public Locale targetLanguage;
+    protected long lastRequestTime = -1L;
 
     public AbstractTranslationEngine(@NotNull TranslationEngineBuilder<?> builder, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
         this.builder = Objects.requireNonNull(builder);
@@ -81,6 +84,21 @@ public abstract class AbstractTranslationEngine {
             filtered = StringUtils.replaceIgnoreCase(filtered, word, replaceWith);
         }
         return filtered;
+    }
+
+    protected void startRequest() {
+        this.waitForCooldown();
+        this.updateRequestTime();
+    }
+
+    protected void waitForCooldown() {
+        while ((this.lastRequestTime + Backend.getOptions().waitMillisBetweenRequests.getValue()) > System.currentTimeMillis()) {
+            ThreadUtils.sleep(20);
+        }
+    }
+
+    protected void updateRequestTime() {
+        this.lastRequestTime = System.currentTimeMillis();
     }
 
 }

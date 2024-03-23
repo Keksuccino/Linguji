@@ -33,18 +33,20 @@ module de.keksuccino.linguji.linguji {
     exports de.keksuccino.linguji.linguji.backend.translator.deepl;
     exports de.keksuccino.linguji.linguji.backend.translator.deepl.response;
     exports de.keksuccino.linguji.linguji.backend.translator.deeplx;
-    exports de.keksuccino.linguji.linguji.backend.util;
-    exports de.keksuccino.linguji.linguji.backend.util.os;
-    exports de.keksuccino.linguji.linguji.backend.util.options;
-    exports de.keksuccino.linguji.linguji.backend.util.config;
-    exports de.keksuccino.linguji.linguji.backend.util.config.exceptions;
+    exports de.keksuccino.linguji.linguji.backend.lib;
+    exports de.keksuccino.linguji.linguji.backend.lib.os;
+    exports de.keksuccino.linguji.linguji.backend.lib.options;
+    exports de.keksuccino.linguji.linguji.backend.lib.config;
+    exports de.keksuccino.linguji.linguji.backend.lib.config.exceptions;
     exports de.keksuccino.linguji.linguji.backend.subtitle.subtitles;
     exports de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line;
     exports de.keksuccino.linguji.linguji.backend.subtitle.translation;
-    exports de.keksuccino.linguji.linguji.backend.util.logger;
+    exports de.keksuccino.linguji.linguji.backend.lib.logger;
     exports de.keksuccino.linguji.linguji.frontend.util;
     exports de.keksuccino.linguji.linguji.frontend.util.os.windows;
-    exports de.keksuccino.linguji.linguji.backend.util.lang;
+    exports de.keksuccino.linguji.linguji.backend.lib.lang;
+    exports de.keksuccino.linguji.linguji.backend.lib.ffmpeg;
+    exports de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info;
 
     opens de.keksuccino.linguji.linguji.frontend;
     opens de.keksuccino.linguji.linguji.backend;
@@ -59,17 +61,19 @@ module de.keksuccino.linguji.linguji {
     opens de.keksuccino.linguji.linguji.backend.translator.deepl;
     opens de.keksuccino.linguji.linguji.backend.translator.deepl.response;
     opens de.keksuccino.linguji.linguji.backend.translator.deeplx;
-    opens de.keksuccino.linguji.linguji.backend.util;
-    opens de.keksuccino.linguji.linguji.backend.util.os;
-    opens de.keksuccino.linguji.linguji.backend.util.options;
-    opens de.keksuccino.linguji.linguji.backend.util.config;
-    opens de.keksuccino.linguji.linguji.backend.util.config.exceptions;
+    opens de.keksuccino.linguji.linguji.backend.lib;
+    opens de.keksuccino.linguji.linguji.backend.lib.os;
+    opens de.keksuccino.linguji.linguji.backend.lib.options;
+    opens de.keksuccino.linguji.linguji.backend.lib.config;
+    opens de.keksuccino.linguji.linguji.backend.lib.config.exceptions;
     opens de.keksuccino.linguji.linguji.backend.subtitle.subtitles;
     opens de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line;
     opens de.keksuccino.linguji.linguji.backend.subtitle.translation;
     opens de.keksuccino.linguji.linguji.frontend.util;
-    opens de.keksuccino.linguji.linguji.backend.util.logger;
+    opens de.keksuccino.linguji.linguji.backend.lib.logger;
     opens de.keksuccino.linguji.linguji.frontend.util.os.windows;
-    opens de.keksuccino.linguji.linguji.backend.util.lang;
+    opens de.keksuccino.linguji.linguji.backend.lib.lang;
+    opens de.keksuccino.linguji.linguji.backend.lib.ffmpeg;
+    opens de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info;
 
 }

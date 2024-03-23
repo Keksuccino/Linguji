@@ -1,5 +1,5 @@
 //Copyright (c) 2020 Keksuccino
-package de.keksuccino.linguji.linguji.backend.util.config;
+package de.keksuccino.linguji.linguji.backend.lib.config;
 
 import org.jetbrains.annotations.Nullable;
 

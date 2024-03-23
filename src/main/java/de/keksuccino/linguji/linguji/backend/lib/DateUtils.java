@@ -1,4 +1,4 @@
-package de.keksuccino.linguji.linguji.backend.util;
+package de.keksuccino.linguji.linguji.backend.lib;
 
 import java.text.DateFormat;
 import java.util.Date;

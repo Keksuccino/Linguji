@@ -1,4 +1,4 @@
-package de.keksuccino.linguji.linguji.backend.util.os;
+package de.keksuccino.linguji.linguji.backend.lib.os;
 
 public enum OperatingSystemType {
     WINDOWS,

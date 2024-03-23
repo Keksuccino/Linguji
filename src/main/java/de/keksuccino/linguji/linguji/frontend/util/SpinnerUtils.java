@@ -1,6 +1,6 @@
 package de.keksuccino.linguji.linguji.frontend.util;
 
-import de.keksuccino.linguji.linguji.backend.util.MathUtils;
+import de.keksuccino.linguji.linguji.backend.lib.MathUtils;
 import de.keksuccino.linguji.linguji.frontend.controls.spinner.LongSpinnerValueFactory;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;

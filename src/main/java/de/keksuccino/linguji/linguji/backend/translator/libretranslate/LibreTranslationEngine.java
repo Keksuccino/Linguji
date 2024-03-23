@@ -5,14 +5,13 @@ import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
-import de.keksuccino.linguji.linguji.backend.util.ThreadUtils;
-import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
+import de.keksuccino.linguji.linguji.backend.lib.lang.LanguageType;
 import de.keksuccino.linguji.linguji.backend.translator.libretranslate.response.LibreTranslateResponse;
-import de.keksuccino.linguji.linguji.backend.util.HttpRequest;
-import de.keksuccino.linguji.linguji.backend.util.JsonUtils;
-import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.HttpRequest;
+import de.keksuccino.linguji.linguji.backend.lib.JsonUtils;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import org.apache.hc.client5.http.entity.EntityBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.jetbrains.annotations.NotNull;
@@ -70,13 +69,14 @@ public class LibreTranslationEngine extends AbstractTranslationEngine {
 
         String responseString;
 
+        this.startRequest();
+
         try {
-            responseString = Objects.requireNonNull(JsonUtils.getJsonFromPOST(httpRequest, entityBuilder.build()));
+            responseString = Objects.requireNonNull(JsonUtils.getJsonFromPOST(httpRequest, entityBuilder.build(), 15));
         } catch (Exception ex) {
             timeoutTries++;
             if (timeoutTries < Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
                 LOGGER.warn("Libre Translate translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
-                ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                 if (!process.running) return null;
                 return this._translate(text, timeoutTries, process);
             }

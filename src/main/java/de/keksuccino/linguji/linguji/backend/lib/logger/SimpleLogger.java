@@ -1,6 +1,6 @@
-package de.keksuccino.linguji.linguji.backend.util.logger;
+package de.keksuccino.linguji.linguji.backend.lib.logger;
 
-import de.keksuccino.linguji.linguji.backend.util.DateUtils;
+import de.keksuccino.linguji.linguji.backend.lib.DateUtils;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;

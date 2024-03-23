@@ -34,7 +34,7 @@ public class TranslationEngines {
             () -> new DeepLXTranslationEngine(
                     Objects.requireNonNull(SharedTranslatorOptions.getSourceLanguage()),
                     Objects.requireNonNull(SharedTranslatorOptions.getTargetLanguage())),
-            () -> !Backend.getOptions().deepLXUrl.getValue().trim().isEmpty(),
+            () -> !Backend.getOptions().deepLxUrl.getValue().trim().isEmpty(),
             "deeplx", "DeepLX");
 
     public static final TranslationEngineBuilder<LibreTranslationEngine> LIBRE_TRANSLATE = new TranslationEngineBuilder<>(

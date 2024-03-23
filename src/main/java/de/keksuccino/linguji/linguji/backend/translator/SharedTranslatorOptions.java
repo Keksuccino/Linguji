@@ -1,7 +1,7 @@
 package de.keksuccino.linguji.linguji.backend.translator;
 
 import de.keksuccino.linguji.linguji.backend.Backend;
-import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -5,13 +5,12 @@ import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
-import de.keksuccino.linguji.linguji.backend.util.HttpRequest;
-import de.keksuccino.linguji.linguji.backend.util.JsonUtils;
-import de.keksuccino.linguji.linguji.backend.util.ThreadUtils;
-import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
-import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.HttpRequest;
+import de.keksuccino.linguji.linguji.backend.lib.JsonUtils;
+import de.keksuccino.linguji.linguji.backend.lib.lang.LanguageType;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import org.apache.hc.client5.http.entity.EntityBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.jetbrains.annotations.NotNull;
@@ -28,16 +27,16 @@ public class DeepLXTranslationEngine extends AbstractTranslationEngine {
 
     @Override
     public @Nullable String translate(@NotNull String text, @NotNull TranslationProcess process) throws Exception {
-        return this._translate(text, 0, process);
+        return this._translate(text, 0, 0, process);
     }
 
-    protected @Nullable String _translate(@NotNull String text, int timeoutTries, @NotNull TranslationProcess process) throws Exception {
+    protected @Nullable String _translate(@NotNull String text, int timeoutTries, int emptyResponseTries, @NotNull TranslationProcess process) throws Exception {
 
         if (!process.running) return null;
 
         Gson gson = new Gson();
 
-        HttpRequest request = HttpRequest.create(Backend.getOptions().deepLXUrl.getValue())
+        HttpRequest request = HttpRequest.create(Backend.getOptions().deepLxUrl.getValue())
                 .addHeaderEntry("Content-Type", "application/json");
 
         EntityBuilder entityBuilder = EntityBuilder.create();
@@ -54,15 +53,16 @@ public class DeepLXTranslationEngine extends AbstractTranslationEngine {
 
         String responseString;
 
+        this.startRequest();
+
         try {
-            responseString = Objects.requireNonNull(JsonUtils.getJsonFromPOST(request, entityBuilder.build()));
+            responseString = Objects.requireNonNull(JsonUtils.getJsonFromPOST(request, entityBuilder.build(), 15));
         } catch (Exception ex) {
             timeoutTries++;
             if (timeoutTries < Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
-                LOGGER.warn("DeepLX translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
-                ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
+                LOGGER.warn("DeepLX translation request timed out! Trying again..");
                 if (!process.running) return null;
-                return this._translate(text, timeoutTries, process);
+                return this._translate(text, timeoutTries, emptyResponseTries, process);
             }
             throw ex;
         }
@@ -70,6 +70,16 @@ public class DeepLXTranslationEngine extends AbstractTranslationEngine {
         LOGGER.info("<-- Response from DeepLX: " + responseString);
 
         DeepLXResponse response = Objects.requireNonNull(gson.fromJson(responseString, DeepLXResponse.class));
+
+        if ((response.getText() == null) || (response.getText().isEmpty())) {
+            emptyResponseTries++;
+            if (emptyResponseTries < Backend.getOptions().deepLxTriesBeforeErrorEmptyResponse.getValue()) {
+                LOGGER.warn("DeepLX response was empty! Trying again..");
+                if (!process.running) return null;
+                return this._translate(text, timeoutTries, emptyResponseTries, process);
+            }
+            throw new IllegalStateException("DeepLX response was empty!");
+        }
 
         if (response.code != 200) throw new IllegalStateException("DeepLX returned error code: " + response.code + " (FULL RESPONSE: " + responseString + ")");
 

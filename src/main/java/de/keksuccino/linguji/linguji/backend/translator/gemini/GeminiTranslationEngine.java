@@ -5,7 +5,7 @@ import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
-import de.keksuccino.linguji.linguji.backend.util.lang.LanguageType;
+import de.keksuccino.linguji.linguji.backend.lib.lang.LanguageType;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions.GeminiException;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions.GeminiRequestHardBlockedException;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.request.GeminiContent;
@@ -14,12 +14,11 @@ import de.keksuccino.linguji.linguji.backend.translator.gemini.response.GeminiRe
 import de.keksuccino.linguji.linguji.backend.translator.gemini.response.GeminiResponseCandidate;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.response.GeminiResponseCandidateContentPart;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.safety.GeminiSafetySetting;
-import de.keksuccino.linguji.linguji.backend.util.HttpRequest;
-import de.keksuccino.linguji.linguji.backend.util.JsonUtils;
-import de.keksuccino.linguji.linguji.backend.util.ThreadUtils;
-import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.HttpRequest;
+import de.keksuccino.linguji.linguji.backend.lib.JsonUtils;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import org.apache.hc.client5.http.entity.EntityBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.jetbrains.annotations.NotNull;
@@ -35,10 +34,6 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
     protected final String apiKey;
     @NotNull
     protected final String prompt;
-
-    public GeminiTranslationEngine(@NotNull String apiKey, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
-        this(apiKey, DEFAULT_PROMPT, sourceLanguage, targetLanguage);
-    }
 
     public GeminiTranslationEngine(@NotNull String apiKey, @NotNull String prompt, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
         super(TranslationEngines.GEMINI_PRO, sourceLanguage, targetLanguage);
@@ -60,8 +55,6 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
         Gson gson = new Gson();
 
         try {
-
-//            text = this.replaceProfanity(text, "*");
 
             HttpRequest request = HttpRequest.create(GEMINI_API_URL)
                     .addHeaderEntry("Content-Type", "application/json")
@@ -97,14 +90,14 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
 
             if (!process.running) return null;
 
+            this.startRequest();
+
             try {
-                responseString = JsonUtils.getJsonFromPOST(request, entityBuilder.build());
+                responseString = JsonUtils.getJsonFromPOST(request, entityBuilder.build(), 15);
             } catch (Exception ex) {
                 triesCounter.timeout++;
                 if (triesCounter.timeout < Backend.getOptions().triesBeforeErrorTimeoutOrConnectionFailed.getValue()) {
-                    //thresholdOverrideContext.reset();
                     LOGGER.warn("Gemini translation request failed! Trying again.. (TIMEOUT OR CONNECTION FAILED)");
-                    ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
                     return this._translate(text, process, triesCounter, thresholdOverrideContext);
                 }
@@ -125,12 +118,10 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
             if (response.promptFeedback.blockReason != null) {
                 triesCounter.hardBlock++;
                 if (triesCounter.hardBlock < Backend.getOptions().geminiTriesBeforeErrorHardBlock.getValue()) {
-                    //thresholdOverrideContext.resetSoft();
                     LOGGER.warn("Gemini translation request failed! Trying again.. (HARD-BLOCKED: " + response.promptFeedback.blockReason + ")");
                     if (thresholdOverrideContext.shouldTryOverrideHard(triesCounter.hardBlock)) {
                         thresholdOverrideContext.nextHard();
                     }
-                    ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
                     return this._translate(text, process, triesCounter, thresholdOverrideContext);
                 }
@@ -143,9 +134,7 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
                 //If error is NOT "user location not supported", try again
                 triesCounter.generic++;
                 if (triesCounter.generic < Backend.getOptions().triesBeforeErrorGeneric.getValue()) {
-                    //thresholdOverrideContext.reset();
                     LOGGER.warn("Gemini translation request failed! Trying again.. (ERROR CODE: " + response.error.code + " | MESSAGE: " + response.error.message + ")");
-                    ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                     if (!process.running) return null;
                     return this._translate(text, process, triesCounter, thresholdOverrideContext);
                 }
@@ -161,12 +150,10 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
                 if (!"STOP".equalsIgnoreCase(candidate.finishReason)) {
                     triesCounter.softBlock++;
                     if (triesCounter.softBlock < Backend.getOptions().geminiTriesBeforeErrorSoftBlock.getValue()) {
-                        //thresholdOverrideContext.resetHard();
                         LOGGER.warn("Gemini translation request failed! Trying again.. (SOFT-BLOCKED: " + candidate.finishReason + ")");
                         if (thresholdOverrideContext.shouldTryOverrideSoft(triesCounter.softBlock)) {
                             thresholdOverrideContext.nextSoft();
                         }
-                        ThreadUtils.sleep(Backend.getOptions().waitMillisBeforeNextTry.getValue());
                         if (!process.running) return null;
                         return this._translate(text, process, triesCounter, thresholdOverrideContext);
                     }

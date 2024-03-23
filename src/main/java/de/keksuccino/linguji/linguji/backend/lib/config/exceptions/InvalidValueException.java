@@ -1,4 +1,4 @@
-package de.keksuccino.linguji.linguji.backend.util.config.exceptions;
+package de.keksuccino.linguji.linguji.backend.lib.config.exceptions;
 
 public class InvalidValueException extends Exception {
 

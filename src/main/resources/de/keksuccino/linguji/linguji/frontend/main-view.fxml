@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" minHeight="860.0" minWidth="830.0" prefHeight="1179.0" prefWidth="868.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.keksuccino.linguji.linguji.frontend.MainViewController">
+<VBox alignment="CENTER" minHeight="860.0" minWidth="830.0" prefHeight="1252.0" prefWidth="868.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.keksuccino.linguji.linguji.frontend.MainViewController">
    <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -61,31 +61,15 @@
             <tooltip>
                <Tooltip prefWidth="400.0" text="The debug log gives information about requests to and answers from the AI and shows errors that happened during the translation process." />
             </tooltip></Button>
-         <ScrollPane fitToWidth="true" layoutX="14.0" layoutY="98.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="163.33333333333326" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="97.99999999999989">
+         <ScrollPane fx:id="contentScrollPane" fitToWidth="true" layoutX="14.0" layoutY="98.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="163.33333333333326" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="97.99999999999989">
            <content>
-             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="829.0" prefWidth="796.0">
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="861.0" prefWidth="796.0">
                   <children>
-                     <Label layoutX="17.333333333333332" layoutY="111.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="17.333333333333332">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="The source language of your original subtitle files." />
-                        </tooltip>
-                     </Label>
+                     <Label layoutX="17.333333333333332" layoutY="111.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="17.333333333333332" />
                      <Separator layoutX="85.33333333333333" layoutY="19.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="87.33333333333333" AnchorPane.rightAnchor="17.33333333333337" />
-                     <Label layoutX="403.3333333333333" layoutY="112.0" prefHeight="17.0" prefWidth="219.0" text="Target Language" AnchorPane.leftAnchor="403.3333333333333">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="The target language your subtitle files should get translated to." />
-                        </tooltip>
-                     </Label>
-                     <Label layoutX="17.333333333333332" layoutY="279.0" prefHeight="17.0" prefWidth="97.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </Label>
-                     <TextField fx:id="geminiApiKeyTextField" layoutX="241.33333333333334" layoutY="276.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </TextField>
+                     <Label layoutX="403.3333333333333" layoutY="112.0" prefHeight="17.0" prefWidth="219.0" text="Target Language" AnchorPane.leftAnchor="403.3333333333333" />
+                     <Label layoutX="17.333333333333332" layoutY="279.0" prefHeight="17.0" prefWidth="97.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332" />
+                     <TextField fx:id="geminiApiKeyTextField" layoutX="241.33333333333334" layoutY="276.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
                      <Label layoutX="17.333333333333332" layoutY="46.0" prefHeight="17.0" prefWidth="97.0" text="Prompt" AnchorPane.leftAnchor="17.333333333333332">
                         <tooltip>
                            <Tooltip prefWidth="400.0" text="The prompt used for the AI to translate subtitles." />
@@ -106,16 +90,8 @@
                            <Tooltip prefWidth="400.0" text="The subtitle lines that should get send to the AI with each request. Don't make this number too big or the AI will probably fail to translate the text." wrapText="true" />
                         </tooltip>
                      </Spinner>
-                     <Spinner fx:id="waitAfterErrorSpinner" editable="true" layoutX="640.0" layoutY="140.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="640.0" AnchorPane.rightAnchor="16.66666666666663">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="How long the tool should wait after an error happend. Making this number too small could result in the AI API blocking you for request spam." wrapText="true" />
-                        </tooltip>
-                     </Spinner>
-                     <Label layoutX="403.3333333333333" layoutY="144.0" prefHeight="17.0" prefWidth="219.0" text="Wait After Error (Milliseconds)" AnchorPane.leftAnchor="403.3333333333333">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="How long the tool should wait after an error happend. Making this number too small could result in the AI API blocking you for request spam." wrapText="true" />
-                        </tooltip>
-                     </Label>
+                     <Spinner fx:id="waitBetweenRequestsSpinner" editable="true" layoutX="640.0" layoutY="140.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="640.0" AnchorPane.rightAnchor="16.66666666666663" />
+                     <Label layoutX="403.3333333333333" layoutY="144.0" prefHeight="17.0" prefWidth="219.0" text="Wait Between Requests (Milliseconds)" AnchorPane.leftAnchor="403.3333333333333" />
                      <Label layoutX="17.333333333333332" layoutY="176.0" prefHeight="17.0" prefWidth="219.0" text="Tries Before Stop (Invalid Line Count)" AnchorPane.leftAnchor="17.333333333333332">
                         <tooltip>
                            <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the AI returned an invalid amount of translated lines." />
@@ -312,58 +288,28 @@
                            <Font size="17.0" />
                         </font>
                      </Label>
-                     <Label layoutX="17.333333333333332" layoutY="682.0" prefHeight="17.0" prefWidth="97.0" text="API URL" AnchorPane.leftAnchor="17.333333333333332">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </Label>
-                     <TextField fx:id="deeplxApiUrlTextField" layoutX="241.33333333333334" layoutY="679.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </TextField>
-                     <Separator layoutX="143.33333333333334" layoutY="730.0" prefHeight="3.0" prefWidth="637.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="140.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
-                     <Label layoutX="17.333333333333332" layoutY="717.0" prefHeight="26.0" prefWidth="125.0" text="Libre Translate" AnchorPane.leftAnchor="17.333333333333332">
+                     <Label layoutX="17.333333333333332" layoutY="682.0" prefHeight="17.0" prefWidth="97.0" text="API URL" AnchorPane.leftAnchor="17.333333333333332" />
+                     <TextField fx:id="deeplxApiUrlTextField" layoutX="241.33333333333334" layoutY="679.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Separator layoutX="140.66666666666666" layoutY="760.0" prefHeight="3.0" prefWidth="637.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="140.66666666666666" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Label layoutX="17.333333333333332" layoutY="747.0" prefHeight="26.0" prefWidth="125.0" text="Libre Translate" AnchorPane.leftAnchor="17.333333333333332">
                         <font>
                            <Font size="17.0" />
                         </font>
                      </Label>
-                     <Label layoutX="17.333333333333332" layoutY="758.0" prefHeight="17.0" prefWidth="97.0" text="API URL" AnchorPane.leftAnchor="17.333333333333332">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </Label>
-                     <TextField fx:id="libreApiUrlTextField" layoutX="241.33333333333334" layoutY="755.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </TextField>
-                     <Label layoutX="17.333333333333332" layoutY="790.0" prefHeight="17.0" prefWidth="195.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </Label>
-                     <TextField fx:id="libreApiKeyTextField" layoutX="241.33333333333334" layoutY="787.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </TextField>
+                     <Label layoutX="17.333333333333332" layoutY="788.0" prefHeight="17.0" prefWidth="97.0" text="API URL" AnchorPane.leftAnchor="17.333333333333332" />
+                     <TextField fx:id="libreApiUrlTextField" layoutX="241.33333333333334" layoutY="785.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Label layoutX="17.333333333333332" layoutY="820.0" prefHeight="17.0" prefWidth="195.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332" />
+                     <TextField fx:id="libreApiKeyTextField" layoutX="241.33333333333334" layoutY="817.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
                      <Separator layoutX="76.0" layoutY="579.0" prefHeight="3.0" prefWidth="703.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="17.3" />
                      <Label layoutX="16.0" layoutY="566.0" prefHeight="26.0" prefWidth="78.0" text="DeepL" AnchorPane.leftAnchor="17.0">
                         <font>
                            <Font size="17.0" />
                         </font>
                      </Label>
-                     <Label layoutX="16.0" layoutY="607.0" prefHeight="17.0" prefWidth="97.0" text="API Key" AnchorPane.leftAnchor="17.0">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </Label>
-                     <TextField fx:id="deeplApiKeyTextField" layoutX="240.0" layoutY="604.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.0" AnchorPane.rightAnchor="17.0">
-                        <tooltip>
-                           <Tooltip prefWidth="400.0" text="Your Gemini API key. You need one to use the tool." />
-                        </tooltip>
-                     </TextField>
+                     <Label layoutX="16.0" layoutY="607.0" prefHeight="17.0" prefWidth="97.0" text="API Key" AnchorPane.leftAnchor="17.0" />
+                     <TextField fx:id="deeplApiKeyTextField" layoutX="240.0" layoutY="604.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.0" AnchorPane.rightAnchor="17.0" />
+                     <Label layoutX="17.0" layoutY="714.0" prefHeight="17.0" prefWidth="249.0" text="Tries Before Stop (Empty Response)" AnchorPane.leftAnchor="17.0" />
+                     <Spinner fx:id="deeplxTriesBeforeStopEmptyResponseSpinner" editable="true" layoutX="241.0" layoutY="710.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="241.0" />
                   </children>
                </AnchorPane>
            </content>

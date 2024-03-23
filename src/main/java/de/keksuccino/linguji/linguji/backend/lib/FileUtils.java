@@ -1,6 +1,6 @@
-package de.keksuccino.linguji.linguji.backend.util;
+package de.keksuccino.linguji.linguji.backend.lib;
 
-import de.keksuccino.linguji.linguji.backend.util.os.OSUtils;
+import de.keksuccino.linguji.linguji.backend.lib.os.OSUtils;
 import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.net.URL;

@@ -1,4 +1,4 @@
-package de.keksuccino.linguji.linguji.backend.util.lang;
+package de.keksuccino.linguji.linguji.backend.lib.lang;
 
 public enum LanguageType {
     DISPLAY,

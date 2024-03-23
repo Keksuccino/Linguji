@@ -1,6 +1,6 @@
-package de.keksuccino.linguji.linguji.backend.util.options;
+package de.keksuccino.linguji.linguji.backend.lib.options;
 
-import de.keksuccino.linguji.linguji.backend.util.config.Config;
+import de.keksuccino.linguji.linguji.backend.lib.config.Config;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 

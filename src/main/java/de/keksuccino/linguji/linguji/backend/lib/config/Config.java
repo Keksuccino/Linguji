@@ -1,7 +1,7 @@
-package de.keksuccino.linguji.linguji.backend.util.config;
+package de.keksuccino.linguji.linguji.backend.lib.config;
 
-import de.keksuccino.linguji.linguji.backend.util.MathUtils;
-import de.keksuccino.linguji.linguji.backend.util.config.exceptions.InvalidValueException;
+import de.keksuccino.linguji.linguji.backend.lib.MathUtils;
+import de.keksuccino.linguji.linguji.backend.lib.config.exceptions.InvalidValueException;
 import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import de.keksuccino.linguji.linguji.backend.util.config.ConfigEntry.EntryType;
+import de.keksuccino.linguji.linguji.backend.lib.config.ConfigEntry.EntryType;
 
 /**
  * Simple config system to locally store values.<br>

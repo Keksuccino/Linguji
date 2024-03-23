@@ -1,4 +1,4 @@
-package de.keksuccino.linguji.linguji.backend.util.lang;
+package de.keksuccino.linguji.linguji.backend.lib.lang;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

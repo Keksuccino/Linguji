@@ -6,11 +6,11 @@ import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehavi
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngineBuilder;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
 import de.keksuccino.linguji.linguji.backend.translator.gemini.safety.GeminiSafetySetting;
-import de.keksuccino.linguji.linguji.backend.util.lang.Locale;
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
-import de.keksuccino.linguji.linguji.backend.util.options.AbstractOptions;
-import de.keksuccino.linguji.linguji.backend.util.os.OSUtils;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.options.AbstractOptions;
+import de.keksuccino.linguji.linguji.backend.lib.os.OSUtils;
 import de.keksuccino.linguji.linguji.frontend.util.SpinnerUtils;
 import de.keksuccino.linguji.linguji.frontend.util.os.windows.FXWinUtil;
 import javafx.animation.Animation;
@@ -18,7 +18,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -29,12 +28,13 @@ import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
-import java.util.ArrayList;
 
-public class MainViewController {
+public class MainViewController implements ViewControllerBase {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
+    @FXML
+    private ScrollPane contentScrollPane;
     @FXML
     private ProgressBar subtitleProgressBar;
     @FXML
@@ -74,7 +74,7 @@ public class MainViewController {
     @FXML
     private Spinner<Integer> triesBeforeOverrideGeminiThresholdHardBlockSpinner;
     @FXML
-    private Spinner<Long> waitAfterErrorSpinner;
+    private Spinner<Long> waitBetweenRequestsSpinner;
     @FXML
     private ComboBox<GeminiSafetySetting.SafetyThreshold> geminiHarassmentSettingComboBox;
     @FXML
@@ -109,6 +109,8 @@ public class MainViewController {
     private TextField libreApiUrlTextField;
     @FXML
     private TextField libreApiKeyTextField;
+    @FXML
+    private Spinner<Integer> deeplxTriesBeforeStopEmptyResponseSpinner;
 
     @Nullable
     private TranslationProcess translationProcess = null;
@@ -131,7 +133,7 @@ public class MainViewController {
         this.setupIntegerConfigOption(this.triesBeforeStopGeminiHardBlockSpinner, Backend.getOptions().geminiTriesBeforeErrorHardBlock, 1, 10000);
         this.setupIntegerConfigOption(this.triesBeforeOverrideGeminiThresholdSoftBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdSoftBlockAfterTries, 1, 10000);
         this.setupIntegerConfigOption(this.triesBeforeOverrideGeminiThresholdHardBlockSpinner, Backend.getOptions().geminiOverrideSafetyThresholdHardBlockAfterTries, 1, 10000);
-        this.setupLongConfigOption(this.waitAfterErrorSpinner, Backend.getOptions().waitMillisBeforeNextTry, 1L, 100000000000000L);
+        this.setupLongConfigOption(this.waitBetweenRequestsSpinner, Backend.getOptions().waitMillisBetweenRequests, 1L, 100000000000000L);
         this.setupGeminiSafetyThresholdConfigOption(this.geminiHarassmentSettingComboBox, Backend.getOptions().geminiHarmCategoryHarassmentSetting);
         this.setupGeminiSafetyThresholdConfigOption(this.geminiHateSpeechSettingComboBox, Backend.getOptions().geminiHarmCategoryHateSpeechSetting);
         this.setupGeminiSafetyThresholdConfigOption(this.geminiSexuallyExplicitSettingComboBox, Backend.getOptions().geminiHarmCategorySexuallyExplicitSetting);
@@ -145,9 +147,21 @@ public class MainViewController {
         this.setupTranslationEngineBuilderConfigOption(this.fallbackTranslationEngineComboBox, Backend.getOptions().fallbackTranslationEngine);
         this.setupFallbackTranslationBehaviourConfigOption(this.fallbackTranslatorBehaviourComboBox, Backend.getOptions().fallbackTranslatorBehaviour);
         this.setupStringConfigOption(this.deeplApiKeyTextField, Backend.getOptions().deepLApiKey);
-        this.setupStringConfigOption(this.deeplxApiUrlTextField, Backend.getOptions().deepLXUrl);
+        this.setupStringConfigOption(this.deeplxApiUrlTextField, Backend.getOptions().deepLxUrl);
         this.setupStringConfigOption(this.libreApiUrlTextField, Backend.getOptions().libreTranslateUrl);
         this.setupStringConfigOption(this.libreApiKeyTextField, Backend.getOptions().libreTranslateApiKey);
+        this.setupIntegerConfigOption(this.deeplxTriesBeforeStopEmptyResponseSpinner, Backend.getOptions().deepLxTriesBeforeErrorEmptyResponse, 1, 10000);
+
+        //Fix slow scrolling in content ScrollPane
+        this.contentScrollPane.getContent().setOnScroll(scrollEvent -> {
+            double deltaY = scrollEvent.getDeltaY();
+            double contentHeight = this.contentScrollPane.getContent().getBoundsInLocal().getHeight();
+            double scrollPaneHeight = this.contentScrollPane.getHeight();
+            double diff = contentHeight - scrollPaneHeight;
+            if (diff < 1) diff = 1;
+            double vValue = this.contentScrollPane.getVvalue();
+            this.contentScrollPane.setVvalue(vValue + -deltaY/diff);
+        });
 
         this.updateStartTranslationButtonState();
 
@@ -421,20 +435,6 @@ public class MainViewController {
         comboBox.getItems().addAll(FallbackTranslatorBehaviour.values());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.getName()));
         comboBox.setValue(FallbackTranslatorBehaviour.getByName(option.getValue()));
-    }
-
-    protected static ArrayList<Node> getAllNodes(Parent root) {
-        ArrayList<Node> nodes = new ArrayList<>();
-        addAllDescendants(root, nodes);
-        return nodes;
-    }
-
-    protected static void addAllDescendants(Parent parent, ArrayList<Node> nodes) {
-        for (Node node : parent.getChildrenUnmodifiable()) {
-            nodes.add(node);
-            if (node instanceof Parent)
-                addAllDescendants((Parent)node, nodes);
-        }
     }
 
 }

@@ -1,9 +1,9 @@
 package de.keksuccino.linguji.linguji.frontend;
 
 import de.keksuccino.linguji.linguji.backend.Backend;
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
-import de.keksuccino.linguji.linguji.backend.util.os.OSUtils;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.os.OSUtils;
 import de.keksuccino.linguji.linguji.frontend.util.os.windows.FXWinUtil;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

@@ -1,7 +1,7 @@
-package de.keksuccino.linguji.linguji.backend.util.logger;
+package de.keksuccino.linguji.linguji.backend.lib.logger;
 
-import de.keksuccino.linguji.linguji.backend.util.FileUtils;
-import de.keksuccino.linguji.linguji.backend.util.ThreadUtils;
+import de.keksuccino.linguji.linguji.backend.lib.FileUtils;
+import de.keksuccino.linguji.linguji.backend.lib.ThreadUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;

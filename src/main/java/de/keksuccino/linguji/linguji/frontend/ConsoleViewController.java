@@ -1,7 +1,7 @@
 package de.keksuccino.linguji.linguji.frontend;
 
-import de.keksuccino.linguji.linguji.backend.util.logger.LogHandler;
-import de.keksuccino.linguji.linguji.backend.util.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
+import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import de.keksuccino.linguji.linguji.frontend.controls.listview.NoSelectionModel;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConsoleViewController {
+public class ConsoleViewController implements ViewControllerBase {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
