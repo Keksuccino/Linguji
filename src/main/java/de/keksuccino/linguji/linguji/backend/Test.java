@@ -3,6 +3,8 @@ package de.keksuccino.linguji.linguji.backend;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.Ffmpeg;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoInfo;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoStream;
+import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
+import de.keksuccino.linguji.linguji.backend.lib.mkvtoolnix.MkvToolNix;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.AbstractTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
@@ -56,11 +58,14 @@ public class Test {
 //        LOGGER.info("TRANSLATED: \n" + translator.translate(text, new TranslationProcess()));
 
         Ffmpeg ffmpeg = Ffmpeg.buildDefault();
-        VideoInfo info = ffmpeg.getVideoInfo(new File("video.mkv"));
+        VideoInfo info = ffmpeg.getVideoInfo(new File("output.mkv"));
 
         for (VideoStream sub : info.getSubtitles()) {
             LOGGER.info("########## SUB #" + sub.index + ": " + sub);
         }
+
+//        MkvToolNix mkvToolNix = MkvToolNix.createDefault();
+//        mkvToolNix.addSubtitleToMkv(new File("video.mkv"), new File("output.mkv"), new File("subtitle.ass"), Locale.GERMAN, true);
 
     }
 

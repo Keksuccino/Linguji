@@ -12,6 +12,8 @@ import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -19,8 +21,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Backend {
-
-    //TODO wenn "invalid lines", checken ob leere Zeilen enthalten sind (sollte niemals der Fall sein) und rausfiltern, dann nochmal checken
 
     //TODO MyMemory als translator adden
 
@@ -30,10 +30,13 @@ public class Backend {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
     public static final String VERSION = "1.1.0";
+    public static final File TEMP_DIRECTORY = new File("temp_data");
 
     private static Options options;
 
     public static void init() {
+
+        resetTempDirectory();
 
         updateOptions();
 
@@ -70,8 +73,15 @@ public class Backend {
                 File inDir = FileUtils.createDirectory(new File(inDirString), false);
                 File outDir = FileUtils.createDirectory(new File(outDirString), false);
 
+                File[] filesInInput = Objects.requireNonNull(inDir.listFiles(), "Failed to get files of input directory!");
                 List<AbstractSubtitle> subtitles = new ArrayList<>();
-                for (File file : Objects.requireNonNull(inDir.listFiles(), "Failed to get subtitle files from input directory!")) {
+
+                File firstVideoFile = getFirstVideoOfInputDirectory();
+                if (firstVideoFile != null) {
+
+                }
+
+                for (File file : filesInInput) {
                     //Handle ASS subtitle files
                     if (file.isFile() && file.getPath().toLowerCase().endsWith(".ass")) {
                         AssSubtitle assSubtitle = Objects.requireNonNull(AssSubtitle.create(file), "Failed to parse ASS subtitle file: " + file.getAbsolutePath());
@@ -124,6 +134,31 @@ public class Backend {
 
         return process;
 
+    }
+
+    @Nullable
+    public static File getFirstVideoOfInputDirectory() {
+        try {
+            String inDirString = Backend.getOptions().inputDirectory.getValue();
+            File inDir = FileUtils.createDirectory(new File(inDirString), false);
+            File[] filesInInput = Objects.requireNonNull(inDir.listFiles());
+            for (File f : filesInInput) {
+                if (f.isFile()) {
+                    //MKV
+                    if (f.getAbsolutePath().toLowerCase().endsWith(".mkv")) return f;
+                }
+            }
+        } catch (Exception ignore) {}
+        return null;
+    }
+
+    public static void resetTempDirectory() {
+        try {
+            org.apache.commons.io.FileUtils.deleteDirectory(TEMP_DIRECTORY);
+        } catch (Exception ex) {
+            LOGGER.error("Failed to delete temp directory!", ex);
+        }
+        FileUtils.createDirectory(TEMP_DIRECTORY, false);
     }
 
     public static void updateOptions() {

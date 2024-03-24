@@ -15,6 +15,7 @@ module de.keksuccino.linguji.linguji {
     requires org.apache.httpcomponents.core5.httpcore5.h2;
     requires com.google.common;
     requires org.apache.commons.lang3;
+    requires org.apache.commons.io;
     requires com.sun.jna;
     requires com.sun.jna.platform;
     requires javafx.graphics;

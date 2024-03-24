@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="260.0" prefWidth="568.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.keksuccino.linguji.linguji.frontend.VideoSubtitleChooserViewController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <AnchorPane prefHeight="343.0" prefWidth="1027.0" VBox.vgrow="ALWAYS">
+         <children>
+            <Label alignment="CENTER" layoutX="44.0" layoutY="16.0" prefHeight="29.0" prefWidth="440.0" text="Video files were found in the input directory!" textAlignment="CENTER" AnchorPane.leftAnchor="44.0" AnchorPane.rightAnchor="44.0">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font></Label>
+            <Label alignment="CENTER" layoutX="44.0" layoutY="65.0" prefHeight="21.0" prefWidth="440.0" text="Please choose the subtitle you want to translate." textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="44.0" AnchorPane.rightAnchor="44.0" />
+            <Label alignment="CENTER" layoutX="44.0" layoutY="86.0" prefHeight="21.0" prefWidth="440.0" text="All video files need to have the same amount of subtitles with the same order!" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="44.0" AnchorPane.rightAnchor="44.0" />
+            <ComboBox fx:id="subtitleChooserComboBox" layoutX="98.0" layoutY="135.0" prefWidth="331.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="98.66666666666669" />
+            <Button fx:id="confirmButton" layoutX="175.0" layoutY="170.0" mnemonicParsing="false" onMouseClicked="#onConfirmButtonClick" prefWidth="177.0" text="Confirm" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

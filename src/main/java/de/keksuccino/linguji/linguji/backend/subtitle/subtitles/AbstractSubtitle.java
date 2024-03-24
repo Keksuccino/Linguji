@@ -13,6 +13,8 @@ public abstract class AbstractSubtitle {
     public TranslationFinishStatus translationFinishStatus = TranslationFinishStatus.NOT_FINISHED;
     @Nullable
     public File sourceFile = null;
+    @Nullable
+    public File sourceVideoFile = null;
 
     @NotNull
     protected List<AbstractSubtitleLine> lines = new ArrayList<>();

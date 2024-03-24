@@ -26,6 +26,7 @@ public class Options extends AbstractOptions {
     public final Option<String> fallbackTranslationEngine = new Option<>(config, "fallback_translation_engine", TranslationEngines.DEEPLX.getName(), "general");
     public final Option<String> fallbackTranslatorBehaviour = new Option<>(config, "fallback_translator_behaviour", FallbackTranslatorBehaviour.TRANSLATE_FULL_PACKET.getName(), "general");
     public final Option<Long> waitMillisBetweenRequests = new Option<>(config, "wait_millis_between_requests", 3000L, "general");
+    public final Option<Integer> videoFileSubtitleStreamIndex = new Option<>(config, "video_file_subtitle_stream_index", 2, "general");
 
     public final Option<String> geminiApiKey = new Option<>(config, "gemini_api_key", "", "gemini");
     public final Option<String> geminiHarmCategoryHarassmentSetting = new Option<>(config, "gemini_harm_category_harassment_setting", "BLOCK_ONLY_HIGH", "gemini");

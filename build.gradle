@@ -62,6 +62,7 @@ dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '33.0.0-jre'
     implementation group: 'net.java.dev.jna', name: 'jna', version: '5.14.0'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.14.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.15.1'
 //    implementation 'net.clojars.suuft:libretranslate-java:1.0.5'
 
 }
