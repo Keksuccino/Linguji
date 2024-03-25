@@ -1,7 +1,14 @@
-Changelog v1.0.2
-
-Note: Some default settings values changed in this update. It is recommended to delete the old config.txt file or update said settings with their new default values.
-
-- New default value for "Tries Before Stop (Hard-Block)" (Gemini) is "5" (was "50" before)
-- New default value for "Override After Tries (Hard-Block)" (Gemini) is "1" (was "3" before)
-- New default value for "Tries Per Threshold Override (Hard-Block)" (Gemini) is "2" (was "10" before)
+Changelog v1.1.0 [ W I P ]
+ 
+IMPORTANT:
+Many default settings values changed in this update.
+It is recommended to delete the old config.txt file and let it generate again!
+ 
+- Added new translation engines: Libre Translate, DeepL, DeepLX
+- It is now possible to set a primary and a fallback translator
+  - The fallback translator gets used when the primary translator fails to translate a line packet
+- Added support for MKV VIDEO FILES (Windows only for now)
+  - MKV files with ASS subtitles in the input directory get automatically translated and a version of the MKV with the translated subtitles gets saved to the output directory
+  - FFMPEG and MkvToolNix is needed for video support
+- UI improvements
+- More small improvements and bug fixes
