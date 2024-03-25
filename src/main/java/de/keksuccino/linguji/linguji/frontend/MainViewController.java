@@ -1,6 +1,9 @@
 package de.keksuccino.linguji.linguji.frontend;
 
 import de.keksuccino.linguji.linguji.backend.Backend;
+import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.Ffmpeg;
+import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoInfo;
+import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoStream;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehaviour;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngineBuilder;
@@ -21,13 +24,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.awt.*;
 import java.io.File;
+import java.util.Objects;
 
 public class MainViewController implements ViewControllerBase {
 
@@ -111,9 +121,15 @@ public class MainViewController implements ViewControllerBase {
     private TextField libreApiKeyTextField;
     @FXML
     private Spinner<Integer> deeplxTriesBeforeStopEmptyResponseSpinner;
+    @FXML
+    private CheckBox setVideoSubtitleAsDefaultCheckBox;
 
+    protected Stage stage;
     @Nullable
     private TranslationProcess translationProcess = null;
+    @Nullable
+    protected VideoStream cachedVideoFileSubtitleStream = null;
+    protected boolean subChooserOpen = false;
 
     @FXML
     protected void initialize() {
@@ -151,6 +167,7 @@ public class MainViewController implements ViewControllerBase {
         this.setupStringConfigOption(this.libreApiUrlTextField, Backend.getOptions().libreTranslateUrl);
         this.setupStringConfigOption(this.libreApiKeyTextField, Backend.getOptions().libreTranslateApiKey);
         this.setupIntegerConfigOption(this.deeplxTriesBeforeStopEmptyResponseSpinner, Backend.getOptions().deepLxTriesBeforeErrorEmptyResponse, 1, 10000);
+        this.setupBooleanConfigOption(this.setVideoSubtitleAsDefaultCheckBox, Backend.getOptions().setVideoSubtitleAsDefault);
 
         //Fix slow scrolling in content ScrollPane
         this.contentScrollPane.getContent().setOnScroll(scrollEvent -> {
@@ -173,6 +190,8 @@ public class MainViewController implements ViewControllerBase {
 
     protected void finishInitialization(@NotNull Stage stage, @NotNull Parent parent) {
 
+        this.stage = stage;
+
         //Modify all tooltips
         getAllNodes(parent).forEach(node -> {
             if (node instanceof Control control) {
@@ -181,6 +200,9 @@ public class MainViewController implements ViewControllerBase {
                 }
             }
         });
+
+        //Clear temp dir on close
+        stage.setOnCloseRequest(event -> Backend.resetTempDirectory());
 
     }
 
@@ -205,11 +227,65 @@ public class MainViewController implements ViewControllerBase {
     }
 
     @FXML
+    protected void onOpenConsoleWindowButtonClick() {
+
+        if (this.subChooserOpen) return;
+
+        try {
+
+            Stage stageConsoleWindow = new Stage();
+            stageConsoleWindow.initOwner(this.stage);
+            stageConsoleWindow.setAlwaysOnTop(false);
+            FXMLLoader fxmlLoader = new FXMLLoader(LingujiApplication.class.getResource("console-view.fxml"));
+            Parent root = fxmlLoader.load();
+            ConsoleViewController controller = fxmlLoader.getController();
+            controller.finishInitialization(stageConsoleWindow);
+            Scene scene = new Scene(root, 1067, 634);
+            stageConsoleWindow.setTitle("Console Output");
+            stageConsoleWindow.setScene(scene);
+            stageConsoleWindow.show();
+
+            if (OSUtils.isWindows()) {
+                try {
+                    FXWinUtil.setDarkMode(stageConsoleWindow, true);
+                } catch (Exception ex) {
+                    LOGGER.error("Failed to set theme of Windows title bar!", ex);
+                }
+            }
+
+        } catch (Exception ex) {
+            LOGGER.error("Failed to open console window!", ex);
+        }
+
+    }
+
+    @FXML
     protected void onStartTranslationButtonClick() {
+        if (this.subChooserOpen) return;
+        if (this.translationProcess == null) {
+            //Video support Windows-only for now
+            if (OSUtils.isWindows()) {
+                File videoFile = Backend.getFirstVideoOfInputDirectory();
+                if (videoFile != null) {
+                    this.openSubtitleChooser(videoFile);
+                } else {
+                    this.toggleTranslationProcess();
+                }
+            } else {
+                this.toggleTranslationProcess();
+            }
+        } else {
+            this.toggleTranslationProcess();
+        }
+    }
+
+    protected void toggleTranslationProcess() {
         try {
             if (this.translationProcess == null) {
+                VideoStream v = this.cachedVideoFileSubtitleStream;
+                this.cachedVideoFileSubtitleStream = null;
                 this.toggleAllConfigInputs(true);
-                this.translationProcess = Backend.translate();
+                this.translationProcess = Backend.translate(v);
                 this.startTranslationButton.setText("Stop Translation Process");
             } else {
                 this.translationProcess.running = false;
@@ -228,32 +304,46 @@ public class MainViewController implements ViewControllerBase {
         }
     }
 
-    @FXML
-    protected void onOpenConsoleWindowButtonClick() {
+    protected void openSubtitleChooser(@NotNull File videoFile) {
 
-       try {
+        try {
 
-           Stage stageConsoleWindow = new Stage();
-           FXMLLoader fxmlLoader = new FXMLLoader(LingujiApplication.class.getResource("console-view.fxml"));
-           Parent root = fxmlLoader.load();
-           ConsoleViewController controller = fxmlLoader.getController();
-           controller.finishInitialization(stageConsoleWindow);
-           Scene scene = new Scene(root, 1067, 634);
-           stageConsoleWindow.setTitle("Console Output");
-           stageConsoleWindow.setScene(scene);
-           stageConsoleWindow.show();
+            Stage stageChooserWindow = new Stage();
+            stageChooserWindow.initOwner(this.stage);
+            //blocks the main view if the chooser is open
+            stageChooserWindow.initModality(Modality.WINDOW_MODAL);
+            FXMLLoader loader = new FXMLLoader(LingujiApplication.class.getResource("video-subtitle-chooser-view.fxml"));
+            Parent root = loader.load();
 
-           if (OSUtils.isWindows()) {
-               try {
-                   FXWinUtil.setDarkMode(stageConsoleWindow, true);
-               } catch (Exception ex) {
-                   LOGGER.error("Failed to set theme of Windows title bar!", ex);
-               }
-           }
+            VideoSubtitleChooserViewController controller = loader.getController();
 
-       } catch (Exception ex) {
-           LOGGER.error("Failed to open console window!", ex);
-       }
+            controller.mainViewController = this;
+
+            Ffmpeg ffmpeg = Ffmpeg.buildDefault();
+            VideoInfo info = Objects.requireNonNull(ffmpeg.getVideoInfo(videoFile));
+            controller.subtitles = info.getSubtitlesOfType("ass");
+
+            controller.finishInitialization(stageChooserWindow);
+
+            Scene scene = new Scene(root, 568, 272);
+            stageChooserWindow.setTitle("Choose Subtitle");
+            stageChooserWindow.setScene(scene);
+            stageChooserWindow.show();
+            Toolkit.getDefaultToolkit().beep();
+
+            this.subChooserOpen = true;
+
+            if (OSUtils.isWindows()) {
+                try {
+                    FXWinUtil.setDarkMode(stageChooserWindow, true);
+                } catch (Exception ex) {
+                    LOGGER.error("Failed to set theme of Windows title bar!", ex);
+                }
+            }
+
+        } catch (Exception ex) {
+            LOGGER.error("Failed to open subtitle chooser window!", ex);
+        }
 
     }
 
@@ -336,6 +426,15 @@ public class MainViewController implements ViewControllerBase {
         this.promptTextField.setDisable(disabled);
         this.geminiApiKeyTextField.setDisable(disabled);
         this.linesPerPacketSpinner.setDisable(disabled);
+        this.primaryTranslationEngineComboBox.setDisable(disabled);
+        this.fallbackTranslationEngineComboBox.setDisable(disabled);
+        this.waitBetweenRequestsSpinner.setDisable(disabled);
+        this.setVideoSubtitleAsDefaultCheckBox.setDisable(disabled);
+        this.deeplApiKeyTextField.setDisable(disabled);
+        this.deeplxApiUrlTextField.setDisable(disabled);
+        this.libreApiKeyTextField.setDisable(disabled);
+        this.libreApiUrlTextField.setDisable(disabled);
+        this.fallbackTranslatorBehaviourComboBox.setDisable(disabled);
     }
 
     protected void setupStringConfigOption(@NotNull TextField textField, @NotNull AbstractOptions.Option<String> option) {

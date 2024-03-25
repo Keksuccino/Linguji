@@ -20,6 +20,7 @@ module de.keksuccino.linguji.linguji {
     requires com.sun.jna.platform;
     requires javafx.graphics;
     requires jdk.crypto.ec;
+    requires java.desktop;
 
     exports de.keksuccino.linguji.linguji.frontend;
     exports de.keksuccino.linguji.linguji.backend;

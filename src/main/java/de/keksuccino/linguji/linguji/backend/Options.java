@@ -26,7 +26,7 @@ public class Options extends AbstractOptions {
     public final Option<String> fallbackTranslationEngine = new Option<>(config, "fallback_translation_engine", TranslationEngines.DEEPLX.getName(), "general");
     public final Option<String> fallbackTranslatorBehaviour = new Option<>(config, "fallback_translator_behaviour", FallbackTranslatorBehaviour.TRANSLATE_FULL_PACKET.getName(), "general");
     public final Option<Long> waitMillisBetweenRequests = new Option<>(config, "wait_millis_between_requests", 3000L, "general");
-    public final Option<Integer> videoFileSubtitleStreamIndex = new Option<>(config, "video_file_subtitle_stream_index", 2, "general");
+    public final Option<Boolean> setVideoSubtitleAsDefault = new Option<>(config, "set_video_subtitle_as_default", true, "general");
 
     public final Option<String> geminiApiKey = new Option<>(config, "gemini_api_key", "", "gemini");
     public final Option<String> geminiHarmCategoryHarassmentSetting = new Option<>(config, "gemini_harm_category_harassment_setting", "BLOCK_ONLY_HIGH", "gemini");
@@ -40,11 +40,11 @@ public class Options extends AbstractOptions {
     public final Option<Boolean> geminiOverrideSafetyThresholdSoftBlock = new Option<>(config, "gemini_override_safety_threshold_soft_block", true, "gemini");
     public final Option<Boolean> geminiOverrideSafetyThresholdHardBlock = new Option<>(config, "gemini_override_safety_threshold_hard_block", true, "gemini");
     /** Min should be 1 **/
-    public final Option<Integer> geminiOverrideSafetyThresholdSoftBlockAfterTries = new Option<>(config, "gemini_override_safety_threshold_soft_block_after_tries", 50, "gemini");
+    public final Option<Integer> geminiOverrideSafetyThresholdSoftBlockAfterTries = new Option<>(config, "gemini_override_safety_threshold_soft_block_after_tries", 10, "gemini");
     /** Min should be 1 **/
     public final Option<Integer> geminiOverrideSafetyThresholdHardBlockAfterTries = new Option<>(config, "gemini_override_safety_threshold_hard_block_after_tries", 1, "gemini");
     /** Min should be 1 **/
-    public final Option<Integer> geminiOverrideSafetyThresholdSoftBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_soft_block_tries_per_level", 20, "gemini");
+    public final Option<Integer> geminiOverrideSafetyThresholdSoftBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_soft_block_tries_per_level", 10, "gemini");
     /** Min should be 1 **/
     public final Option<Integer> geminiOverrideSafetyThresholdHardBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_hard_block_tries_per_level", 2, "gemini");
     public final Option<Boolean> geminiOverrideSafetyThresholdSkipLowLevels = new Option<>(config, "gemini_override_safety_threshold_skip_low_levels", true, "gemini");

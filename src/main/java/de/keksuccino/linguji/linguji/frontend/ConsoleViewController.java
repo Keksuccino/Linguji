@@ -19,6 +19,7 @@ import java.util.List;
 public class ConsoleViewController implements ViewControllerBase {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
+    private static final int MAX_LINES = 500;
 
     @FXML
     private ListView<Text> consoleListView;
@@ -64,6 +65,11 @@ public class ConsoleViewController implements ViewControllerBase {
                     line.setFill(Color.web("#fcb94c")); //yellow
                 } else {
                     line.setFill(Color.web("#e0e0e0")); //white
+                }
+                //Clear view if too many lines
+                if (this.consoleListView.getItems().size() >= MAX_LINES) {
+                    System.out.println("################# CLEARING CONSOLE VIEW !");
+                    this.consoleListView.getItems().clear();
                 }
                 this.consoleListView.getItems().add(line);
             });

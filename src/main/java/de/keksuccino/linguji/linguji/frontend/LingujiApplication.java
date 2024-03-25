@@ -41,7 +41,7 @@ public class LingujiApplication extends javafx.application.Application {
         Parent parent = fxmlLoader.load();
         MainViewController controller = fxmlLoader.getController();
         controller.finishInitialization(stage, parent);
-        Scene scene = new Scene(parent, 883, 860);
+        Scene scene = new Scene(parent, 883, 847);
 
         stage.setTitle("Linguji v" + Backend.VERSION);
         stage.setScene(scene);

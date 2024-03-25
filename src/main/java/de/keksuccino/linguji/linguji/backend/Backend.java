@@ -1,6 +1,10 @@
 package de.keksuccino.linguji.linguji.backend;
 
 import com.google.common.io.Files;
+import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.Ffmpeg;
+import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoStream;
+import de.keksuccino.linguji.linguji.backend.lib.mkvtoolnix.MkvToolNix;
+import de.keksuccino.linguji.linguji.backend.lib.os.OSUtils;
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AbstractSubtitle;
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AssSubtitle;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.SubtitleTranslator;
@@ -13,14 +17,28 @@ import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class Backend {
+
+
+
+    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
+    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
+    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
+    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
+    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
+    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
+    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
+
+
+
+
 
     //TODO MyMemory als translator adden
 
@@ -36,7 +54,7 @@ public class Backend {
 
     public static void init() {
 
-        resetTempDirectory();
+        Backend.resetTempDirectory();
 
         updateOptions();
 
@@ -48,12 +66,18 @@ public class Backend {
             FileUtils.createDirectory(new File(getOptions().outputDirectory.getValue()), false);
         }
 
+        FileUtils.createDirectory(Ffmpeg.DEFAULT_FFMPEG_DIRECTORY, false);
+        FileUtils.createDirectory(MkvToolNix.DEFAULT_MKVTOOLNIX_DIRECTORY, false);
+
     }
 
     @NotNull
-    public static TranslationProcess translate() {
+    public static TranslationProcess translate(@Nullable VideoStream videoFileSubtitleStream) {
 
-        TranslationProcess process = new TranslationProcess();
+        Backend.resetTempDirectory();
+
+        final TranslationProcess process = new TranslationProcess();
+        final File tempExtractedSubtitleDir = FileUtils.createDirectory(new File(TEMP_DIRECTORY, "extracted_subs_" + System.currentTimeMillis()), false);
 
         Thread t = new Thread(() -> {
 
@@ -70,24 +94,30 @@ public class Backend {
                 String inDirString = Backend.getOptions().inputDirectory.getValue();
                 String outDirString = Backend.getOptions().outputDirectory.getValue();
                 if (inDirString.trim().isEmpty() || outDirString.trim().isEmpty()) throw new FileNotFoundException("Input or output directory is empty! Needs to be a valid directory!");
-                File inDir = FileUtils.createDirectory(new File(inDirString), false);
                 File outDir = FileUtils.createDirectory(new File(outDirString), false);
 
-                File[] filesInInput = Objects.requireNonNull(inDir.listFiles(), "Failed to get files of input directory!");
+                List<File> inputFiles = getInputFiles();
                 List<AbstractSubtitle> subtitles = new ArrayList<>();
 
-                File firstVideoFile = getFirstVideoOfInputDirectory();
-                if (firstVideoFile != null) {
-
+                if (inputFiles.isEmpty()) {
+                    LOGGER.warn("Input directory is empty or the system failed to get the input files!");
+                    process.running = false;
+                    return;
                 }
 
-                for (File file : filesInInput) {
-                    //Handle ASS subtitle files
-                    if (file.isFile() && file.getPath().toLowerCase().endsWith(".ass")) {
-                        AssSubtitle assSubtitle = Objects.requireNonNull(AssSubtitle.create(file), "Failed to parse ASS subtitle file: " + file.getAbsolutePath());
-                        assSubtitle.sourceFile = file;
-                        subtitles.add(assSubtitle);
+                //Add subtitles of video files from input directory (video support Windows-only for now)
+                if ((videoFileSubtitleStream != null) && OSUtils.isWindows()) {
+                    MkvToolNix mkvToolNix = MkvToolNix.createDefault();
+                    for (File videoFile : getVideoInputFiles()) {
+                        File extractedSubtitle = mkvToolNix.extractSubtitleTrackFromMkv(videoFile, videoFileSubtitleStream, tempExtractedSubtitleDir);
+                        LOGGER.info("Extracted subtitle track from: " + videoFile.getPath());
+                        addToListIfValidSubtitle(extractedSubtitle, videoFile, subtitles);
                     }
+                }
+
+                //Add normal subtitle files from input directory
+                for (File file : inputFiles) {
+                    addToListIfValidSubtitle(file, null, subtitles);
                 }
 
                 process.subtitles = new ArrayList<>(subtitles);
@@ -110,9 +140,19 @@ public class Backend {
                             String fileExtension = Files.getFileExtension(subtitle.sourceFile.getPath()).replace(".", "");
                             String fileName = Files.getNameWithoutExtension(subtitle.sourceFile.getPath());
                             String outFileSuffix = Backend.getOptions().outputFileSuffix.getValue();
-                            File translateOutFile = new File(outDir, fileName + outFileSuffix + "." + fileExtension);
-                            FileUtils.writeTextToFile(translateOutFile, subtitle.serialize());
-                            LOGGER.info("Translation of subtitle file successfully finished and saved to: " + translateOutFile.getAbsolutePath());
+                            File outSubtitleFile = (subtitle.sourceVideoFile == null) ? new File(outDir, fileName + outFileSuffix + "." + fileExtension) : new File(tempExtractedSubtitleDir, fileName + "_translated." + fileExtension);
+                            FileUtils.writeTextToFile(outSubtitleFile, subtitle.serialize());
+                            if (subtitle.sourceVideoFile != null) {
+                                //TODO write new video file with translated subs
+                                MkvToolNix mkvToolNix = MkvToolNix.createDefault();
+                                String videoFileExtension = Files.getFileExtension(subtitle.sourceVideoFile.getPath()).replace(".", "");
+                                String videoFileName = Files.getNameWithoutExtension(subtitle.sourceVideoFile.getPath());
+                                File outVideoFile = new File(outDir, videoFileName + outFileSuffix + "." + videoFileExtension);
+                                mkvToolNix.addSubtitleToMkv(subtitle.sourceVideoFile, outVideoFile, outSubtitleFile, targetLang, Backend.getOptions().setVideoSubtitleAsDefault.getValue());
+                                LOGGER.info("Translation of video file subtitle finished and video saved to: " + outVideoFile.getAbsolutePath());
+                            } else {
+                                LOGGER.info("Translation of subtitle file successfully finished and saved to: " + outSubtitleFile.getAbsolutePath());
+                            }
                         }
                     } catch (Exception ex) {
                         subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED_WITH_EXCEPTIONS;
@@ -136,29 +176,55 @@ public class Backend {
 
     }
 
+    protected static void addToListIfValidSubtitle(@NotNull File file, @Nullable File videoSource, @NotNull List<AbstractSubtitle> subtitles) {
+        AbstractSubtitle subtitle = null;
+        //ASS
+        if (file.isFile() && file.getPath().toLowerCase().endsWith(".ass")) {
+            subtitle = Objects.requireNonNull(AssSubtitle.create(file), "Failed to parse ASS subtitle file: " + file.getAbsolutePath());
+        }
+        if (subtitle != null) {
+            subtitle.sourceFile = file;
+            subtitle.sourceVideoFile = videoSource;
+            subtitles.add(subtitle);
+        }
+    }
+
+    @NotNull
+    public static List<File> getInputFiles() {
+        List<File> files = new ArrayList<>();
+        String inDirString = Backend.getOptions().inputDirectory.getValue();
+        File inDir = FileUtils.createDirectory(new File(inDirString), false);
+        File[] filesInInput = inDir.listFiles();
+        if (filesInInput != null) files.addAll(Arrays.asList(filesInInput));
+        return files;
+    }
+
+    @NotNull
+    public static List<File> getVideoInputFiles() {
+        List<File> videoFiles = new ArrayList<>();
+        for (File f : getInputFiles()) {
+            if (f.isFile()) {
+                //MKV
+                if (f.getAbsolutePath().toLowerCase().endsWith(".mkv")) videoFiles.add(f);
+            }
+        }
+        return videoFiles;
+    }
+
     @Nullable
     public static File getFirstVideoOfInputDirectory() {
-        try {
-            String inDirString = Backend.getOptions().inputDirectory.getValue();
-            File inDir = FileUtils.createDirectory(new File(inDirString), false);
-            File[] filesInInput = Objects.requireNonNull(inDir.listFiles());
-            for (File f : filesInInput) {
-                if (f.isFile()) {
-                    //MKV
-                    if (f.getAbsolutePath().toLowerCase().endsWith(".mkv")) return f;
-                }
-            }
-        } catch (Exception ignore) {}
+        List<File> videoFiles = getVideoInputFiles();
+        if (!videoFiles.isEmpty()) return videoFiles.get(0);
         return null;
     }
 
     public static void resetTempDirectory() {
         try {
             org.apache.commons.io.FileUtils.deleteDirectory(TEMP_DIRECTORY);
+            FileUtils.createDirectory(TEMP_DIRECTORY, false);
         } catch (Exception ex) {
-            LOGGER.error("Failed to delete temp directory!", ex);
+            LOGGER.error("Failed to clear temp directory!", ex);
         }
-        FileUtils.createDirectory(TEMP_DIRECTORY, false);
     }
 
     public static void updateOptions() {
