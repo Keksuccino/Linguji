@@ -10,8 +10,6 @@ _**jimaku** ( 字幕 / じまく ) : Japanese word for "subtitles"._
 Linguji is a subtitle translator powered by AI!<br>
 It automatically batch-translates subtitle files and even video files with subtitles!
 
-If you need help getting Linguji to work or have any questions, please join my [Discord](https://discord.gg/rhayah27GC).
-
 ## Key Features
 
 - **Batch Translation:** Automatically translate multiple files at once without manually choosing the next file!
@@ -30,6 +28,8 @@ Download the [latest release](https://github.com/Keksuccino/Linguji/releases) fo
 To start translating subtitle files, simply **set a valid Gemini API key** and put all your subtitle files into the `input_subtitles` folder (by default) that should be in the same directory as the `linguji` executable.
 
 Now simply hit the **Start Translation Process** button and see the magic happen!
+
+If you need help getting Linguji to work or have any questions, please join my [Discord](https://discord.gg/rhayah27GC).
 
 # Requirements
 
