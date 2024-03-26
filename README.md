@@ -38,7 +38,7 @@ If you need help getting Linguji to work or have any questions, please join my [
 
 - Java 17
 
-Linguji needs [FFMPEG](https://www.gyan.dev/ffmpeg/builds/) (full build) and [MkvToolNix](https://mkvtoolnix.download/downloads.html) for video file support.<br>
+- Linguji needs [FFMPEG](https://www.gyan.dev/ffmpeg/builds/) (full build) and [MkvToolNix](https://mkvtoolnix.download/downloads.html) for video file support.<br>
 If you plan to translate video files, make sure to place all FFMPEG executables in the `ffmpeg` directory and all MkvToolNix executables in the `mkvtoolnix` directory. Both directories get created at the same path as the Linguji executable when running Linguji for the first time.
 
 # Copyright & Licensing
