@@ -21,6 +21,8 @@ It automatically batch-translates subtitle files and even video files with subti
 - **Advanced Error Handling:** Linguji strives to keep the translation process going by working around various errors. This includes adapting its translation process to avoid triggering the same error again, like adjusting Gemini's safety threshold after encountering profanity or safety-related blocks.
 - **Fallback Translator:** The fallback translation engine is used when the primary engine fails to translate the given subtitles.
 
+If you need help getting Linguji to work or have any questions, please join my [Discord](https://discord.gg/rhayah27GC).
+
 # Getting Started
 
 Download the [latest release](https://github.com/Keksuccino/Linguji/releases) for your operating system, then run the `linguji` executable inside.
