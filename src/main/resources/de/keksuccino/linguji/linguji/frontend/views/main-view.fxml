@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" minHeight="860.0" minWidth="830.0" prefHeight="1252.0" prefWidth="868.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.keksuccino.linguji.linguji.frontend.MainViewController">
+<VBox alignment="CENTER" minHeight="860.0" minWidth="830.0" prefHeight="1252.0" prefWidth="868.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.keksuccino.linguji.linguji.frontend.views.MainViewController">
    <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -57,7 +57,7 @@
                <Font size="10.0" />
             </font>
          </Label>
-         <Button fx:id="openConsoleWindowButton" layoutX="14.0" layoutY="645.0" mnemonicParsing="false" onMouseClicked="#onOpenConsoleWindowButtonClick" prefHeight="25.0" prefWidth="762.0" text="Open Debug Log" AnchorPane.bottomAnchor="115.66666666666663" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+         <Button layoutX="14.0" layoutY="645.0" mnemonicParsing="false" onMouseClicked="#onOpenConsoleWindowButtonClick" prefHeight="25.0" prefWidth="762.0" text="Open Debug Log" AnchorPane.bottomAnchor="115.66666666666663" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
             <tooltip>
                <Tooltip prefWidth="400.0" text="The debug log gives information about requests to and answers from the AI and shows errors that happened during the translation process." />
             </tooltip></Button>

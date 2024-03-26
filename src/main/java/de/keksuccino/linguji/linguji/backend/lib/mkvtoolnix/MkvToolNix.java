@@ -30,8 +30,16 @@ public class MkvToolNix extends CliExecutor {
     protected File mkvextractExecutable;
 
     @NotNull
-    public static MkvToolNix createDefault() throws FileNotFoundException {
+    public static MkvToolNix buildDefault() throws FileNotFoundException {
         return new MkvToolNix(DEFAULT_MKVTOOLNIX_DIRECTORY);
+    }
+
+    public static boolean readyToBuildDefaultInstance() {
+        File mkvmergeExecutable = new File(DEFAULT_MKVTOOLNIX_DIRECTORY, "mkvmerge.exe");
+        if (!mkvmergeExecutable.isFile()) return false;
+        File mkvextractExecutable = new File(DEFAULT_MKVTOOLNIX_DIRECTORY, "mkvextract.exe");
+        if (!mkvextractExecutable.isFile()) return false;
+        return true;
     }
 
     public MkvToolNix(@NotNull File mkvToolNixDirectory) throws FileNotFoundException {
@@ -57,10 +65,10 @@ public class MkvToolNix extends CliExecutor {
         File subtitleFile = new File(subtitleFileSaveDirectory, Files.getNameWithoutExtension(mkvFile.getPath()) + "_subtitle_track_" + subtitleTrackToExtract.index + "." + subtitleFileExtension);
 
         List<String> args = new ArrayList<>();
-        args.add("\"" + this.mkvextractExecutable.getAbsolutePath() + "\"");
+        args.add("\"" + this.mkvextractExecutable.getPath().replace("\\", "/") + "\"");
         args.add("tracks");
-        args.add("\"" + mkvFile.getAbsolutePath() + "\"");
-        args.add(subtitleTrackToExtract.index + ":" + "\"" + subtitleFile.getAbsolutePath() + "\"");
+        args.add("\"" + mkvFile.getPath().replace("\\", "/") + "\"");
+        args.add(subtitleTrackToExtract.index + ":" + "\"" + subtitleFile.getPath().replace("\\", "/") + "\"");
         args.add("--gui-mode");
 
         String feedback = this.execute(args.toArray(new String[0]));
@@ -77,21 +85,21 @@ public class MkvToolNix extends CliExecutor {
 
     public void addSubtitleToMkv(@NotNull File mkvFileIn, @NotNull File mkvFileOut, @NotNull File subtitleFile, @Nullable Locale subtitleLang, boolean setSubtitleAsDefault) throws Exception {
 
-        if (!mkvFileIn.isFile()) throw new FileNotFoundException("Input MKV file not found: " + mkvFileIn.getAbsolutePath());
-        if (!subtitleFile.isFile()) throw new FileNotFoundException("Input subtitle file not found: " + subtitleFile.getAbsolutePath());
+        if (!mkvFileIn.isFile()) throw new FileNotFoundException("Input MKV file not found: " + mkvFileIn.getPath().replace("\\", "/"));
+        if (!subtitleFile.isFile()) throw new FileNotFoundException("Input subtitle file not found: " + subtitleFile.getPath().replace("\\", "/"));
 
         List<String> args = new ArrayList<>();
-        args.add("\"" + this.mkvmergeExecutable.getAbsolutePath() + "\"");
+        args.add("\"" + this.mkvmergeExecutable.getPath().replace("\\", "/") + "\"");
         args.add("-o");
-        args.add("\"" + mkvFileOut.getAbsolutePath() + "\"");
-        args.add("\"" + mkvFileIn.getAbsolutePath() + "\"");
+        args.add("\"" + mkvFileOut.getPath().replace("\\", "/") + "\"");
+        args.add("\"" + mkvFileIn.getPath().replace("\\", "/") + "\"");
         if (subtitleLang != null) {
             args.add("--language");
             args.add("0:" + subtitleLang.getIso());
         }
         args.add("--default-track-flag");
         args.add("0:" + (setSubtitleAsDefault ? "1" : "0"));
-        args.add("\"" + subtitleFile.getAbsolutePath() + "\"");
+        args.add("\"" + subtitleFile.getPath().replace("\\", "/") + "\"");
         args.add("--gui-mode");
 
         String feedback = this.execute(args.toArray(new String[0]));

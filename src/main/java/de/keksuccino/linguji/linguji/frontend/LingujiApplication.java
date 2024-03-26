@@ -5,25 +5,20 @@ import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import de.keksuccino.linguji.linguji.backend.lib.os.OSUtils;
 import de.keksuccino.linguji.linguji.frontend.util.os.windows.FXWinUtil;
+import de.keksuccino.linguji.linguji.frontend.views.MainViewController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 public class LingujiApplication extends javafx.application.Application {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
 
-    @Nullable
-    public static Stage stage;
-
     public static void main(String[] args) {
 
-        Backend.init();
-
-        ConsoleViewMemory.init();
+        Frontend.init();
 
         launch();
 
@@ -32,12 +27,9 @@ public class LingujiApplication extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        LingujiApplication.stage = stage;
+        Frontend.mainViewStage = stage;
 
-//        stage.setMinWidth(830);
-//        stage.setMinHeight(870);
-
-        FXMLLoader fxmlLoader = new FXMLLoader(LingujiApplication.class.getResource("main-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainViewController.class.getResource("main-view.fxml"));
         Parent parent = fxmlLoader.load();
         MainViewController controller = fxmlLoader.getController();
         controller.finishInitialization(stage, parent);

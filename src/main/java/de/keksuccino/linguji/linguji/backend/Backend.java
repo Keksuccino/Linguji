@@ -15,6 +15,8 @@ import de.keksuccino.linguji.linguji.backend.lib.FileUtils;
 import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
+import de.keksuccino.linguji.linguji.frontend.Frontend;
+import de.keksuccino.linguji.linguji.frontend.TaskExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
@@ -25,20 +27,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Backend {
-
-
-
-    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
-    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
-    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
-    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
-    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
-    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
-    //TODO Info adden, wenn FFMPEG und MkvToolNix nicht gefunden !!!!!!!!!!!!!
-
-
-
-
 
     //TODO MyMemory als translator adden
 
@@ -81,6 +69,8 @@ public class Backend {
 
         Thread t = new Thread(() -> {
 
+            boolean finishedWithoutErrors = true;
+
             try {
 
                 Locale sourceLang = Locale.getByName(Backend.getOptions().sourceLanguageLocale.getValue());
@@ -100,6 +90,12 @@ public class Backend {
                 List<AbstractSubtitle> subtitles = new ArrayList<>();
 
                 if (inputFiles.isEmpty()) {
+                    TaskExecutor.queueTask(() -> {
+                        Frontend.openAlert(
+                                "Empty input directory!",
+                                "No files found in the input directory!",
+                                "Linguji did not find any files in the input directory!\nIf there are files in that directory, make sure Linguji has read/write access.");
+                    });
                     LOGGER.warn("Input directory is empty or the system failed to get the input files!");
                     process.running = false;
                     return;
@@ -107,7 +103,7 @@ public class Backend {
 
                 //Add subtitles of video files from input directory (video support Windows-only for now)
                 if ((videoFileSubtitleStream != null) && OSUtils.isWindows()) {
-                    MkvToolNix mkvToolNix = MkvToolNix.createDefault();
+                    MkvToolNix mkvToolNix = MkvToolNix.buildDefault();
                     for (File videoFile : getVideoInputFiles()) {
                         File extractedSubtitle = mkvToolNix.extractSubtitleTrackFromMkv(videoFile, videoFileSubtitleStream, tempExtractedSubtitleDir);
                         LOGGER.info("Extracted subtitle track from: " + videoFile.getPath());
@@ -118,6 +114,18 @@ public class Backend {
                 //Add normal subtitle files from input directory
                 for (File file : inputFiles) {
                     addToListIfValidSubtitle(file, null, subtitles);
+                }
+
+                if (subtitles.isEmpty()) {
+                    TaskExecutor.queueTask(() -> {
+                        Frontend.openAlert(
+                                "No files found!",
+                                "No translatable files found!",
+                                "There are no translatable files in the input directory!\nMake sure all input files are supported by Linguji!");
+                    });
+                    LOGGER.warn("No translatable files found in input directory!");
+                    process.running = false;
+                    return;
                 }
 
                 process.subtitles = new ArrayList<>(subtitles);
@@ -143,8 +151,7 @@ public class Backend {
                             File outSubtitleFile = (subtitle.sourceVideoFile == null) ? new File(outDir, fileName + outFileSuffix + "." + fileExtension) : new File(tempExtractedSubtitleDir, fileName + "_translated." + fileExtension);
                             FileUtils.writeTextToFile(outSubtitleFile, subtitle.serialize());
                             if (subtitle.sourceVideoFile != null) {
-                                //TODO write new video file with translated subs
-                                MkvToolNix mkvToolNix = MkvToolNix.createDefault();
+                                MkvToolNix mkvToolNix = MkvToolNix.buildDefault();
                                 String videoFileExtension = Files.getFileExtension(subtitle.sourceVideoFile.getPath()).replace(".", "");
                                 String videoFileName = Files.getNameWithoutExtension(subtitle.sourceVideoFile.getPath());
                                 File outVideoFile = new File(outDir, videoFileName + outFileSuffix + "." + videoFileExtension);
@@ -153,8 +160,11 @@ public class Backend {
                             } else {
                                 LOGGER.info("Translation of subtitle file successfully finished and saved to: " + outSubtitleFile.getAbsolutePath());
                             }
+                        } else {
+                            finishedWithoutErrors = false;
                         }
                     } catch (Exception ex) {
+                        finishedWithoutErrors = false;
                         subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED_WITH_EXCEPTIONS;
                         LOGGER.error("Failed to finish translation of subtitle file: " + ((subtitle.sourceFile != null) ? subtitle.sourceFile.getAbsolutePath() : "NULL"), ex);
                     }
@@ -162,10 +172,36 @@ public class Backend {
                 }
 
             } catch (Exception ex) {
+                finishedWithoutErrors = false;
                 LOGGER.error("Error while trying to translate subtitles!", ex);
             }
 
             process.running = false;
+
+            if (!process.stoppedByUser) {
+
+                final boolean finalFinishedWithoutErrors = finishedWithoutErrors;
+                TaskExecutor.queueTask(() -> {
+
+                    if (finalFinishedWithoutErrors) {
+
+                        Frontend.openAlert(
+                                "Finished!",
+                                "Translation process successfully finished!",
+                                "The translation process finished without errors!\nYou can find the translated files in the output directory.");
+
+                    } else {
+
+                        Frontend.openAlert(
+                                "Finished with errors!",
+                                "Translation process finished with errors!",
+                                "Errors happened during the translation process!\nNot all files could be translated!\n\nPlease check the log file for more information.");
+
+                    }
+
+                });
+
+            }
 
         }, "Backend Translation Thread");
 

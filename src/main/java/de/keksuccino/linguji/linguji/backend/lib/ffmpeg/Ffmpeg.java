@@ -15,11 +15,6 @@ public class Ffmpeg extends CliExecutor {
 
     public static final File DEFAULT_FFMPEG_DIRECTORY = new File("ffmpeg");
 
-    protected static final String FFPROBE_PATH_PLACEHOLDER = "%ffprobe_path%";
-    protected static final String FFMPEG_PATH_PLACEHOLDER = "%ffmpeg_path%";
-    protected static final String VIDEO_FILE_PATH = "%video_path%";
-    protected static final String VIDEO_INFO_COMMAND = "\"%ffprobe_path%\" -v quiet -print_format json -show_format -show_streams \"%video_path%\"";
-
     @NotNull
     protected final File ffmpegDirectory;
     @NotNull
@@ -31,6 +26,14 @@ public class Ffmpeg extends CliExecutor {
     public static Ffmpeg buildDefault() throws FileNotFoundException {
         FileUtils.createDirectory(DEFAULT_FFMPEG_DIRECTORY, false);
         return new Ffmpeg(DEFAULT_FFMPEG_DIRECTORY);
+    }
+
+    public static boolean readyToBuildDefaultInstance() {
+        File ffmpegExecutable = new File(DEFAULT_FFMPEG_DIRECTORY, "ffmpeg.exe");
+        if (!ffmpegExecutable.isFile()) return false;
+        File ffprobeExecutable = new File(DEFAULT_FFMPEG_DIRECTORY, "ffprobe.exe");
+        if (!ffprobeExecutable.isFile()) return false;
+        return true;
     }
 
     public Ffmpeg(@NotNull File ffmpegDirectory) throws FileNotFoundException {

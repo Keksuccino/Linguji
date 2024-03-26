@@ -10,6 +10,7 @@ import java.util.List;
 public class TranslationProcess {
 
     public volatile boolean running = true;
+    public volatile boolean stoppedByUser = false;
     @Nullable
     public volatile List<AbstractSubtitle> subtitles;
     @Nullable

@@ -25,7 +25,7 @@ public class Options extends AbstractOptions {
     public final Option<String> primaryTranslationEngine = new Option<>(config, "primary_translation_engine", TranslationEngines.GEMINI_PRO.getName(), "general");
     public final Option<String> fallbackTranslationEngine = new Option<>(config, "fallback_translation_engine", TranslationEngines.DEEPLX.getName(), "general");
     public final Option<String> fallbackTranslatorBehaviour = new Option<>(config, "fallback_translator_behaviour", FallbackTranslatorBehaviour.TRANSLATE_FULL_PACKET.getName(), "general");
-    public final Option<Long> waitMillisBetweenRequests = new Option<>(config, "wait_millis_between_requests", 3000L, "general");
+    public final Option<Long> waitMillisBetweenRequests = new Option<>(config, "wait_millis_between_requests", 4000L, "general");
     public final Option<Boolean> setVideoSubtitleAsDefault = new Option<>(config, "set_video_subtitle_as_default", true, "general");
 
     public final Option<String> geminiApiKey = new Option<>(config, "gemini_api_key", "", "gemini");
@@ -55,7 +55,7 @@ public class Options extends AbstractOptions {
     public final Option<String> deepLApiKey = new Option<>(config, "deepl_api_key", "", "deepl");
 
     public final Option<String> deepLxUrl = new Option<>(config, "deeplx_url", "http://localhost:1188/translate", "deeplx");
-    public final Option<Integer> deepLxTriesBeforeErrorEmptyResponse = new Option<>(config, "deeplx_tries_before_error_empty_response", 50, "deeplx");
+    public final Option<Integer> deepLxTriesBeforeErrorEmptyResponse = new Option<>(config, "deeplx_tries_before_error_empty_response", 10, "deeplx");
 
     public Options() {
         this.config.syncConfig();

@@ -1,9 +1,10 @@
-package de.keksuccino.linguji.linguji.frontend;
+package de.keksuccino.linguji.linguji.frontend.views;
 
 import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.Ffmpeg;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoInfo;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoStream;
+import de.keksuccino.linguji.linguji.backend.lib.mkvtoolnix.MkvToolNix;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehaviour;
 import de.keksuccino.linguji.linguji.backend.translator.TranslationEngineBuilder;
@@ -14,6 +15,8 @@ import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
 import de.keksuccino.linguji.linguji.backend.lib.options.AbstractOptions;
 import de.keksuccino.linguji.linguji.backend.lib.os.OSUtils;
+import de.keksuccino.linguji.linguji.frontend.Frontend;
+import de.keksuccino.linguji.linguji.frontend.TaskExecutor;
 import de.keksuccino.linguji.linguji.frontend.util.SpinnerUtils;
 import de.keksuccino.linguji.linguji.frontend.util.os.windows.FXWinUtil;
 import javafx.animation.Animation;
@@ -104,8 +107,6 @@ public class MainViewController implements ViewControllerBase {
     @FXML
     private CheckBox geminiThresholdOverrideSkipLowLevelsCheckBox;
     @FXML
-    private Button openConsoleWindowButton;
-    @FXML
     private ComboBox<FallbackTranslatorBehaviour> fallbackTranslatorBehaviourComboBox;
     @FXML
     private ComboBox<TranslationEngineBuilder<?>> primaryTranslationEngineComboBox;
@@ -132,7 +133,7 @@ public class MainViewController implements ViewControllerBase {
     protected boolean subChooserOpen = false;
 
     @FXML
-    protected void initialize() {
+    public void initialize() {
 
         this.inputDirLabel.setText(Backend.getOptions().inputDirectory.getValue());
         this.outputDirLabel.setText(Backend.getOptions().outputDirectory.getValue());
@@ -188,7 +189,7 @@ public class MainViewController implements ViewControllerBase {
 
     }
 
-    protected void finishInitialization(@NotNull Stage stage, @NotNull Parent parent) {
+    public void finishInitialization(@NotNull Stage stage, @NotNull Parent parent) {
 
         this.stage = stage;
 
@@ -207,6 +208,8 @@ public class MainViewController implements ViewControllerBase {
     }
 
     protected void tick() {
+
+        TaskExecutor.runQueuedTasks();
 
         //Update UI after translation process finished
         if ((this.translationProcess != null) && !this.translationProcess.running) {
@@ -236,7 +239,7 @@ public class MainViewController implements ViewControllerBase {
             Stage stageConsoleWindow = new Stage();
             stageConsoleWindow.initOwner(this.stage);
             stageConsoleWindow.setAlwaysOnTop(false);
-            FXMLLoader fxmlLoader = new FXMLLoader(LingujiApplication.class.getResource("console-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(ConsoleViewController.class.getResource("console-view.fxml"));
             Parent root = fxmlLoader.load();
             ConsoleViewController controller = fxmlLoader.getController();
             controller.finishInitialization(stageConsoleWindow);
@@ -267,7 +270,13 @@ public class MainViewController implements ViewControllerBase {
             if (OSUtils.isWindows()) {
                 File videoFile = Backend.getFirstVideoOfInputDirectory();
                 if (videoFile != null) {
-                    this.openSubtitleChooser(videoFile);
+                    if (!Ffmpeg.readyToBuildDefaultInstance()) {
+                        this.openFfmpegMissingPopup();
+                    } else if (!MkvToolNix.readyToBuildDefaultInstance()) {
+                        this.openMkvToolNixMissingPopup();
+                    } else {
+                        this.openSubtitleChooser(videoFile);
+                    }
                 } else {
                     this.toggleTranslationProcess();
                 }
@@ -288,6 +297,7 @@ public class MainViewController implements ViewControllerBase {
                 this.translationProcess = Backend.translate(v);
                 this.startTranslationButton.setText("Stop Translation Process");
             } else {
+                this.translationProcess.stoppedByUser = true;
                 this.translationProcess.running = false;
                 this.translationProcess = null;
                 this.startTranslationButton.setText("Start Translation Process");
@@ -296,6 +306,7 @@ public class MainViewController implements ViewControllerBase {
         } catch (Exception ex) {
             LOGGER.error("Error while trying to start translation process!", ex);
             if (this.translationProcess != null) {
+                this.translationProcess.stoppedByUser = true;
                 this.translationProcess.running = false;
                 this.translationProcess = null;
                 this.startTranslationButton.setText("Start Translation Process");
@@ -312,7 +323,7 @@ public class MainViewController implements ViewControllerBase {
             stageChooserWindow.initOwner(this.stage);
             //blocks the main view if the chooser is open
             stageChooserWindow.initModality(Modality.WINDOW_MODAL);
-            FXMLLoader loader = new FXMLLoader(LingujiApplication.class.getResource("video-subtitle-chooser-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(VideoSubtitleChooserViewController.class.getResource("video-subtitle-chooser-view.fxml"));
             Parent root = loader.load();
 
             VideoSubtitleChooserViewController controller = loader.getController();
@@ -347,6 +358,24 @@ public class MainViewController implements ViewControllerBase {
 
     }
 
+    protected void openFfmpegMissingPopup() {
+
+        Frontend.openAlert(
+                "FFMPEG not found!",
+                "FFMPEG executables not found!",
+                "Video files were found in the input directory, but not all\nFFMPEG executables were found in the 'ffmpeg' directory.\n\nMake sure both 'ffmpeg' and 'ffprobe' executables are in the 'ffmpeg' directory,\nwhich is located at the same path as Linguji's executable.");
+
+    }
+
+    protected void openMkvToolNixMissingPopup() {
+
+        Frontend.openAlert(
+                "MkvToolNix not found!",
+                "MkvToolNix executables not found!",
+                "Video files were found in the input directory, but not all\nMkvToolNix executables were found in the 'mkvtoolnix' directory.\n\nMake sure both 'mkvmerge' and 'mkvextract' executables are in the 'mkvtoolnix' directory,\nwhich is located at the same path as Linguji's executable.");
+
+    }
+
     @FXML
     protected void onPromptTextFieldInput() {
         String s = this.promptTextField.getText();
@@ -364,8 +393,6 @@ public class MainViewController implements ViewControllerBase {
     @FXML
     protected void onChooseInputDirButtonClick() {
 
-        if (LingujiApplication.stage == null) return;
-
         File inputDirParent = null;
         if (!Backend.getOptions().inputDirectory.getValue().trim().isEmpty()) {
             inputDirParent = new File(Backend.getOptions().inputDirectory.getValue());
@@ -376,7 +403,7 @@ public class MainViewController implements ViewControllerBase {
         if (inputDirParent != null) {
             chooser.setInitialDirectory(inputDirParent);
         }
-        File selectedDirectory = chooser.showDialog(LingujiApplication.stage);
+        File selectedDirectory = chooser.showDialog(this.stage);
         if (selectedDirectory == null) return;
 
         Backend.getOptions().inputDirectory.setValue(selectedDirectory.getPath().replace("\\", "/"));
@@ -389,8 +416,6 @@ public class MainViewController implements ViewControllerBase {
     @FXML
     protected void onChooseOutputDirButtonClick() {
 
-        if (LingujiApplication.stage == null) return;
-
         File outputDirParent = null;
         if (!Backend.getOptions().outputDirectory.getValue().trim().isEmpty()) {
             outputDirParent = new File(Backend.getOptions().outputDirectory.getValue());
@@ -401,7 +426,7 @@ public class MainViewController implements ViewControllerBase {
         if (outputDirParent != null) {
             chooser.setInitialDirectory(outputDirParent);
         }
-        File selectedDirectory = chooser.showDialog(LingujiApplication.stage);
+        File selectedDirectory = chooser.showDialog(this.stage);
         if (selectedDirectory == null) return;
 
         Backend.getOptions().outputDirectory.setValue(selectedDirectory.getPath().replace("\\", "/"));

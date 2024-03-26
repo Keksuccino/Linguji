@@ -1,4 +1,4 @@
-package de.keksuccino.linguji.linguji.frontend;
+package de.keksuccino.linguji.linguji.frontend.views;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;

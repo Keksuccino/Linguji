@@ -1,4 +1,4 @@
-package de.keksuccino.linguji.linguji.frontend;
+package de.keksuccino.linguji.linguji.frontend.views;
 
 import de.keksuccino.linguji.linguji.backend.lib.MathUtils;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoStream;

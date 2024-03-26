@@ -44,6 +44,9 @@ module de.keksuccino.linguji.linguji {
     exports de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line;
     exports de.keksuccino.linguji.linguji.backend.subtitle.translation;
     exports de.keksuccino.linguji.linguji.backend.lib.logger;
+    exports de.keksuccino.linguji.linguji.frontend.views;
+    exports de.keksuccino.linguji.linguji.frontend.controls.spinner;
+    exports de.keksuccino.linguji.linguji.frontend.controls.listview;
     exports de.keksuccino.linguji.linguji.frontend.util;
     exports de.keksuccino.linguji.linguji.frontend.util.os.windows;
     exports de.keksuccino.linguji.linguji.backend.lib.lang;
@@ -71,6 +74,9 @@ module de.keksuccino.linguji.linguji {
     opens de.keksuccino.linguji.linguji.backend.subtitle.subtitles;
     opens de.keksuccino.linguji.linguji.backend.subtitle.subtitles.line;
     opens de.keksuccino.linguji.linguji.backend.subtitle.translation;
+    opens de.keksuccino.linguji.linguji.frontend.views;
+    opens de.keksuccino.linguji.linguji.frontend.controls.spinner;
+    opens de.keksuccino.linguji.linguji.frontend.controls.listview;
     opens de.keksuccino.linguji.linguji.frontend.util;
     opens de.keksuccino.linguji.linguji.backend.lib.logger;
     opens de.keksuccino.linguji.linguji.frontend.util.os.windows;
