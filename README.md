@@ -7,14 +7,19 @@ _**jimaku** ( 字幕 / じまく ) : Japanese word for "subtitles"._
 
 <br>
 
-Linguji is a Gemini-powered AI subtitle file translator.
+Linguji is a subtitle translator powered by AI!<br>
+It automatically batch-translates subtitle files and even video files with subtitles!
 
-It currently supports only ASS files and can batch-translate them from a source language to a target language while trying to preserve its text formatting as good as possible. It has an advanced error handling and tries to keep the translation process going by working around various types of errors and trying to adapt its translation process to not trigger the same error again, like changing the **safety threshold** after a prompt or answer was blocked for profanity/safety reasons.
+## Key Features
 
-If you need help getting Linguji to work or have any questions, please join my [Discord](https://discord.gg/rhayah27GC).
-
-<br>
-<img width="639" alt="Screenshot_4" src="https://github.com/Keksuccino/Linguji/assets/35544624/e96e387e-980d-4869-8e0c-55c14e4c3442">
+- **Batch Translation:** Automatically translate multiple files at once without manually choosing the next file!
+- **Supported Formats:**
+  - **Subtitles:** Currently handles ASS files.
+  - **Videos:** Works with MKV files containing ASS subtitles.
+- **Translation Engines:** Linguji offers flexibility by supporting various translation engines, including Gemini Pro, DeepL, DeepLX, and Libre Translate. Choose the engine that best suits your needs.
+- **Formatting Preservation:** One of Linguji's priorities is to preserve the original subtitle text formatting as good as possible during translation.
+- **Advanced Error Handling:** Linguji strives to keep the translation process going by working around various errors. This includes adapting its translation process to avoid triggering the same error again, like adjusting Gemini's safety threshold after encountering profanity or safety-related blocks.
+- **Fallback Translator:** The fallback translation engine is used when the primary engine fails to translate the given subtitles.
 
 # Getting Started
 
@@ -27,6 +32,11 @@ Now simply hit the **Start Translation Process** button and see the magic happen
 # Requirements
 
 - Java 17
+
+# Additional Requirements
+
+Linguji needs [FFMPEG](https://www.gyan.dev/ffmpeg/builds/) (full build) and [MkvToolNix](https://mkvtoolnix.download/downloads.html) for video file support.<br>
+If you plan to translate video files, make sure to place all FFMPEG executables in the `ffmpeg` directory and all MkvToolNix executables in the `mkvtoolnix` directory. Both directories get created at the same path as the Linguji executable when running Linguji for the first time.
 
 # Copyright & Licensing
 
