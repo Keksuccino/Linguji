@@ -13,6 +13,7 @@ It automatically batch-translates subtitle files and even video files with subti
 ## Key Features
 
 - **Batch Translation:** Automatically translate multiple files at once without manually choosing the next file!
+- **GUI:** Everything in Linguji can be done in a GUI, so no need for manually editing configs or typing commands.
 - **Supported Formats:**
   - **Subtitles:** Currently handles ASS files.
   - **Videos:** Works with MKV files containing ASS subtitles.
