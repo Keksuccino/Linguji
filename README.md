@@ -24,7 +24,7 @@ It automatically batch-translates subtitle files and even video files with subti
 
 <br>
 
-[<img width="634" src="https://github.com/Keksuccino/Linguji/assets/35544624/c3d6c5b4-0e91-4774-ba1b-d5c223726f48">](https://www.youtube.com/watch?v=JTlyWOfve20)
+[<img width="634" src="https://github.com/Keksuccino/Linguji/assets/35544624/1ca53281-df10-4684-bea5-f21bd71b005d">](https://www.youtube.com/watch?v=JTlyWOfve20)
 
 # Getting Started
 
