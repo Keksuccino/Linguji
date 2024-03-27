@@ -22,7 +22,8 @@ It automatically batch-translates subtitle files and even video files with subti
 - **Fallback Translator:** The fallback translation engine is used when the primary engine fails to translate the given subtitles.
 
 <br>
-<img width="540" alt="Linguji UI" src="https://github.com/Keksuccino/Linguji/assets/35544624/ee9b3f3a-c841-48e4-b5c8-764dc8dda974">
+
+[<img width="634" src="https://github.com/Keksuccino/Linguji/assets/35544624/c3d6c5b4-0e91-4774-ba1b-d5c223726f48">](https://www.youtube.com/watch?v=JTlyWOfve20)
 
 # Getting Started
 
