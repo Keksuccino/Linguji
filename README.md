@@ -28,7 +28,7 @@ It automatically batch-translates subtitle files and even video files with subti
 
 Download the [latest release](https://github.com/Keksuccino/Linguji/releases) for your operating system, then run the `linguji` executable inside.
 
-To start translating subtitle files, simply **set a valid Gemini API key** and put all your subtitle files into the `input_subtitles` folder (by default) that should be in the same directory as the `linguji` executable.
+To start translating subtitle files, simply **set a valid Gemini API key** and put all your subtitle files and video files into the `input_subtitles` folder (by default) that should be in the same directory as the `linguji` executable.
 
 Now simply hit the **Start Translation Process** button and see the magic happen!
 
