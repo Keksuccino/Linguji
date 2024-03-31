@@ -41,7 +41,8 @@ public enum Locale {
     SPANISH("spanish", "Spanish", "es", "spa"),
     SPANISH_INTERNATIONAL("spanish_international", "Spanish (International Sort)", "es-ES", "spa"),
     SPANISH_MEXICO("spanish_mexico", "Spanish (Mexico)", "es-MX", "spa"),
-    SPANISH_LATIN("spanish_latin", "Spanish (Latin America)", "es-419", "spa");
+    SPANISH_LATIN("spanish_latin", "Spanish (Latin America)", "es-419", "spa"),
+    SLOVAK("slovak", "Slovak", "sk", "slk");
 
     private final String name;
     private final String displayName;
