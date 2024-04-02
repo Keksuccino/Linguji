@@ -35,7 +35,7 @@ public class Backend {
     //TODO Wenn möglich, irgendwann support für Llama-2 GenAI model adden (self-hosted)
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
-    public static final String VERSION = "1.1.1";
+    public static final String VERSION = "1.1.2";
     public static final File TEMP_DIRECTORY = new File("temp_data");
 
     private static Options options;
@@ -43,6 +43,8 @@ public class Backend {
     public static void init() {
 
         Backend.resetTempDirectory();
+
+        Locale.registerCustomLocals();
 
         updateOptions();
 

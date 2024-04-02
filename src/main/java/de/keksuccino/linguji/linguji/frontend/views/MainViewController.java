@@ -437,10 +437,11 @@ public class MainViewController implements ViewControllerBase {
     }
 
     protected void updateStartTranslationButtonState() {
-        this.startTranslationButton.setDisable(
-                Backend.getOptions().geminiApiKey.getValue().trim().isEmpty()
-                        || Backend.getOptions().inputDirectory.getValue().trim().isEmpty()
-                        || Backend.getOptions().outputDirectory.getValue().trim().isEmpty());
+//        this.startTranslationButton.setDisable(
+//                Backend.getOptions().geminiApiKey.getValue().trim().isEmpty()
+//                        || Backend.getOptions().inputDirectory.getValue().trim().isEmpty()
+//                        || Backend.getOptions().outputDirectory.getValue().trim().isEmpty());
+        this.startTranslationButton.setDisable(false);
     }
 
     protected void toggleAllConfigInputs(boolean disabled) {
