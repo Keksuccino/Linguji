@@ -74,6 +74,8 @@ There's a pretty good [list with language codes](https://www.loc.gov/standards/i
 The first code (3-letter-code) is the ISO-3 code, the second one (2-letter-code) is the ISO code.<br>
 If there are two or more ISO-3 codes for the same language, use the one with the `(T)` at the end, but don't include the `(T)`.
 
+Keep an eye on the **debug log** when using custom languages, to see if the translation engines support it!
+
 # Requirements
 
 - Java 17
