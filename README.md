@@ -36,6 +36,44 @@ Now simply hit the **Start Translation Process** button and see the magic happen
 
 If you need help getting Linguji to work or have any questions, please join my [Discord](https://discord.gg/rhayah27GC).
 
+# Add Custom Translatable Languages
+
+Your language is missing from the languages menu? No problem!<br>
+You can add custom languages by adding them to the `custom_locales.json` file that gets created at the same path as Linguji's exectuable when running it for the first time.
+
+For example, lets add a custom language to the file:
+
+```
+[
+  {
+    "name": "example_name_lowercase_without_spaces",
+    "display_name": "Example Display Name",
+    "iso": "ex",
+    "iso3": "exa"
+  },
+  {
+    "name": "example_name_lowercase_without_spaces_2",
+    "display_name": "Example Display Name 2",
+    "iso": "ex",
+    "iso3": "exa"
+  },
+  {
+    "name": "trigedasleng",
+    "display_name": "Trigedasleng",
+    "iso": "ts",
+    "iso3": "tri"
+  }
+]
+```
+
+We added the fictional language `trigedasleng` below the existing two example entries.<br>
+Don't forget the **comma** after every `}`, except the very last one!
+
+When adding **real languages**, make sure to use the correct **ISO** and **ISO-3** language codes!<br>
+There's a pretty good [list with language codes](https://www.loc.gov/standards/iso639-2/php/code_list.php) you can use for that.<br>
+The first code (3-letter-code) is the ISO-3 code, the second one (2-letter-code) is the ISO code.<br>
+If there are two or more ISO-3 codes for the same language, use the one with the `(T)` at the end, but don't include the `(T)`.
+
 # Requirements
 
 - Java 17
