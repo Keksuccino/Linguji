@@ -7,6 +7,7 @@ import de.keksuccino.linguji.linguji.backend.lib.mkvtoolnix.MkvToolNix;
 import de.keksuccino.linguji.linguji.backend.lib.os.OSUtils;
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AbstractSubtitle;
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AssSubtitle;
+import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.SrtSubtitle;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.SubtitleTranslator;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
 import de.keksuccino.linguji.linguji.backend.translator.SharedTranslatorOptions;
@@ -81,7 +82,8 @@ public class Backend {
 
                 TranslationEngineBuilder<?> primaryBuilder = Objects.requireNonNull(SharedTranslatorOptions.getPrimaryTranslationEngine());
                 TranslationEngineBuilder<?> fallbackBuilder = Objects.requireNonNull(SharedTranslatorOptions.getFallbackTranslationEngine());
-                SubtitleTranslator<AssSubtitle> subtitleTranslator = new SubtitleTranslator<>(Objects.requireNonNull(primaryBuilder.createInstance()), Objects.requireNonNull(fallbackBuilder.createInstance()));
+                SubtitleTranslator<AssSubtitle> assSubtitleTranslator = new SubtitleTranslator<>(Objects.requireNonNull(primaryBuilder.createInstance()), Objects.requireNonNull(fallbackBuilder.createInstance()));
+                SubtitleTranslator<SrtSubtitle> srtSubtitleTranslator = new SubtitleTranslator<>(Objects.requireNonNull(primaryBuilder.createInstance()), Objects.requireNonNull(fallbackBuilder.createInstance()));
 
                 String inDirString = Backend.getOptions().inputDirectory.getValue();
                 String outDirString = Backend.getOptions().outputDirectory.getValue();
@@ -138,11 +140,18 @@ public class Backend {
                     process.currentSubtitleFinishedLines.clear();
                     process.currentSubtitleTranslatableLinesCount = 0;
                     try {
+
                         //Handle ASS subtitles
                         if (subtitle instanceof AssSubtitle assSubtitle) {
-                            subtitleTranslator.translate(assSubtitle, process);
+                            assSubtitleTranslator.translate(assSubtitle, process);
                             subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED;
                         }
+                        //Handle SRT subtitles
+                        if (subtitle instanceof SrtSubtitle srtSubtitle) {
+                            srtSubtitleTranslator.translate(srtSubtitle, process);
+                            subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED;
+                        }
+
                         if (!process.running) break;
                         //Write translated subtitle file if FINISHED
                         if (subtitle.translationFinishStatus == AbstractSubtitle.TranslationFinishStatus.FINISHED) {
@@ -215,16 +224,24 @@ public class Backend {
     }
 
     protected static void addToListIfValidSubtitle(@NotNull File file, @Nullable File videoSource, @NotNull List<AbstractSubtitle> subtitles) {
+
         AbstractSubtitle subtitle = null;
+
         //ASS
         if (file.isFile() && file.getPath().toLowerCase().endsWith(".ass")) {
             subtitle = Objects.requireNonNull(AssSubtitle.create(file), "Failed to parse ASS subtitle file: " + file.getAbsolutePath());
         }
+        //SRT
+        if (file.isFile() && file.getPath().toLowerCase().endsWith(".srt")) {
+            subtitle = Objects.requireNonNull(SrtSubtitle.create(file), "Failed to parse SRT subtitle file: " + file.getAbsolutePath());
+        }
+
         if (subtitle != null) {
             subtitle.sourceFile = file;
             subtitle.sourceVideoFile = videoSource;
             subtitles.add(subtitle);
         }
+
     }
 
     @NotNull
