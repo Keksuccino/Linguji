@@ -1,5 +1,6 @@
 package de.keksuccino.linguji.linguji.frontend.views;
 
+import com.google.common.collect.Lists;
 import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.Ffmpeg;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoInfo;
@@ -40,6 +41,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MainViewController implements ViewControllerBase {
@@ -332,7 +335,12 @@ public class MainViewController implements ViewControllerBase {
 
             Ffmpeg ffmpeg = Ffmpeg.buildDefault();
             VideoInfo info = Objects.requireNonNull(ffmpeg.getVideoInfo(videoFile));
-            controller.subtitles = info.getSubtitlesOfType("ass");
+
+            //Add subtitle tracks of all supported types
+            controller.subtitles = new ArrayList<>();
+            controller.subtitles.addAll(info.getSubtitlesOfType("ass"));
+            controller.subtitles.addAll(info.getSubtitlesOfType("srt"));
+            controller.subtitles.addAll(info.getSubtitlesOfType("subrip")); //that's SRT (not sure if the type is always subrip, so I'm adding both srt and subrip)
 
             controller.finishInitialization(stageChooserWindow);
 

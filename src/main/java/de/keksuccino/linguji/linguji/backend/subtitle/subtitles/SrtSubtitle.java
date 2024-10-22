@@ -51,7 +51,13 @@ public class SrtSubtitle extends AbstractSubtitle {
 
         for (String line : FileUtils.readTextLinesFrom(srtFile)) {
 
+            //Remove UTF-8 BOM
+            if (line.startsWith(FileUtils.UTF8_BOM_CHAR)) {
+                line = line.substring(1);
+            }
+
             lineCounter++;
+
             boolean subtitleLineNumberUpdated = false;
 
             //Cache subtitle line number if last line was empty OR it's the beginning of the file

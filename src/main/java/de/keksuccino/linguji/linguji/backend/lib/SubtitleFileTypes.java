@@ -11,6 +11,10 @@ public class SubtitleFileTypes {
         if (subtitleTrack.isSubtitle()) {
             //ASS
             if ("ass".equals(subtitleTrack.getSubtitleType())) return "ass";
+            //SRT
+            if ("srt".equals(subtitleTrack.getSubtitleType())) return "srt";
+            //SRT (SubRip)
+            if ("subrip".equals(subtitleTrack.getSubtitleType())) return "srt";
         }
         return null;
     }
