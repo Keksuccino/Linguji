@@ -15,8 +15,8 @@ It automatically batch-translates subtitle files and even video files with subti
 - **Batch Translation:** Automatically translate multiple files at once without manually choosing the next file!
 - **GUI:** Everything in Linguji can be done in a GUI, so no need for manually editing configs or typing commands.
 - **Supported Formats:**
-  - **Subtitles:** Currently handles ASS files.
-  - **Videos:** Works with MKV files containing ASS subtitles.
+  - **Subtitles:** Currently handles ASS and SRT (SubRip) files.
+  - **Videos:** Works with MKV files containing ASS and SRT subtitles.
 - **Translation Engines:** Linguji supports various translation engines, including Gemini Pro, DeepL, [DeepLX](https://github.com/OwO-Network/DeepLX), and Libre Translate. Choose the engine that best suits your needs.
 - **Formatting Preservation:** One of Linguji's priorities is to preserve the original subtitle text formatting as good as possible during translation.
 - **Advanced Error Handling:** Linguji strives to keep the translation process going by working around various errors. This includes adapting its translation process to avoid triggering the same error again, like adjusting Gemini's safety threshold after encountering profanity or safety-related blocks.
