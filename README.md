@@ -85,7 +85,7 @@ If you plan to translate video files, make sure to place all FFMPEG executables 
 
 # Copyright & Licensing
 
-Linguji © Copyright 2024 Keksuccino.<br>
+Linguji © Copyright 2025 Keksuccino.<br>
 Linguji is licensed under Apache-2.0.
 
 Linguji uses a modified version of [JavaFX Dark Theme](https://github.com/antoniopelusi/JavaFX-Dark-Theme) by Antonio Pelusi.
