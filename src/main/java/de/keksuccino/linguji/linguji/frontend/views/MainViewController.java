@@ -1,16 +1,15 @@
 package de.keksuccino.linguji.linguji.frontend.views;
 
-import com.google.common.collect.Lists;
 import de.keksuccino.linguji.linguji.backend.Backend;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.Ffmpeg;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoInfo;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoStream;
 import de.keksuccino.linguji.linguji.backend.lib.mkvtoolnix.MkvToolNix;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
-import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehaviour;
-import de.keksuccino.linguji.linguji.backend.translator.TranslationEngineBuilder;
-import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
-import de.keksuccino.linguji.linguji.backend.translator.gemini.safety.GeminiSafetySetting;
+import de.keksuccino.linguji.linguji.backend.engine.FallbackTranslatorBehaviour;
+import de.keksuccino.linguji.linguji.backend.engine.TranslationEngineBuilder;
+import de.keksuccino.linguji.linguji.backend.engine.engines.TranslationEngines;
+import de.keksuccino.linguji.linguji.backend.engine.engines.gemini.safety.GeminiSafetySetting;
 import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
@@ -42,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class MainViewController implements ViewControllerBase {

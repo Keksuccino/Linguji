@@ -1,17 +1,17 @@
 package de.keksuccino.linguji.linguji.backend;
 
 import com.google.common.io.Files;
+import de.keksuccino.linguji.linguji.backend.brain.AbstractTranslationBrain;
+import de.keksuccino.linguji.linguji.backend.brain.brains.TranslationBrains;
+import de.keksuccino.linguji.linguji.backend.engine.AbstractTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.Ffmpeg;
 import de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info.VideoStream;
 import de.keksuccino.linguji.linguji.backend.lib.mkvtoolnix.MkvToolNix;
 import de.keksuccino.linguji.linguji.backend.lib.os.OSUtils;
 import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AbstractSubtitle;
-import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.AssSubtitle;
-import de.keksuccino.linguji.linguji.backend.subtitle.subtitles.SrtSubtitle;
-import de.keksuccino.linguji.linguji.backend.subtitle.translation.SubtitleTranslator;
 import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationProcess;
-import de.keksuccino.linguji.linguji.backend.translator.SharedTranslatorOptions;
-import de.keksuccino.linguji.linguji.backend.translator.TranslationEngineBuilder;
+import de.keksuccino.linguji.linguji.backend.engine.SharedTranslatorOptions;
+import de.keksuccino.linguji.linguji.backend.engine.TranslationEngineBuilder;
 import de.keksuccino.linguji.linguji.backend.lib.FileUtils;
 import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
@@ -29,14 +29,8 @@ import java.util.Objects;
 
 public class Backend {
 
-    //TODO MyMemory als translator adden
-
-    //TODO Wenn möglich, irgendwann support für Nous-Hermes-2-Mixtral GenAI model adden (self-hosted)
-
-    //TODO Wenn möglich, irgendwann support für Llama-2 GenAI model adden (self-hosted)
-
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "1.3.0";
     public static final File TEMP_DIRECTORY = new File("temp_data");
 
     private static Options options;
@@ -82,8 +76,8 @@ public class Backend {
 
                 TranslationEngineBuilder<?> primaryBuilder = Objects.requireNonNull(SharedTranslatorOptions.getPrimaryTranslationEngine());
                 TranslationEngineBuilder<?> fallbackBuilder = Objects.requireNonNull(SharedTranslatorOptions.getFallbackTranslationEngine());
-                SubtitleTranslator<AssSubtitle> assSubtitleTranslator = new SubtitleTranslator<>(Objects.requireNonNull(primaryBuilder.createInstance()), Objects.requireNonNull(fallbackBuilder.createInstance()));
-                SubtitleTranslator<SrtSubtitle> srtSubtitleTranslator = new SubtitleTranslator<>(Objects.requireNonNull(primaryBuilder.createInstance()), Objects.requireNonNull(fallbackBuilder.createInstance()));
+                AbstractTranslationEngine primaryEngine = Objects.requireNonNull(primaryBuilder.createInstance());
+                AbstractTranslationEngine fallbackEngine = Objects.requireNonNull(fallbackBuilder.createInstance());
 
                 String inDirString = Backend.getOptions().inputDirectory.getValue();
                 String outDirString = Backend.getOptions().outputDirectory.getValue();
@@ -141,18 +135,16 @@ public class Backend {
                     process.currentSubtitleTranslatableLinesCount = 0;
                     try {
 
-                        //Handle ASS subtitles
-                        if (subtitle instanceof AssSubtitle assSubtitle) {
-                            assSubtitleTranslator.translate(assSubtitle, process);
-                            subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED;
-                        }
-                        //Handle SRT subtitles
-                        if (subtitle instanceof SrtSubtitle srtSubtitle) {
-                            srtSubtitleTranslator.translate(srtSubtitle, process);
-                            subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED;
+                        for (AbstractTranslationBrain<?> brain : TranslationBrains.getBrains()) {
+                            if (brain.checkSubtitleCompatibility(subtitle)) {
+                                brain.translate(subtitle, process, primaryEngine, fallbackEngine);
+                                subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED;
+                                break;
+                            }
                         }
 
                         if (!process.running) break;
+
                         //Write translated subtitle file if FINISHED
                         if (subtitle.translationFinishStatus == AbstractSubtitle.TranslationFinishStatus.FINISHED) {
                             Objects.requireNonNull(subtitle.sourceFile, "Source file of subtitle was NULL!");
@@ -174,6 +166,7 @@ public class Backend {
                         } else {
                             finishedWithoutErrors = false;
                         }
+
                     } catch (Exception ex) {
                         finishedWithoutErrors = false;
                         subtitle.translationFinishStatus = AbstractSubtitle.TranslationFinishStatus.FINISHED_WITH_EXCEPTIONS;
@@ -227,13 +220,11 @@ public class Backend {
 
         AbstractSubtitle subtitle = null;
 
-        //ASS
-        if (file.isFile() && file.getPath().toLowerCase().endsWith(".ass")) {
-            subtitle = Objects.requireNonNull(AssSubtitle.create(file), "Failed to parse ASS subtitle file: " + file.getAbsolutePath());
-        }
-        //SRT
-        if (file.isFile() && file.getPath().toLowerCase().endsWith(".srt")) {
-            subtitle = Objects.requireNonNull(SrtSubtitle.create(file), "Failed to parse SRT subtitle file: " + file.getAbsolutePath());
+        for (AbstractTranslationBrain<?> brain : TranslationBrains.getBrains()) {
+            if (brain.checkFileCompatibility(file)) {
+                subtitle = Objects.requireNonNull(brain.parseFile(file), "Failed to parse " + brain.getDisplayName() + " file: " + file.getAbsolutePath());
+                break;
+            }
         }
 
         if (subtitle != null) {

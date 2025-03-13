@@ -1,7 +1,7 @@
 package de.keksuccino.linguji.linguji.backend;
 
-import de.keksuccino.linguji.linguji.backend.translator.FallbackTranslatorBehaviour;
-import de.keksuccino.linguji.linguji.backend.translator.TranslationEngines;
+import de.keksuccino.linguji.linguji.backend.engine.FallbackTranslatorBehaviour;
+import de.keksuccino.linguji.linguji.backend.engine.engines.TranslationEngines;
 import de.keksuccino.linguji.linguji.backend.lib.config.Config;
 import de.keksuccino.linguji.linguji.backend.lib.options.AbstractOptions;
 

@@ -5,7 +5,6 @@ module de.keksuccino.linguji.linguji {
     requires org.controlsfx.controls;
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.bootstrapfx.core;
     requires org.jetbrains.annotations;
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
@@ -24,17 +23,17 @@ module de.keksuccino.linguji.linguji {
 
     exports de.keksuccino.linguji.linguji.frontend;
     exports de.keksuccino.linguji.linguji.backend;
-    exports de.keksuccino.linguji.linguji.backend.translator;
-    exports de.keksuccino.linguji.linguji.backend.translator.gemini;
-    exports de.keksuccino.linguji.linguji.backend.translator.gemini.response;
-    exports de.keksuccino.linguji.linguji.backend.translator.gemini.request;
-    exports de.keksuccino.linguji.linguji.backend.translator.gemini.safety;
-    exports de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions;
-    exports de.keksuccino.linguji.linguji.backend.translator.libretranslate;
-    exports de.keksuccino.linguji.linguji.backend.translator.libretranslate.response;
-    exports de.keksuccino.linguji.linguji.backend.translator.deepl;
-    exports de.keksuccino.linguji.linguji.backend.translator.deepl.response;
-    exports de.keksuccino.linguji.linguji.backend.translator.deeplx;
+    exports de.keksuccino.linguji.linguji.backend.engine;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.gemini;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.gemini.response;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.gemini.request;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.gemini.safety;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.gemini.exceptions;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.libretranslate;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.libretranslate.response;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.deepl;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.deepl.response;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.deeplx;
     exports de.keksuccino.linguji.linguji.backend.lib;
     exports de.keksuccino.linguji.linguji.backend.lib.os;
     exports de.keksuccino.linguji.linguji.backend.lib.options;
@@ -55,17 +54,17 @@ module de.keksuccino.linguji.linguji {
 
     opens de.keksuccino.linguji.linguji.frontend;
     opens de.keksuccino.linguji.linguji.backend;
-    opens de.keksuccino.linguji.linguji.backend.translator;
-    opens de.keksuccino.linguji.linguji.backend.translator.gemini;
-    opens de.keksuccino.linguji.linguji.backend.translator.gemini.response;
-    opens de.keksuccino.linguji.linguji.backend.translator.gemini.request;
-    opens de.keksuccino.linguji.linguji.backend.translator.gemini.safety;
-    opens de.keksuccino.linguji.linguji.backend.translator.gemini.exceptions;
-    opens de.keksuccino.linguji.linguji.backend.translator.libretranslate;
-    opens de.keksuccino.linguji.linguji.backend.translator.libretranslate.response;
-    opens de.keksuccino.linguji.linguji.backend.translator.deepl;
-    opens de.keksuccino.linguji.linguji.backend.translator.deepl.response;
-    opens de.keksuccino.linguji.linguji.backend.translator.deeplx;
+    opens de.keksuccino.linguji.linguji.backend.engine;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.gemini;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.gemini.response;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.gemini.request;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.gemini.safety;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.gemini.exceptions;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.libretranslate;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.libretranslate.response;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.deepl;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.deepl.response;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.deeplx;
     opens de.keksuccino.linguji.linguji.backend.lib;
     opens de.keksuccino.linguji.linguji.backend.lib.os;
     opens de.keksuccino.linguji.linguji.backend.lib.options;
@@ -83,5 +82,7 @@ module de.keksuccino.linguji.linguji {
     opens de.keksuccino.linguji.linguji.backend.lib.lang;
     opens de.keksuccino.linguji.linguji.backend.lib.ffmpeg;
     opens de.keksuccino.linguji.linguji.backend.lib.ffmpeg.info;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines;
 
 }
