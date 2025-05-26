@@ -108,6 +108,54 @@ public class SpinnerUtils {
 
     }
 
+    @SuppressWarnings("all")
+    public static void prepareDoubleSpinner(@NotNull Spinner<Double> spinner, double minValue, double maxValue, double selected, @Nullable DoubleSpinnerChangeListener changeListener) {
+
+        if (minValue >= maxValue) throw new RuntimeException("Min value needs to be smaller than max value!");
+        if (selected < minValue) selected = minValue;
+        if (selected > maxValue) selected = maxValue;
+
+        SpinnerValueFactory.DoubleSpinnerValueFactory valFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(minValue, maxValue);
+        valFactory.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Double d) {
+                return String.format("%.2f", d);
+            }
+            @Override
+            public Double fromString(String s) {
+                if (MathUtils.isDouble(s)) return Double.parseDouble(s);
+                return minValue;
+            }
+        });
+        valFactory.setValue(selected);
+        spinner.setValueFactory(valFactory);
+        UnaryOperator<TextFormatter.Change> doubleFilter = change -> {
+            String newVal = change.getControlNewText();
+            if (newVal.isEmpty()) return change;
+            if (MathUtils.isDouble(newVal)) {
+                double parsed = Double.parseDouble(newVal);
+                if ((parsed >= minValue) && (parsed <= maxValue)) return change;
+            }
+            return null;
+        };
+        spinner.getEditor().setTextFormatter(new TextFormatter<String>(doubleFilter));
+
+        //If unfocus/focus and value is empty, set minVal
+        spinner.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (spinner.getEditor().getText().trim().isEmpty() || (spinner.getValue() == minValue)) {
+                valFactory.setValue(minValue);
+                spinner.getEditor().setText(String.format("%.2f", minValue));
+            }
+        });
+
+        if (changeListener != null) {
+            spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+                if ((oldValue != null) && (newValue != null)) changeListener.onChange(oldValue, newValue);
+            });
+        }
+
+    }
+
     @FunctionalInterface
     public interface IntegerSpinnerChangeListener {
         void onChange(int oldValue, int newValue);
@@ -116,6 +164,11 @@ public class SpinnerUtils {
     @FunctionalInterface
     public interface LongSpinnerChangeListener {
         void onChange(long oldValue, long newValue);
+    }
+
+    @FunctionalInterface
+    public interface DoubleSpinnerChangeListener {
+        void onChange(double oldValue, double newValue);
     }
 
 }

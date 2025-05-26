@@ -7,6 +7,7 @@ import de.keksuccino.linguji.linguji.backend.engine.engines.deepl.DeepLTranslati
 import de.keksuccino.linguji.linguji.backend.engine.engines.deeplx.DeepLXTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.engine.engines.gemini.GeminiTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.engine.engines.libretranslate.LibreTranslationEngine;
+import de.keksuccino.linguji.linguji.backend.engine.engines.openrouter.OpenRouterTranslationEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -49,9 +50,14 @@ public class TranslationEngines {
             () -> !Backend.getOptions().libreTranslateUrl.getValue().trim().isEmpty(),
             "libre_translate", "Libre Translate");
 
+    public static final TranslationEngineBuilder<OpenRouterTranslationEngine> OPENROUTER = new TranslationEngineBuilder<>(
+            OpenRouterTranslationEngine::new,
+            () -> !Backend.getOptions().openRouterApiKey.getValue().trim().isEmpty(),
+            "openrouter", "OpenRouter");
+
     @NotNull
     public static List<TranslationEngineBuilder<?>> getBuilders() {
-        return List.of(GEMINI_PRO, DEEPL, DEEPLX, LIBRE_TRANSLATE);
+        return List.of(GEMINI_PRO, DEEPL, DEEPLX, LIBRE_TRANSLATE, OPENROUTER);
     }
 
     @NotNull

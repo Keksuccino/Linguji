@@ -34,6 +34,7 @@ module de.keksuccino.linguji.linguji {
     exports de.keksuccino.linguji.linguji.backend.engine.engines.deepl;
     exports de.keksuccino.linguji.linguji.backend.engine.engines.deepl.response;
     exports de.keksuccino.linguji.linguji.backend.engine.engines.deeplx;
+    exports de.keksuccino.linguji.linguji.backend.engine.engines.openrouter;
     exports de.keksuccino.linguji.linguji.backend.lib;
     exports de.keksuccino.linguji.linguji.backend.lib.os;
     exports de.keksuccino.linguji.linguji.backend.lib.options;
@@ -65,6 +66,7 @@ module de.keksuccino.linguji.linguji {
     opens de.keksuccino.linguji.linguji.backend.engine.engines.deepl;
     opens de.keksuccino.linguji.linguji.backend.engine.engines.deepl.response;
     opens de.keksuccino.linguji.linguji.backend.engine.engines.deeplx;
+    opens de.keksuccino.linguji.linguji.backend.engine.engines.openrouter;
     opens de.keksuccino.linguji.linguji.backend.lib;
     opens de.keksuccino.linguji.linguji.backend.lib.os;
     opens de.keksuccino.linguji.linguji.backend.lib.options;

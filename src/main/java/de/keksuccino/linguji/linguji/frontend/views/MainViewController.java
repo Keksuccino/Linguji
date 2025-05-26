@@ -12,6 +12,8 @@ import de.keksuccino.linguji.linguji.backend.engine.engines.TranslationEngines;
 import de.keksuccino.linguji.linguji.backend.engine.engines.gemini.GeminiModel;
 import de.keksuccino.linguji.linguji.backend.engine.engines.gemini.GeminiModelFetcher;
 import de.keksuccino.linguji.linguji.backend.engine.engines.gemini.safety.GeminiSafetySetting;
+import de.keksuccino.linguji.linguji.backend.engine.engines.openrouter.OpenRouterModel;
+import de.keksuccino.linguji.linguji.backend.engine.engines.openrouter.OpenRouterTranslationEngine;
 import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
 import de.keksuccino.linguji.linguji.backend.lib.logger.SimpleLogger;
@@ -134,6 +136,16 @@ public class MainViewController implements ViewControllerBase {
     private Spinner<Integer> deeplxTriesBeforeStopEmptyResponseSpinner;
     @FXML
     private CheckBox setVideoSubtitleAsDefaultCheckBox;
+    @FXML
+    private TextField openRouterApiKeyTextField;
+    @FXML
+    private ComboBox<OpenRouterModel> openRouterModelComboBox;
+    @FXML
+    private Button refreshOpenRouterModelsButton;
+    @FXML
+    private Spinner<Double> openRouterTemperatureSpinner;
+    @FXML
+    private Spinner<Integer> openRouterMaxTokensSpinner;
 
     protected Stage stage;
     @Nullable
@@ -181,6 +193,10 @@ public class MainViewController implements ViewControllerBase {
         this.setupStringConfigOption(this.libreApiKeyTextField, Backend.getOptions().libreTranslateApiKey);
         this.setupIntegerConfigOption(this.deeplxTriesBeforeStopEmptyResponseSpinner, Backend.getOptions().deepLxTriesBeforeErrorEmptyResponse, 1, 10000);
         this.setupBooleanConfigOption(this.setVideoSubtitleAsDefaultCheckBox, Backend.getOptions().setVideoSubtitleAsDefault);
+        this.setupStringConfigOption(this.openRouterApiKeyTextField, Backend.getOptions().openRouterApiKey);
+        this.setupOpenRouterModelConfigOption();
+        this.setupDoubleConfigOption(this.openRouterTemperatureSpinner, Backend.getOptions().openRouterTemperature, 0.0, 2.0);
+        this.setupIntegerConfigOption(this.openRouterMaxTokensSpinner, Backend.getOptions().openRouterMaxTokens, 1, 100000);
 
         //Fix slow scrolling in content ScrollPane
         this.contentScrollPane.getContent().setOnScroll(scrollEvent -> {
@@ -485,6 +501,11 @@ public class MainViewController implements ViewControllerBase {
         this.libreApiKeyTextField.setDisable(disabled);
         this.libreApiUrlTextField.setDisable(disabled);
         this.fallbackTranslatorBehaviourComboBox.setDisable(disabled);
+        this.openRouterApiKeyTextField.setDisable(disabled);
+        this.openRouterModelComboBox.setDisable(disabled);
+        this.refreshOpenRouterModelsButton.setDisable(disabled);
+        this.openRouterTemperatureSpinner.setDisable(disabled);
+        this.openRouterMaxTokensSpinner.setDisable(disabled);
     }
 
     protected void setupStringConfigOption(@NotNull TextField textField, @NotNull AbstractOptions.Option<String> option) {
@@ -510,6 +531,17 @@ public class MainViewController implements ViewControllerBase {
         if (option.getValue() < minValue) option.setValue(minValue);
         if (option.getValue() > maxValue) option.setValue(maxValue);
         SpinnerUtils.prepareLongSpinner(spinner, minValue, maxValue, option.getValue(), (oldValue, newValue) -> {
+            option.setValue(newValue);
+            if (option.getValue() < minValue) option.setValue(minValue);
+            if (option.getValue() > maxValue) option.setValue(maxValue);
+            this.updateStartTranslationButtonState();
+        });
+    }
+
+    protected void setupDoubleConfigOption(@NotNull Spinner<Double> spinner, @NotNull AbstractOptions.Option<Double> option, double minValue, double maxValue) {
+        if (option.getValue() < minValue) option.setValue(minValue);
+        if (option.getValue() > maxValue) option.setValue(maxValue);
+        SpinnerUtils.prepareDoubleSpinner(spinner, minValue, maxValue, option.getValue(), (oldValue, newValue) -> {
             option.setValue(newValue);
             if (option.getValue() < minValue) option.setValue(minValue);
             if (option.getValue() > maxValue) option.setValue(maxValue);
@@ -712,6 +744,145 @@ public class MainViewController implements ViewControllerBase {
                 // Re-enable button
                 this.refreshGeminiModelsButton.setDisable(false);
                 this.refreshGeminiModelsButton.setText("Refresh");
+            });
+        });
+        
+        refreshThread.setDaemon(true);
+        refreshThread.start();
+    }
+
+    protected void setupOpenRouterModelConfigOption() {
+        // Set up the converter for the ComboBox
+        this.openRouterModelComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(OpenRouterModel model) {
+                return model != null ? model.getDisplayName() : "";
+            }
+            @Override
+            public OpenRouterModel fromString(String string) {
+                for (OpenRouterModel model : openRouterModelComboBox.getItems()) {
+                    if (model.getDisplayName().equals(string)) {
+                        return model;
+                    }
+                }
+                return null;
+            }
+        });
+
+        // Load models
+        this.loadOpenRouterModels();
+
+        // Set up the value change listener
+        this.openRouterModelComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Backend.getOptions().openRouterModel.setValue(newValue.getId());
+            }
+        });
+    }
+
+    protected void loadOpenRouterModels() {
+        // Always create engine instance - it will handle missing API key gracefully
+        OpenRouterTranslationEngine engine = new OpenRouterTranslationEngine();
+        
+        List<OpenRouterModel> models = engine.getAvailableModels();
+        
+        // Clear and add models to ComboBox
+        this.openRouterModelComboBox.getItems().clear();
+        this.openRouterModelComboBox.getItems().addAll(models);
+        
+        // Select the saved model or default
+        String savedModelId = Backend.getOptions().openRouterModel.getValue();
+        OpenRouterModel selectedModel = null;
+        
+        for (OpenRouterModel model : models) {
+            if (model.getId().equals(savedModelId)) {
+                selectedModel = model;
+                break;
+            }
+        }
+        
+        // If saved model not found, select the first one
+        if (selectedModel == null && !models.isEmpty()) {
+            selectedModel = models.get(0);
+        }
+        
+        this.openRouterModelComboBox.setValue(selectedModel);
+    }
+
+    @FXML
+    protected void onOpenRouterApiKeyTextFieldInput() {
+        String s = this.openRouterApiKeyTextField.getText();
+        if (s != null) {
+            Backend.getOptions().openRouterApiKey.setValue(s);
+            // Reload models when API key changes
+            this.loadOpenRouterModels();
+        }
+        this.updateStartTranslationButtonState();
+    }
+
+    @FXML
+    protected void onRefreshOpenRouterModelsButtonClick() {
+        String apiKey = Backend.getOptions().openRouterApiKey.getValue();
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            Frontend.openAlert(
+                    "No API Key",
+                    "OpenRouter API key not configured",
+                    "Please enter a valid OpenRouter API key before refreshing the model list.");
+            return;
+        }
+        
+        // Show that we're refreshing
+        this.refreshOpenRouterModelsButton.setDisable(true);
+        this.refreshOpenRouterModelsButton.setText("Loading...");
+        
+        // Run in a separate thread to avoid blocking UI
+        Thread refreshThread = new Thread(() -> {
+            // Create engine instance and refresh models
+            OpenRouterTranslationEngine engine = new OpenRouterTranslationEngine();
+            engine.refreshAvailableModels();
+            List<OpenRouterModel> models = engine.getAvailableModels();
+            
+            // Update UI on JavaFX thread
+            TaskExecutor.queueTask(() -> {
+                if (models != null && !models.isEmpty()) {
+                    // Save current selection
+                    OpenRouterModel currentSelection = this.openRouterModelComboBox.getValue();
+                    String currentModelId = currentSelection != null ? currentSelection.getId() : null;
+                    
+                    // Update models
+                    this.openRouterModelComboBox.getItems().clear();
+                    this.openRouterModelComboBox.getItems().addAll(models);
+                    
+                    // Try to restore selection
+                    if (currentModelId != null) {
+                        for (OpenRouterModel model : models) {
+                            if (model.getId().equals(currentModelId)) {
+                                this.openRouterModelComboBox.setValue(model);
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // If previous selection not found, select first
+                    if (this.openRouterModelComboBox.getValue() == null && !models.isEmpty()) {
+                        this.openRouterModelComboBox.setValue(models.get(0));
+                    }
+                    
+                    Frontend.openAlert(
+                            "Models Refreshed",
+                            "Successfully refreshed OpenRouter models",
+                            "Found " + models.size() + " available OpenRouter models.");
+                } else {
+                    Frontend.openAlert(
+                            "Refresh Failed",
+                            "Failed to refresh OpenRouter models",
+                            "Could not fetch models from the OpenRouter API. Using default models.");
+                    this.loadOpenRouterModels(); // Load default models
+                }
+                
+                // Re-enable button
+                this.refreshOpenRouterModelsButton.setDisable(false);
+                this.refreshOpenRouterModelsButton.setText("Refresh");
             });
         });
         

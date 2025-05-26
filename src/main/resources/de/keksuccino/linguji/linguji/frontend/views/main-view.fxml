@@ -63,7 +63,7 @@
             </tooltip></Button>
          <ScrollPane fx:id="contentScrollPane" fitToWidth="true" layoutX="14.0" layoutY="98.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="163.33333333333326" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="97.99999999999989">
            <content>
-             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="950.0" prefWidth="796.0">
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1100.0" prefWidth="796.0">
                   <children>
                      <Label layoutX="17.333333333333332" layoutY="111.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="17.333333333333332" />
                      <Separator layoutX="85.33333333333333" layoutY="19.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="87.33333333333333" AnchorPane.rightAnchor="17.33333333333337" />
@@ -345,6 +345,49 @@
                      <TextField fx:id="libreApiUrlTextField" layoutX="241.33333333333334" layoutY="878.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
                      <Label layoutX="17.333333333333332" layoutY="913.0" prefHeight="17.0" prefWidth="195.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332" />
                      <TextField fx:id="libreApiKeyTextField" layoutX="241.33333333333334" layoutY="910.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Separator layoutX="126.0" layoutY="959.0" prefHeight="3.0" prefWidth="652.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="126.0" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Label layoutX="17.333333333333332" layoutY="946.0" prefHeight="26.0" prefWidth="115.0" text="OpenRouter" AnchorPane.leftAnchor="17.333333333333332">
+                        <font>
+                           <Font size="17.0" />
+                        </font>
+                     </Label>
+                     <Label layoutX="17.333333333333332" layoutY="987.0" prefHeight="17.0" prefWidth="97.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332" />
+                     <TextField fx:id="openRouterApiKeyTextField" layoutX="241.33333333333334" layoutY="984.0" onKeyTyped="#onOpenRouterApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Label layoutX="17.333333333333332" layoutY="1019.0" prefHeight="17.0" prefWidth="97.0" text="Model" AnchorPane.leftAnchor="17.333333333333332">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="The OpenRouter model to use for translation." />
+                        </tooltip>
+                     </Label>
+                     <ComboBox fx:id="openRouterModelComboBox" layoutX="241.33333333333334" layoutY="1016.0" prefHeight="25.0" prefWidth="300.0" AnchorPane.leftAnchor="241.33333333333334">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="The OpenRouter model to use for translation." />
+                        </tooltip>
+                     </ComboBox>
+                     <Button fx:id="refreshOpenRouterModelsButton" layoutX="551.0" layoutY="1016.0" mnemonicParsing="false" onMouseClicked="#onRefreshOpenRouterModelsButtonClick" prefHeight="25.0" prefWidth="80.0" text="Refresh">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="Refresh the list of available OpenRouter models." />
+                        </tooltip>
+                     </Button>
+                     <Label layoutX="17.333333333333332" layoutY="1051.0" prefHeight="17.0" prefWidth="97.0" text="Temperature" AnchorPane.leftAnchor="17.333333333333332">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="Controls randomness: lowering results in less random completions." />
+                        </tooltip>
+                     </Label>
+                     <Spinner fx:id="openRouterTemperatureSpinner" editable="true" layoutX="241.33333333333334" layoutY="1047.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="241.33333333333334">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="Controls randomness: lowering results in less random completions." />
+                        </tooltip>
+                     </Spinner>
+                     <Label layoutX="403.3333333333333" layoutY="1051.0" prefHeight="17.0" prefWidth="97.0" text="Max Tokens" AnchorPane.leftAnchor="403.3333333333333">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="The maximum number of tokens to generate in the response." />
+                        </tooltip>
+                     </Label>
+                     <Spinner fx:id="openRouterMaxTokensSpinner" editable="true" layoutX="640.0" layoutY="1047.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="640.0" AnchorPane.rightAnchor="16.66666666666663">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="The maximum number of tokens to generate in the response." />
+                        </tooltip>
+                     </Spinner>
                   </children>
                </AnchorPane>
            </content>
