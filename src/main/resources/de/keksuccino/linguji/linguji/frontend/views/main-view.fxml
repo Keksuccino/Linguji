@@ -63,7 +63,7 @@
             </tooltip></Button>
          <ScrollPane fx:id="contentScrollPane" fitToWidth="true" layoutX="14.0" layoutY="98.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="163.33333333333326" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="97.99999999999989">
            <content>
-             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1100.0" prefWidth="796.0">
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1120.0" prefWidth="796.0">
                   <children>
                      <Label layoutX="17.333333333333332" layoutY="111.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="17.333333333333332" />
                      <Separator layoutX="85.33333333333333" layoutY="19.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="87.33333333333333" AnchorPane.rightAnchor="17.33333333333337" />
@@ -378,12 +378,12 @@
                            <Tooltip prefWidth="400.0" text="Controls randomness: lowering results in less random completions." />
                         </tooltip>
                      </Spinner>
-                     <Label layoutX="403.3333333333333" layoutY="1051.0" prefHeight="17.0" prefWidth="97.0" text="Max Tokens" AnchorPane.leftAnchor="403.3333333333333">
+                     <Label layoutX="17.333333333333332" layoutY="1083.0" prefHeight="17.0" prefWidth="97.0" text="Max Tokens" AnchorPane.leftAnchor="17.333333333333332">
                         <tooltip>
                            <Tooltip prefWidth="400.0" text="The maximum number of tokens to generate in the response." />
                         </tooltip>
                      </Label>
-                     <Spinner fx:id="openRouterMaxTokensSpinner" editable="true" layoutX="640.0" layoutY="1047.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="640.0" AnchorPane.rightAnchor="16.66666666666663">
+                     <Spinner fx:id="openRouterMaxTokensSpinner" editable="true" layoutX="241.33333333333334" layoutY="1079.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="241.33333333333334">
                         <tooltip>
                            <Tooltip prefWidth="400.0" text="The maximum number of tokens to generate in the response." />
                         </tooltip>

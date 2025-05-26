@@ -61,8 +61,8 @@ public class Options extends AbstractOptions {
 
     public final Option<String> openRouterApiKey = new Option<>(config, "openrouter_api_key", "", "openrouter");
     public final Option<String> openRouterModel = new Option<>(config, "openrouter_model", "openai/gpt-4o", "openrouter");
-    public final Option<Double> openRouterTemperature = new Option<>(config, "openrouter_temperature", 0.3, "openrouter");
-    public final Option<Integer> openRouterMaxTokens = new Option<>(config, "openrouter_max_tokens", 4096, "openrouter");
+    public final Option<Double> openRouterTemperature = new Option<>(config, "openrouter_temperature", 1.0, "openrouter");
+    public final Option<Integer> openRouterMaxTokens = new Option<>(config, "openrouter_max_tokens", 10000, "openrouter");
     public final Option<Double> openRouterTopP = new Option<>(config, "openrouter_top_p", 1.0, "openrouter");
 
     public Options() {

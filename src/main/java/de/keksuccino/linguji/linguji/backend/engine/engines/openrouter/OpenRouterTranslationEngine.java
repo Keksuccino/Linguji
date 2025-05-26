@@ -44,6 +44,8 @@ public class OpenRouterTranslationEngine extends AbstractTranslationEngine {
             translator = new OpenRouterTranslator();
         }
         
+        this.startRequest();
+        
         return translator.translate(text, sourceLanguage, targetLanguage);
     }
 

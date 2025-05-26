@@ -30,7 +30,7 @@ import java.util.Objects;
 public class Backend {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
-    public static final String VERSION = "1.3.0";
+    public static final String VERSION = "1.4.0";
     public static final File TEMP_DIRECTORY = new File("temp_data");
 
     private static Options options;

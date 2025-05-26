@@ -81,7 +81,10 @@ public class OpenRouterTranslator {
         json.add("messages", messages);
         
         // Parameters
-        json.addProperty("temperature", Backend.getOptions().openRouterTemperature.getValue());
+        double temperature = Backend.getOptions().openRouterTemperature.getValue();
+        if (temperature < 0.0) temperature = 0.0;
+        if (temperature > 2.0) temperature = 2.0;
+        json.addProperty("temperature", temperature);
         json.addProperty("max_tokens", Backend.getOptions().openRouterMaxTokens.getValue());
         json.addProperty("top_p", Backend.getOptions().openRouterTopP.getValue());
         
@@ -112,7 +115,8 @@ public class OpenRouterTranslator {
         try {
             JsonObject response = JsonParser.parseString(responseBody).getAsJsonObject();
             
-            LOGGER.info("<-- Response from OpenRouter: " + responseBody);
+            // Trim the response before logging to remove empty lines
+            LOGGER.info("<-- Response from OpenRouter: " + responseBody.trim());
             
             if (!response.has("choices") || response.getAsJsonArray("choices").isEmpty()) {
                 throw new Exception("No translation choices in response");
