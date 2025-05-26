@@ -48,6 +48,7 @@ public class Options extends AbstractOptions {
     /** Min should be 1 **/
     public final Option<Integer> geminiOverrideSafetyThresholdHardBlockTriesPerLevel = new Option<>(config, "gemini_override_safety_threshold_hard_block_tries_per_level", 2, "gemini");
     public final Option<Boolean> geminiOverrideSafetyThresholdSkipLowLevels = new Option<>(config, "gemini_override_safety_threshold_skip_low_levels", true, "gemini");
+    public final Option<String> geminiModel = new Option<>(config, "gemini_model", "gemini-2.0-flash", "gemini");
 
     public final Option<String> libreTranslateUrl = new Option<>(config, "libre_translate_url", "https://trans.zillyhuhn.com/translate", "libre_translate");
     public final Option<String> libreTranslateApiKey = new Option<>(config, "libre_translate_api_key", "", "libre_translate");

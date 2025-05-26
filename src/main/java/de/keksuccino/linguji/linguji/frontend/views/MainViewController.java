@@ -9,6 +9,8 @@ import de.keksuccino.linguji.linguji.backend.subtitle.translation.TranslationPro
 import de.keksuccino.linguji.linguji.backend.engine.FallbackTranslatorBehaviour;
 import de.keksuccino.linguji.linguji.backend.engine.TranslationEngineBuilder;
 import de.keksuccino.linguji.linguji.backend.engine.engines.TranslationEngines;
+import de.keksuccino.linguji.linguji.backend.engine.engines.gemini.GeminiModel;
+import de.keksuccino.linguji.linguji.backend.engine.engines.gemini.GeminiModelFetcher;
 import de.keksuccino.linguji.linguji.backend.engine.engines.gemini.safety.GeminiSafetySetting;
 import de.keksuccino.linguji.linguji.backend.lib.lang.Locale;
 import de.keksuccino.linguji.linguji.backend.lib.logger.LogHandler;
@@ -41,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MainViewController implements ViewControllerBase {
@@ -69,6 +72,10 @@ public class MainViewController implements ViewControllerBase {
     private ComboBox<Locale> targetLangComboBox;
     @FXML
     private TextField geminiApiKeyTextField;
+    @FXML
+    private ComboBox<GeminiModel> geminiModelComboBox;
+    @FXML
+    private Button refreshGeminiModelsButton;
     @FXML
     private TextField promptTextField;
     @FXML
@@ -141,6 +148,7 @@ public class MainViewController implements ViewControllerBase {
         this.geminiApiKeyTextField.setText(Backend.getOptions().geminiApiKey.getValue());
         this.promptTextField.setText(Backend.getOptions().aiPrompt.getValue());
 
+        this.setupGeminiModelConfigOption();
         this.setupLocaleConfigOption(this.sourceLangComboBox, Backend.getOptions().sourceLanguageLocale);
         this.setupLocaleConfigOption(this.targetLangComboBox, Backend.getOptions().targetLanguageLocale);
         this.setupIntegerConfigOption(this.linesPerPacketSpinner, Backend.getOptions().linesPerPacket, 1, 10000);
@@ -392,7 +400,11 @@ public class MainViewController implements ViewControllerBase {
     @FXML
     protected void onApiKeyTextFieldInput() {
         String s = this.geminiApiKeyTextField.getText();
-        if (s != null) Backend.getOptions().geminiApiKey.setValue(s);
+        if (s != null) {
+            Backend.getOptions().geminiApiKey.setValue(s);
+            // Reload models when API key changes
+            this.loadGeminiModels();
+        }
         this.updateStartTranslationButtonState();
     }
 
@@ -457,6 +469,8 @@ public class MainViewController implements ViewControllerBase {
         this.targetLangComboBox.setDisable(disabled);
         this.promptTextField.setDisable(disabled);
         this.geminiApiKeyTextField.setDisable(disabled);
+        this.geminiModelComboBox.setDisable(disabled);
+        this.refreshGeminiModelsButton.setDisable(disabled);
         this.linesPerPacketSpinner.setDisable(disabled);
         this.primaryTranslationEngineComboBox.setDisable(disabled);
         this.fallbackTranslationEngineComboBox.setDisable(disabled);
@@ -566,6 +580,139 @@ public class MainViewController implements ViewControllerBase {
         comboBox.getItems().addAll(FallbackTranslatorBehaviour.values());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> option.setValue(newValue.getName()));
         comboBox.setValue(FallbackTranslatorBehaviour.getByName(option.getValue()));
+    }
+
+    protected void setupGeminiModelConfigOption() {
+        // Set up the converter for the ComboBox
+        this.geminiModelComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(GeminiModel model) {
+                return model != null ? model.getDisplayName() : "";
+            }
+            @Override
+            public GeminiModel fromString(String string) {
+                for (GeminiModel model : geminiModelComboBox.getItems()) {
+                    if (model.getDisplayName().equals(string)) {
+                        return model;
+                    }
+                }
+                return null;
+            }
+        });
+
+        // Load models
+        this.loadGeminiModels();
+
+        // Set up the value change listener
+        this.geminiModelComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Backend.getOptions().geminiModel.setValue(newValue.getModelId());
+            }
+        });
+    }
+
+    protected void loadGeminiModels() {
+        List<GeminiModel> models = null;
+        
+        // Try to fetch models from API if API key is available
+        String apiKey = Backend.getOptions().geminiApiKey.getValue();
+        if (apiKey != null && !apiKey.trim().isEmpty()) {
+            models = GeminiModelFetcher.fetchAvailableModels(apiKey);
+        }
+        
+        // If fetching failed or no API key, use fallback models
+        if (models == null || models.isEmpty()) {
+            models = GeminiModelFetcher.getFallbackModels();
+        }
+        
+        // Clear and add models to ComboBox
+        this.geminiModelComboBox.getItems().clear();
+        this.geminiModelComboBox.getItems().addAll(models);
+        
+        // Select the saved model or default
+        String savedModelId = Backend.getOptions().geminiModel.getValue();
+        GeminiModel selectedModel = null;
+        
+        for (GeminiModel model : models) {
+            if (model.getModelId().equals(savedModelId)) {
+                selectedModel = model;
+                break;
+            }
+        }
+        
+        // If saved model not found, select the first one
+        if (selectedModel == null && !models.isEmpty()) {
+            selectedModel = models.get(0);
+        }
+        
+        this.geminiModelComboBox.setValue(selectedModel);
+    }
+
+    @FXML
+    protected void onRefreshGeminiModelsButtonClick() {
+        String apiKey = Backend.getOptions().geminiApiKey.getValue();
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            Frontend.openAlert(
+                    "No API Key",
+                    "Gemini API key not configured",
+                    "Please enter a valid Gemini API key before refreshing the model list.");
+            return;
+        }
+        
+        // Show that we're refreshing
+        this.refreshGeminiModelsButton.setDisable(true);
+        this.refreshGeminiModelsButton.setText("Loading...");
+        
+        // Run in a separate thread to avoid blocking UI
+        Thread refreshThread = new Thread(() -> {
+            List<GeminiModel> models = GeminiModelFetcher.fetchAvailableModels(apiKey);
+            
+            // Update UI on JavaFX thread
+            TaskExecutor.queueTask(() -> {
+                if (models != null && !models.isEmpty()) {
+                    // Save current selection
+                    GeminiModel currentSelection = this.geminiModelComboBox.getValue();
+                    String currentModelId = currentSelection != null ? currentSelection.getModelId() : null;
+                    
+                    // Update models
+                    this.geminiModelComboBox.getItems().clear();
+                    this.geminiModelComboBox.getItems().addAll(models);
+                    
+                    // Try to restore selection
+                    if (currentModelId != null) {
+                        for (GeminiModel model : models) {
+                            if (model.getModelId().equals(currentModelId)) {
+                                this.geminiModelComboBox.setValue(model);
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // If previous selection not found, select first
+                    if (this.geminiModelComboBox.getValue() == null && !models.isEmpty()) {
+                        this.geminiModelComboBox.setValue(models.get(0));
+                    }
+                    
+                    Frontend.openAlert(
+                            "Models Refreshed",
+                            "Successfully refreshed Gemini models",
+                            "Found " + models.size() + " available Gemini models.");
+                } else {
+                    Frontend.openAlert(
+                            "Refresh Failed",
+                            "Failed to refresh Gemini models",
+                            "Could not fetch models from the Gemini API. Using fallback models.");
+                    this.loadGeminiModels(); // Load fallback models
+                }
+                
+                // Re-enable button
+                this.refreshGeminiModelsButton.setDisable(false);
+                this.refreshGeminiModelsButton.setText("Refresh");
+            });
+        });
+        
+        refreshThread.setDaemon(true);
+        refreshThread.start();
     }
 
 }

@@ -28,17 +28,21 @@ import java.util.Objects;
 public class GeminiTranslationEngine extends AbstractTranslationEngine {
 
     private static final SimpleLogger LOGGER = LogHandler.getLogger();
-    public static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent";
+    public static final String GEMINI_API_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
+    public static final String GEMINI_API_URL_SUFFIX = ":generateContent";
 
     @NotNull
     protected final String apiKey;
     @NotNull
     protected final String prompt;
+    @NotNull
+    protected final String modelId;
 
-    public GeminiTranslationEngine(@NotNull String apiKey, @NotNull String prompt, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
+    public GeminiTranslationEngine(@NotNull String apiKey, @NotNull String prompt, @NotNull String modelId, @NotNull Locale sourceLanguage, @NotNull Locale targetLanguage) {
         super(TranslationEngines.GEMINI_PRO, sourceLanguage, targetLanguage);
         this.apiKey = Objects.requireNonNull(apiKey);
         this.prompt = Objects.requireNonNull(prompt);
+        this.modelId = Objects.requireNonNull(modelId);
     }
 
     @Override
@@ -55,8 +59,10 @@ public class GeminiTranslationEngine extends AbstractTranslationEngine {
         Gson gson = new Gson();
 
         try {
+            
+            String apiUrl = GEMINI_API_URL_BASE + this.modelId + GEMINI_API_URL_SUFFIX;
 
-            HttpRequest request = HttpRequest.create(GEMINI_API_URL)
+            HttpRequest request = HttpRequest.create(apiUrl)
                     .addHeaderEntry("Content-Type", "application/json")
                     .addHeaderEntry("accept", "application/json")
                     .addHeaderEntry("x-goog-api-key", this.apiKey);

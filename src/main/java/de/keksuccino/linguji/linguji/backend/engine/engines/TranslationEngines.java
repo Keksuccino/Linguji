@@ -19,6 +19,7 @@ public class TranslationEngines {
             () -> new GeminiTranslationEngine(
                     Backend.getOptions().geminiApiKey.getValue(),
                     SharedTranslatorOptions.getPrompt(),
+                    Backend.getOptions().geminiModel.getValue(),
                     Objects.requireNonNull(SharedTranslatorOptions.getSourceLanguage()),
                     Objects.requireNonNull(SharedTranslatorOptions.getTargetLanguage())),
             () -> (!Backend.getOptions().geminiApiKey.getValue().trim().isEmpty() && !Backend.getOptions().aiPrompt.getValue().trim().isEmpty()),
