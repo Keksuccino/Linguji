@@ -41,7 +41,7 @@ public class Locale {
     public static final Locale HUNGARIAN = Locale.createAndRegister("hungarian", "Hungarian", "hu", "hun");
     public static final Locale ICELANDIC = Locale.createAndRegister("icelandic", "Icelandic", "is", "isl");
     public static final Locale ITALIAN = Locale.createAndRegister("italian", "Italian", "it", "ita");
-    public static final Locale JAPANESE = Locale.createAndRegister("japanese", "Japanese", "jp", "jpn");
+    public static final Locale JAPANESE = Locale.createAndRegister("japanese", "Japanese", "ja", "jpn");
     public static final Locale THAI = Locale.createAndRegister("thai", "Thai", "th", "tha");
     public static final Locale KOREAN = Locale.createAndRegister("korean", "Korean", "ko", "kor");
     public static final Locale NORWEGIAN = Locale.createAndRegister("norwegian", "Norwegian", "no", "nor");

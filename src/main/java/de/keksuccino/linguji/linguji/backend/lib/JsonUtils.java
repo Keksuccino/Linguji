@@ -138,6 +138,19 @@ public class JsonUtils {
             request.getHeader().forEach(post::addHeader);
             if (entity != null) post.setEntity(collector.put(entity));
             CloseableHttpResponse response = collector.put(httpClient.execute(post));
+            
+            // Check HTTP status code
+            int statusCode = response.getCode();
+            if (statusCode < 200 || statusCode >= 300) {
+                Scanner errorScanner = collector.put(new Scanner(response.getEntity().getContent(), StandardCharsets.UTF_8));
+                StringBuilder errorContent = new StringBuilder();
+                while(errorScanner.hasNext()) {
+                    errorContent.append(errorScanner.nextLine());
+                }
+                LOGGER.error("HTTP POST request failed with status code: " + statusCode + ", response: " + errorContent.toString());
+                throw new Exception("HTTP request failed with status " + statusCode + ": " + errorContent.toString());
+            }
+            
             Scanner scanner = collector.put(new Scanner(response.getEntity().getContent(), StandardCharsets.UTF_8));
 
             StringBuilder content = new StringBuilder();

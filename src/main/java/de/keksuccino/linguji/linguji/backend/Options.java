@@ -54,6 +54,7 @@ public class Options extends AbstractOptions {
     public final Option<String> libreTranslateApiKey = new Option<>(config, "libre_translate_api_key", "", "libre_translate");
 
     public final Option<String> deepLApiKey = new Option<>(config, "deepl_api_key", "", "deepl");
+    public final Option<Boolean> deepLUsePro = new Option<>(config, "deepl_use_pro", false, "deepl");
 
     public final Option<String> deepLxUrl = new Option<>(config, "deeplx_url", "http://localhost:1188/translate", "deeplx");
     public final Option<Integer> deepLxTriesBeforeErrorEmptyResponse = new Option<>(config, "deeplx_tries_before_error_empty_response", 10, "deeplx");

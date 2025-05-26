@@ -123,6 +123,8 @@ public class MainViewController implements ViewControllerBase {
     @FXML
     private TextField deeplApiKeyTextField;
     @FXML
+    private CheckBox deeplUseProCheckBox;
+    @FXML
     private TextField deeplxApiUrlTextField;
     @FXML
     private TextField libreApiUrlTextField;
@@ -173,6 +175,7 @@ public class MainViewController implements ViewControllerBase {
         this.setupTranslationEngineBuilderConfigOption(this.fallbackTranslationEngineComboBox, Backend.getOptions().fallbackTranslationEngine);
         this.setupFallbackTranslationBehaviourConfigOption(this.fallbackTranslatorBehaviourComboBox, Backend.getOptions().fallbackTranslatorBehaviour);
         this.setupStringConfigOption(this.deeplApiKeyTextField, Backend.getOptions().deepLApiKey);
+        this.setupBooleanConfigOption(this.deeplUseProCheckBox, Backend.getOptions().deepLUsePro);
         this.setupStringConfigOption(this.deeplxApiUrlTextField, Backend.getOptions().deepLxUrl);
         this.setupStringConfigOption(this.libreApiUrlTextField, Backend.getOptions().libreTranslateUrl);
         this.setupStringConfigOption(this.libreApiKeyTextField, Backend.getOptions().libreTranslateApiKey);
@@ -477,6 +480,7 @@ public class MainViewController implements ViewControllerBase {
         this.waitBetweenRequestsSpinner.setDisable(disabled);
         this.setVideoSubtitleAsDefaultCheckBox.setDisable(disabled);
         this.deeplApiKeyTextField.setDisable(disabled);
+        this.deeplUseProCheckBox.setDisable(disabled);
         this.deeplxApiUrlTextField.setDisable(disabled);
         this.libreApiKeyTextField.setDisable(disabled);
         this.libreApiUrlTextField.setDisable(disabled);

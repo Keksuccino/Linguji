@@ -63,7 +63,7 @@
             </tooltip></Button>
          <ScrollPane fx:id="contentScrollPane" fitToWidth="true" layoutX="14.0" layoutY="98.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="163.33333333333326" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="97.99999999999989">
            <content>
-             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="928.0" prefWidth="796.0">
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="950.0" prefWidth="796.0">
                   <children>
                      <Label layoutX="17.333333333333332" layoutY="111.0" prefHeight="17.0" prefWidth="219.0" text="Source Language" AnchorPane.leftAnchor="17.333333333333332" />
                      <Separator layoutX="85.33333333333333" layoutY="19.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="87.33333333333333" AnchorPane.rightAnchor="17.33333333333337" />
@@ -117,6 +117,16 @@
                            <Tooltip prefWidth="400.0" text="How many times the tool should try to finish the translation task after the AI returned an invalid amount of translated lines." />
                         </tooltip>
                      </Spinner>
+                     <Label layoutX="17.333333333333332" layoutY="240.0" prefHeight="17.0" prefWidth="219.0" text="Set Video Subtitles As Default" AnchorPane.leftAnchor="17.333333333333332">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="If translated subtitles of video files should get set as default subtitle in the video file." />
+                        </tooltip>
+                     </Label>
+                     <CheckBox fx:id="setVideoSubtitleAsDefaultCheckBox" layoutX="241.33333333333334" layoutY="236.0" mnemonicParsing="false" AnchorPane.leftAnchor="241.33333333333334">
+                        <tooltip>
+                           <Tooltip prefWidth="400.0" text="If translated subtitles of video files should get set as default subtitle in the video file." />
+                        </tooltip>
+                     </CheckBox>
                      <Separator layoutX="83.33333333333333" layoutY="283.0" prefHeight="3.0" prefWidth="681.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="83.33333333333333" AnchorPane.rightAnchor="17.33333333333337" />
                      <Label layoutX="17.333333333333332" layoutY="375.0" prefHeight="17.0" prefWidth="249.0" text="Tries Before Stop (Soft-Block)" AnchorPane.leftAnchor="17.333333333333332">
                         <tooltip>
@@ -297,24 +307,6 @@
                            <Tooltip prefWidth="400.0" text="How/If the fallback translator should translate packets." />
                         </tooltip>
                      </ComboBox>
-                     <Separator layoutX="89.33333333333333" layoutY="717.0" prefHeight="3.0" prefWidth="691.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="89.33333333333333" AnchorPane.rightAnchor="17.33333333333337" />
-                     <Label layoutX="17.333333333333332" layoutY="704.0" prefHeight="26.0" prefWidth="78.0" text="DeepLX" AnchorPane.leftAnchor="17.333333333333332">
-                        <font>
-                           <Font size="17.0" />
-                        </font>
-                     </Label>
-                     <Label layoutX="17.333333333333332" layoutY="745.0" prefHeight="17.0" prefWidth="97.0" text="API URL" AnchorPane.leftAnchor="17.333333333333332" />
-                     <TextField fx:id="deeplxApiUrlTextField" layoutX="241.33333333333334" layoutY="742.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
-                     <Separator layoutX="140.66666666666666" layoutY="823.0" prefHeight="3.0" prefWidth="637.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="140.66666666666666" AnchorPane.rightAnchor="17.33333333333337" />
-                     <Label layoutX="17.333333333333332" layoutY="810.0" prefHeight="26.0" prefWidth="125.0" text="Libre Translate" AnchorPane.leftAnchor="17.333333333333332">
-                        <font>
-                           <Font size="17.0" />
-                        </font>
-                     </Label>
-                     <Label layoutX="17.333333333333332" layoutY="851.0" prefHeight="17.0" prefWidth="97.0" text="API URL" AnchorPane.leftAnchor="17.333333333333332" />
-                     <TextField fx:id="libreApiUrlTextField" layoutX="241.33333333333334" layoutY="848.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
-                     <Label layoutX="17.333333333333332" layoutY="883.0" prefHeight="17.0" prefWidth="195.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332" />
-                     <TextField fx:id="libreApiKeyTextField" layoutX="241.33333333333334" layoutY="880.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
                      <Separator layoutX="78.0" layoutY="642.0" prefHeight="3.0" prefWidth="703.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="17.33333333333337" />
                      <Label layoutX="17.333333333333332" layoutY="629.0" prefHeight="26.0" prefWidth="78.0" text="DeepL" AnchorPane.leftAnchor="17.333333333333332">
                         <font>
@@ -323,18 +315,36 @@
                      </Label>
                      <Label layoutX="17.333333333333332" layoutY="670.0" prefHeight="17.0" prefWidth="97.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332" />
                      <TextField fx:id="deeplApiKeyTextField" layoutX="241.33333333333334" layoutY="667.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
-                     <Label layoutX="17.333333333333332" layoutY="777.0" prefHeight="17.0" prefWidth="249.0" text="Tries Before Stop (Empty Response)" AnchorPane.leftAnchor="17.333333333333332" />
-                     <Spinner fx:id="deeplxTriesBeforeStopEmptyResponseSpinner" editable="true" layoutX="241.33333333333334" layoutY="773.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="241.33333333333334" />
-                     <Label layoutX="17.333333333333332" layoutY="240.0" prefHeight="17.0" prefWidth="219.0" text="Set Video Subtitles As Default" AnchorPane.leftAnchor="17.333333333333332">
+                     <Label layoutX="17.333333333333332" layoutY="702.0" prefHeight="17.0" prefWidth="219.0" text="Use Pro API" AnchorPane.leftAnchor="17.333333333333332">
                         <tooltip>
-                           <Tooltip prefWidth="400.0" text="If translated subtitles of video files should get set as default subtitle in the video file." />
+                           <Tooltip prefWidth="400.0" text="Enable this if you have a DeepL Pro API subscription. This will use the Pro API endpoint (api.deepl.com) instead of the Free API endpoint (api-free.deepl.com)." />
                         </tooltip>
                      </Label>
-                     <CheckBox fx:id="setVideoSubtitleAsDefaultCheckBox" layoutX="241.33333333333334" layoutY="236.0" mnemonicParsing="false" AnchorPane.leftAnchor="241.33333333333334">
+                     <CheckBox fx:id="deeplUseProCheckBox" layoutX="241.33333333333334" layoutY="698.0" mnemonicParsing="false" AnchorPane.leftAnchor="241.33333333333334">
                         <tooltip>
-                           <Tooltip prefWidth="400.0" text="If translated subtitles of video files should get set as default subtitle in the video file." />
+                           <Tooltip prefWidth="400.0" text="Enable this if you have a DeepL Pro API subscription. This will use the Pro API endpoint (api.deepl.com) instead of the Free API endpoint (api-free.deepl.com)." />
                         </tooltip>
                      </CheckBox>
+                     <Separator layoutX="89.33333333333333" layoutY="747.0" prefHeight="3.0" prefWidth="691.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="89.33333333333333" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Label layoutX="17.333333333333332" layoutY="734.0" prefHeight="26.0" prefWidth="78.0" text="DeepLX" AnchorPane.leftAnchor="17.333333333333332">
+                        <font>
+                           <Font size="17.0" />
+                        </font>
+                     </Label>
+                     <Label layoutX="17.333333333333332" layoutY="775.0" prefHeight="17.0" prefWidth="97.0" text="API URL" AnchorPane.leftAnchor="17.333333333333332" />
+                     <TextField fx:id="deeplxApiUrlTextField" layoutX="241.33333333333334" layoutY="772.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Label layoutX="17.333333333333332" layoutY="807.0" prefHeight="17.0" prefWidth="249.0" text="Tries Before Stop (Empty Response)" AnchorPane.leftAnchor="17.333333333333332" />
+                     <Spinner fx:id="deeplxTriesBeforeStopEmptyResponseSpinner" editable="true" layoutX="241.33333333333334" layoutY="803.0" prefHeight="25.0" prefWidth="139.0" AnchorPane.leftAnchor="241.33333333333334" />
+                     <Separator layoutX="140.66666666666666" layoutY="853.0" prefHeight="3.0" prefWidth="637.0" style="-fx-background: #4f4f4f;" AnchorPane.leftAnchor="140.66666666666666" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Label layoutX="17.333333333333332" layoutY="840.0" prefHeight="26.0" prefWidth="125.0" text="Libre Translate" AnchorPane.leftAnchor="17.333333333333332">
+                        <font>
+                           <Font size="17.0" />
+                        </font>
+                     </Label>
+                     <Label layoutX="17.333333333333332" layoutY="881.0" prefHeight="17.0" prefWidth="97.0" text="API URL" AnchorPane.leftAnchor="17.333333333333332" />
+                     <TextField fx:id="libreApiUrlTextField" layoutX="241.33333333333334" layoutY="878.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
+                     <Label layoutX="17.333333333333332" layoutY="913.0" prefHeight="17.0" prefWidth="195.0" text="API Key" AnchorPane.leftAnchor="17.333333333333332" />
+                     <TextField fx:id="libreApiKeyTextField" layoutX="241.33333333333334" layoutY="910.0" onKeyTyped="#onApiKeyTextFieldInput" prefHeight="25.0" prefWidth="525.0" AnchorPane.leftAnchor="241.33333333333334" AnchorPane.rightAnchor="17.33333333333337" />
                   </children>
                </AnchorPane>
            </content>
