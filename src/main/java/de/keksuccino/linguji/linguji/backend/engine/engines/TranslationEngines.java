@@ -23,7 +23,7 @@ public class TranslationEngines {
                     Objects.requireNonNull(SharedTranslatorOptions.getSourceLanguage()),
                     Objects.requireNonNull(SharedTranslatorOptions.getTargetLanguage())),
             () -> (!Backend.getOptions().geminiApiKey.getValue().trim().isEmpty() && !Backend.getOptions().aiPrompt.getValue().trim().isEmpty()),
-            "gemini_pro", "Gemini Pro");
+            "gemini_pro", "Gemini");
 
     public static final TranslationEngineBuilder<DeepLTranslationEngine> DEEPL = new TranslationEngineBuilder<>(
             () -> new DeepLTranslationEngine(
